@@ -13,7 +13,7 @@
   <link href="css/mobile-home.css" rel="stylesheet">
   <link href="css/mobile-theme.css" rel="stylesheet">
   <link href="css/home.css" rel="stylesheet">
-  <script defer src="js/main.js"></script>
+  <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>
 </head>
 <body class="mobile-home-body home-body">
   <div class="home-wrapper">

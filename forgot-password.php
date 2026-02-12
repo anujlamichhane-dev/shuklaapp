@@ -86,7 +86,7 @@ if (isset($_POST['submit'])) {
   <link href="css/sb-admin.css" rel="stylesheet">
   <link href="css/mobile-home.css" rel="stylesheet">
   <link href="css/mobile-theme.css" rel="stylesheet">
-  <script defer src="js/main.js"></script>
+  <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>
   <style>
     :root {
       --gov-navy: #1f2b4d;
@@ -218,6 +218,7 @@ if (isset($_POST['submit'])) {
     .input-group-text,
     .toggle-password {
       cursor: pointer;
+      pointer-events: auto;
     }
     .helper-text {
       font-size: 0.85rem;

@@ -100,7 +100,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
   <!-- Custom styles for this template-->
   <link href="css/sb-admin.css" rel="stylesheet">
   <link href="css/theme-purple.css" rel="stylesheet">
-  <script defer src="js/main.js"></script>
+  <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>
   <?php if (!empty($extraCss) && is_array($extraCss)): ?>
     <?php foreach ($extraCss as $cssPath): ?>
       <link href="<?php echo htmlspecialchars($cssPath, ENT_QUOTES, 'UTF-8'); ?>" rel="stylesheet">

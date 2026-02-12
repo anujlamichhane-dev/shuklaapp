@@ -104,7 +104,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
   <link href="css/theme-purple.css" rel="stylesheet">
   <link href="css/mobile-home.css" rel="stylesheet">
   <link href="css/mobile-theme.css" rel="stylesheet">
-  <script defer src="js/main.js"></script>
+  <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>
 
   <style>
     :root { --gov-navy:#1f2b4d; --gov-red:#2f6fed; --gov-sky:#f2f4f8; --gov-ink:#1f2b4d; --gov-border:rgba(31,43,77,.18); }
@@ -131,7 +131,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
     .auth-card .card-body{background:#fff;color:#212529;padding:1.75rem}
     .form-control{border-radius:10px;border-color:#d8deea}
     .form-control:focus{border-color:var(--gov-navy);box-shadow:0 0 0 .1rem rgba(11,46,76,.15)}
-    .toggle-password{cursor:pointer}
+    .toggle-password{cursor:pointer;pointer-events:auto}
     .helper-text{font-size:.85rem;color:#6c757d}
     .btn-gov-primary{background:linear-gradient(120deg,var(--gov-red),#b10f1a);border:none;border-radius:12px;font-weight:700;padding:.75rem}
     .btn-gov-outline{border-color:var(--gov-navy);color:var(--gov-navy);border-radius:12px;font-weight:600}
