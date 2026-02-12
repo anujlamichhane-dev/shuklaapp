@@ -26,8 +26,52 @@ const ensureBackHomeButton = () => {
     return;
 };
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', ensureBackHomeButton);
-} else {
+const initPasswordToggle = () => {
+    document.addEventListener('click', (event) => {
+        const toggleButton = event.target.closest('.toggle-password');
+        if (!toggleButton) {
+            return;
+        }
+
+        event.preventDefault();
+
+        let targetInput = null;
+        const targetId = toggleButton.getAttribute('data-target');
+        if (targetId) {
+            targetInput = document.getElementById(targetId);
+        }
+
+        if (!targetInput) {
+            const inputGroup = toggleButton.closest('.input-group');
+            if (inputGroup) {
+                targetInput = inputGroup.querySelector('input[type="password"], input[type="text"]');
+            }
+        }
+
+        if (!targetInput) {
+            return;
+        }
+
+        const icon = toggleButton.querySelector('i');
+        const isHidden = targetInput.type === 'password';
+        targetInput.type = isHidden ? 'text' : 'password';
+        toggleButton.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        toggleButton.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+
+        if (icon) {
+            icon.classList.toggle('fa-eye', !isHidden);
+            icon.classList.toggle('fa-eye-slash', isHidden);
+        }
+    });
+};
+
+const initApp = () => {
     ensureBackHomeButton();
+    initPasswordToggle();
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
 }

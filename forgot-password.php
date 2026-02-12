@@ -341,25 +341,6 @@ if (isset($_POST['submit'])) {
 
   <!-- Core plugin JavaScript-->
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-  <script>
-    document.querySelectorAll('.toggle-password').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var target = document.getElementById(this.getAttribute('data-target'));
-        var icon = this.querySelector('i');
-        if (target.type === 'password') {
-          target.type = 'text';
-          icon.classList.remove('fa-eye');
-          icon.classList.add('fa-eye-slash');
-          this.setAttribute('aria-label', 'Hide password');
-        } else {
-          target.type = 'password';
-          icon.classList.remove('fa-eye-slash');
-          icon.classList.add('fa-eye');
-          this.setAttribute('aria-label', 'Show password');
-        }
-      });
-    });
-  </script>
 
 </body>
 
