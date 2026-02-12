@@ -25,8 +25,8 @@ if (isset($_POST['submit'])) {
         $err = 'Phone number should contain exactly 10 digits';
     } elseif (strlen($password) < 1) {
         $err = 'Please enter your new password';
-    } elseif (strlen($password) <= 8) {
-        $err = 'Password must be longer than 8 characters';
+    } elseif (strlen($password) < 8) {
+        $err = 'Password must be at least 8 characters';
     } else {
         $stmt = $db->prepare("SELECT id, phone FROM users WHERE email = ?");
         if ($stmt === false) {
@@ -316,14 +316,14 @@ if (isset($_POST['submit'])) {
           <div class="form-group">
             <label for="inputPassword">New password</label>
             <div class="input-group">
-              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Create a strong password" minlength="9" required>
+              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Create a strong password" minlength="8" required>
               <div class="input-group-append">
                 <button class="btn btn-outline-secondary toggle-password" type="button" data-target="inputPassword" aria-label="Show password">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
             </div>
-            <small class="helper-text">Must be longer than 8 characters.</small>
+            <small class="helper-text">Must be at least 8 characters.</small>
           </div>
           <button type="submit" name="submit" class="btn btn-gov-primary btn-block mb-2">Update password</button>
           <a href="./index.php" class="btn btn-gov-outline btn-block">Back to login</a>

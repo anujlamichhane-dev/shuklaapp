@@ -26,8 +26,8 @@ if (isset($_POST['submit'])) {
     $err = 'Please enter a valid email adddress';
   } else if (strlen($password) < 1) {
     $err = "Please enter your password";
-  } else if (strlen($password) <= 8) {
-    $err = "Password must be longer than 8 characters";
+  } else if (strlen($password) < 8) {
+    $err = "Password must be at least 8 characters";
   } else {
 
     $stmt = $db->prepare("SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1");
@@ -185,7 +185,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
           <div class="form-group">
             <label for="inputPassword"><?php echo htmlspecialchars(i18n_t('login.password.label'), ENT_QUOTES, 'UTF-8'); ?></label>
             <div class="input-group">
-              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('login.password.placeholder'), ENT_QUOTES, 'UTF-8'); ?>" minlength="9" required>
+              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('login.password.placeholder'), ENT_QUOTES, 'UTF-8'); ?>" minlength="8" required>
               <div class="input-group-append">
                 <button class="btn btn-outline-secondary toggle-password" type="button" data-target="inputPassword">
                   <i class="fas fa-eye"></i>
