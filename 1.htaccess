@@ -1,0 +1,8 @@
+# General settings
+DirectoryIndex index.php index.html
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Add your rewrite rules below this line
+</IfModule>

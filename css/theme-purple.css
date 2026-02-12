@@ -1,0 +1,113 @@
+/* Grey theme overrides for SB Admin */
+:root {
+  /* Grey scale for shells and primary accents */
+  --purple-900: #1a1a1a;
+  --purple-800: #2a2a2a;
+  --purple-700: #3a3a3a;
+  --purple-600: #5a5a5a;
+  --purple-500: #6b6b6b;
+  --purple-400: #8a8a8a;
+  --purple-300: #a3a3a3;
+  --purple-100: #f0f0f0;
+  --primary: #6b6b6b;
+}
+
+a {
+  color: var(--purple-600);
+}
+
+a:hover,
+a:focus {
+  color: var(--purple-700);
+}
+
+.bg-dark {
+  background-color: var(--purple-900) !important;
+}
+
+.sidebar {
+  background-color: var(--purple-900) !important;
+}
+
+.sidebar .nav-item .nav-link:hover,
+.sidebar .nav-item .nav-link:focus,
+.sidebar .nav-item .nav-link:active {
+  color: #fff;
+}
+
+.text-primary {
+  color: var(--purple-600) !important;
+}
+
+.bg-primary {
+  background-color: var(--purple-600) !important;
+}
+
+.border-primary {
+  border-color: var(--purple-600) !important;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: var(--purple-600);
+  border-color: var(--purple-600);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.show > .btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: var(--purple-700);
+  border-color: var(--purple-700);
+}
+
+.btn-primary:focus,
+.btn-primary.focus {
+  box-shadow: 0 0 0 0.2rem rgba(107, 107, 107, 0.35);
+}
+
+.btn-outline-primary {
+  color: var(--purple-600);
+  border-color: var(--purple-600);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active,
+.btn-outline-primary.active,
+.show > .btn-outline-primary.dropdown-toggle {
+  color: #fff;
+  background-color: var(--purple-600);
+  border-color: var(--purple-600);
+}
+
+.badge-primary {
+  background-color: var(--purple-600);
+}
+
+.table-primary,
+.table-primary > th,
+.table-primary > td {
+  background-color: rgba(107, 107, 107, 0.15);
+}
+
+.table-primary th,
+.table-primary td,
+.table-primary thead th,
+.table-primary tbody + tbody {
+  border-color: rgba(107, 107, 107, 0.25);
+}
+
+.table-hover .table-primary:hover {
+  background-color: rgba(107, 107, 107, 0.22);
+}
+
+.scroll-to-top {
+  background: rgba(107, 107, 107, 0.6);
+}
+
+.scroll-to-top:hover {
+  background: rgba(107, 107, 107, 0.85);
+}
