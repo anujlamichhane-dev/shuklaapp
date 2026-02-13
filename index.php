@@ -22,10 +22,21 @@ if (!isset($_SESSION['logged-in'])) {
 
 require_once './src/Database.php';
 require_once './src/i18n.php';
+require_once './src/remember.php';
 
 $db = Database::getInstance();
 
 $err = '';
+
+if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
+  $rememberUser = remember_login($db, $secure);
+  if ($rememberUser) {
+    $_SESSION['logged-in'] = true;
+    $_SESSION['user'] = $rememberUser;
+    header('Location: ./mobile-home.php');
+    exit();
+  }
+}
 
 // LOGIN
 if (isset($_POST['submit'])) {
@@ -71,6 +82,18 @@ if (isset($_POST['submit'])) {
             $user->role = $role;
 
             $_SESSION['user'] = $user;
+
+            if ($remember) {
+              remember_create_token($db, $user->id, $secure);
+            } else {
+              $clear = $db->prepare("DELETE FROM remember_tokens WHERE user_id = ?");
+              if ($clear) {
+                $clear->bind_param('i', $user->id);
+                $clear->execute();
+                $clear->close();
+              }
+              remember_clear_cookie($secure);
+            }
 
             $stmt->close();
             header('Location: ./mobile-home.php');

@@ -4,14 +4,25 @@ if (!ob_get_level()) {
 }
 session_start();
 require_once './src/i18n.php';
+require_once './src/Database.php';
+require_once './src/remember.php';
+
+$db = Database::getInstance();
+$secure = remember_cookie_secure();
+
+if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
+    $rememberUser = remember_login($db, $secure);
+    if ($rememberUser) {
+        $_SESSION['logged-in'] = true;
+        $_SESSION['user'] = $rememberUser;
+    }
+}
 //ini_set('display_errors', 1);
 if(!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false){
     header('Location: ./index.php');
     exit();
 }
 $user = $_SESSION['user'];
-require_once './src/Database.php';
-$db = Database::getInstance();
 
 $role = $user->role ?? 'member';
 $officialRoles = ['mayor','deputymayor','spokesperson','chief_officer','info_officer'];

@@ -1,0 +1,123 @@
+<?php
+
+function remember_cookie_secure() {
+  return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+}
+
+function remember_set_cookie($token, $secure) {
+  setcookie('remember_token', $token, [
+    'expires' => time() + (60 * 60 * 24 * 30),
+    'path' => '/',
+    'domain' => '',
+    'secure' => $secure,
+    'httponly' => true,
+    'samesite' => 'Lax',
+  ]);
+}
+
+function remember_clear_cookie($secure) {
+  setcookie('remember_token', '', [
+    'expires' => time() - 3600,
+    'path' => '/',
+    'domain' => '',
+    'secure' => $secure,
+    'httponly' => true,
+    'samesite' => 'Lax',
+  ]);
+}
+
+function remember_create_token($db, $userId, $secure) {
+  $token = bin2hex(random_bytes(32));
+  $hash = hash('sha256', $token);
+  $expires = date('Y-m-d H:i:s', time() + (60 * 60 * 24 * 30));
+
+  $delete = $db->prepare("DELETE FROM remember_tokens WHERE user_id = ?");
+  if ($delete) {
+    $delete->bind_param('i', $userId);
+    $delete->execute();
+    $delete->close();
+  }
+
+  $stmt = $db->prepare("INSERT INTO remember_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)");
+  if ($stmt === false) {
+    return false;
+  }
+
+  $stmt->bind_param('iss', $userId, $hash, $expires);
+  $ok = $stmt->execute();
+  $stmt->close();
+
+  if ($ok) {
+    remember_set_cookie($token, $secure);
+  }
+
+  return $ok;
+}
+
+function remember_login($db, $secure) {
+  if (empty($_COOKIE['remember_token'])) {
+    return null;
+  }
+
+  $token = $_COOKIE['remember_token'];
+  if (strlen($token) < 20) {
+    remember_clear_cookie($secure);
+    return null;
+  }
+
+  $hash = hash('sha256', $token);
+  $now = date('Y-m-d H:i:s');
+
+  $stmt = $db->prepare("SELECT user_id FROM remember_tokens WHERE token_hash = ? AND expires_at > ? LIMIT 1");
+  if ($stmt === false) {
+    return null;
+  }
+
+  $stmt->bind_param('ss', $hash, $now);
+  if (!$stmt->execute()) {
+    $stmt->close();
+    return null;
+  }
+
+  $stmt->bind_result($userId);
+  if (!$stmt->fetch()) {
+    $stmt->close();
+    remember_clear_cookie($secure);
+    return null;
+  }
+  $stmt->close();
+
+  $update = $db->prepare("UPDATE remember_tokens SET last_used_at = NOW() WHERE token_hash = ?");
+  if ($update) {
+    $update->bind_param('s', $hash);
+    $update->execute();
+    $update->close();
+  }
+
+  $userStmt = $db->prepare("SELECT id, name, email, role FROM users WHERE id = ? LIMIT 1");
+  if ($userStmt === false) {
+    return null;
+  }
+
+  $userStmt->bind_param('i', $userId);
+  if (!$userStmt->execute()) {
+    $userStmt->close();
+    return null;
+  }
+
+  $userStmt->bind_result($id, $name, $email, $role);
+  if (!$userStmt->fetch()) {
+    $userStmt->close();
+    remember_clear_cookie($secure);
+    return null;
+  }
+  $userStmt->close();
+
+  $user = new stdClass();
+  $user->id = $id;
+  $user->name = $name;
+  $user->email = $email;
+  $user->role = $role;
+
+  return $user;
+}
