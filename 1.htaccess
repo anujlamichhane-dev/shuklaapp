@@ -4,5 +4,8 @@ DirectoryIndex index.php index.html
 # Enable Rewrite Engine
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # Add your rewrite rules below this line
+    # Force HTTPS (handles proxies too)
+    RewriteCond %{HTTPS} !=on [OR]
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
