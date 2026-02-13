@@ -133,7 +133,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
     .form-control:focus{border-color:var(--gov-navy);box-shadow:0 0 0 .1rem rgba(11,46,76,.15)}
     .toggle-password{cursor:pointer;pointer-events:auto}
     .helper-text{font-size:.85rem;color:#6c757d}
-    .btn-gov-primary{background:linear-gradient(120deg,var(--gov-red),#b10f1a);border:none;border-radius:12px;font-weight:700;padding:.75rem}
+    .btn-gov-primary{background:linear-gradient(120deg,var(--gov-red),#b10f1a);border:none;border-radius:12px;font-weight:700;padding:.75rem;color:#fff}
+    .btn-gov-primary:hover,.btn-gov-primary:focus{color:#fff}
     .btn-gov-outline{border-color:var(--gov-navy);color:var(--gov-navy);border-radius:12px;font-weight:600}
     .btn-gov-outline:hover{background:var(--gov-navy);color:#fff}
     .link-muted{color:var(--gov-navy);font-weight:600}
@@ -141,7 +142,24 @@ $langUrlNe = $path . '?' . http_build_query($query);
     .lang-switcher{position:fixed;top:14px;right:16px;display:inline-flex;background:rgba(15,23,42,.86);border:1px solid rgba(15,23,42,.08);border-radius:999px;padding:4px;z-index:1200;box-shadow:0 10px 26px rgba(15,23,42,.18)}
     .lang-switcher .lang-btn{border:none;background:transparent;color:#e7eef9;padding:6px 12px;border-radius:999px;font-weight:700;letter-spacing:.03em;cursor:pointer;transition:background .2s ease,color .2s ease}
     .lang-switcher .lang-btn.active{background:#0d6efd;color:#fff;box-shadow:0 4px 14px rgba(13,110,253,.35)}
-  </style>
+  
+    @media (max-width: 768px){
+      body.auth-page{align-items:flex-start;padding:2.75rem 1rem 1.5rem}
+      .auth-shell{max-width:100%;gap:1rem}
+      .auth-card,.brand-panel{width:100%}
+      .auth-card .card-body{padding:1.25rem}
+      .brand-panel{padding:1.25rem}
+      .lang-switcher{top:10px;right:10px;transform:scale(.92)}
+    }
+    @media (max-width: 480px){
+      .brand-badge{flex-direction:column;align-items:flex-start}
+      .brand-badge img{width:64px;height:64px}
+      .card-header .card-title{font-size:1.2rem}
+      .card-header .card-subtitle{font-size:.9rem}
+      .lead-copy{font-size:.95rem}
+      .support-block{font-size:.9rem}
+    }
+</style>
 </head>
 
 <body class="mobile-home-body auth-page">
@@ -220,8 +238,6 @@ $langUrlNe = $path . '?' . http_build_query($query);
 
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
-<zapier-interfaces-chatbot-embed is-popup='false' chatbot-id='cmli3f63z00anafk5l3zuaaqo' height='600px' width='400px'></zapier-interfaces-chatbot-embed>
 </body>
 </html>
 

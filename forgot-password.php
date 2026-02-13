@@ -238,6 +238,11 @@ if (isset($_POST['submit'])) {
       border-radius: 12px;
       font-weight: 700;
       padding: 0.75rem;
+      color: #fff;
+    }
+    .btn-gov-primary:hover,
+    .btn-gov-primary:focus {
+      color: #fff;
     }
     .btn-gov-outline {
       border-color: var(--gov-navy);
@@ -258,7 +263,23 @@ if (isset($_POST['submit'])) {
       color: #4b5563;
       margin-top: 0.75rem;
     }
-  </style>
+  
+    @media (max-width: 768px) {
+      body.auth-page { align-items: flex-start; padding: 2.75rem 1rem 1.5rem; }
+      .auth-shell { max-width: 100%; gap: 1rem; }
+      .auth-card, .brand-panel { width: 100%; }
+      .auth-card .card-body { padding: 1.25rem; }
+      .brand-panel { padding: 1.25rem; }
+    }
+    @media (max-width: 480px) {
+      .brand-badge { flex-direction: column; align-items: flex-start; }
+      .brand-badge img { width: 64px; height: 64px; }
+      .card-header .card-title { font-size: 1.2rem; }
+      .card-header .card-subtitle { font-size: 0.9rem; }
+      .lead-copy { font-size: 0.95rem; }
+      .support-block { font-size: 0.9rem; }
+    }
+</style>
 
 </head>
 
