@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -42,7 +42,7 @@ if (isset($_POST['submit'])) {
         $err = "Unable to process login right now";
       } else {
 
-        // ✅ NO get_result() — use bind_result + fetch
+        // ? NO get_result() � use bind_result + fetch
         $stmt->bind_result($id, $name, $u_email, $u_password, $role);
 
         if ($stmt->fetch()) {
@@ -220,5 +220,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
 
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
+<zapier-interfaces-chatbot-embed is-popup='false' chatbot-id='cmli3f63z00anafk5l3zuaaqo' height='600px' width='400px'></zapier-interfaces-chatbot-embed>
 </body>
 </html>
+
