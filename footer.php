@@ -91,18 +91,18 @@
 
 <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
 <style>
-  zapier-interfaces-chatbot-embed { position: fixed; left: 16px !important; right: auto !important; bottom: calc(16px + env(safe-area-inset-bottom)) !important; z-index: 9999; }
+  zapier-interfaces-chatbot-embed { position: fixed; right: 16px !important; left: auto !important; bottom: calc(16px + env(safe-area-inset-bottom)) !important; z-index: 9999; }
 </style>
-<zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmli3f63z00anafk5l3zuaaqo' style="position:fixed;left:16px;right:auto;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;"></zapier-interfaces-chatbot-embed>
+<zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmli3f63z00anafk5l3zuaaqo' style="position:fixed;right:16px;left:auto;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;"></zapier-interfaces-chatbot-embed>
 
 
 <script>
-  (function forceZapierChatbotLeft(){
+  (function forceZapierChatbotRight(){
     const embed = document.querySelector('zapier-interfaces-chatbot-embed');
     if (!embed) return;
     embed.style.position = 'fixed';
-    embed.style.left = '16px';
-    embed.style.right = 'auto';
+    embed.style.right = '16px';
+    embed.style.left = 'auto';
     embed.style.bottom = 'calc(16px + env(safe-area-inset-bottom))';
     embed.style.zIndex = '9999';
   })();
