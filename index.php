@@ -124,10 +124,10 @@ $langUrlNe = $path . '?' . http_build_query($query);
     .trust-bullets li+li{margin-top:.35rem}
     .support-block{margin-top:1.2rem;padding:.9rem 1rem;background:var(--gov-sky);border-left:4px solid var(--gov-navy);border-radius:12px;font-size:.95rem;color:#0b2540}
     .auth-card{border:none;border-radius:18px;box-shadow:0 22px 60px rgba(15,23,42,.18);overflow:hidden}
-    .auth-card .card-header{background:var(--auth-header-bg);color:var(--auth-header-text);border:none;letter-spacing:.5px}
-    .card-header .card-kicker{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;color:var(--auth-header-text)}
-    .card-header .card-title{font-size:1.4rem;font-weight:700;margin:.25rem 0 0;color:var(--auth-header-text)}
-    .card-header .card-subtitle{font-size:.95rem;opacity:.92;color:var(--auth-header-text)}
+    .auth-card .card-header{background:var(--auth-card);color:var(--auth-text);border:none;letter-spacing:.5px}
+    .card-header .card-kicker{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;color:var(--auth-text)}
+    .card-header .card-title{font-size:1.4rem;font-weight:700;margin:.25rem 0 0;color:var(--auth-text)}
+    .card-header .card-subtitle{font-size:.95rem;opacity:.92;color:var(--auth-text)}
     .auth-card .card-body{background:#fff;color:#212529;padding:1.75rem}
     .form-control{border-radius:10px;border-color:#d8deea}
     .form-control:focus{border-color:var(--gov-navy);box-shadow:0 0 0 .1rem rgba(11,46,76,.15)}
