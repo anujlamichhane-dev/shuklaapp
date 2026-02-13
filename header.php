@@ -135,7 +135,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
     <?php if ($showBackBtn): ?>
       <a class="btn btn-sm btn-outline-light mr-2 d-inline-flex align-items-center btn-home" href="./mobile-home.php" aria-label="Go to home">
         <i class="fas fa-home mr-1"></i>
-        <span>To Home</span>
+        <span>Home</span>
       </a>
     <?php endif; ?>
     <?php if (!$hideSidebarToggle): ?>
