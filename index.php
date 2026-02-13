@@ -21,11 +21,15 @@ if (!isset($_SESSION['logged-in'])) {
 
 require_once './src/Database.php';
 require_once './src/i18n.php';
-require_once './src/remember.php';
 
 $db = Database::getInstance();
 
 $err = '';
+
+if (isset($_SESSION['logged-in']) && $_SESSION['logged-in'] == true && !empty($_SESSION['user'])) {
+  header('Location: ./mobile-home.php');
+  exit();
+}
 
 if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
   $rememberUser = remember_login($db, $secure);

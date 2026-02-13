@@ -8,15 +8,8 @@ function remember_cookie_secure() {
 }
 
 function remember_cookie_domain() {
-  $host = $_SERVER['HTTP_HOST'] ?? '';
-  $host = preg_replace('/:\d+$/', '', $host);
-  if ($host === '' || filter_var($host, FILTER_VALIDATE_IP) || $host === 'localhost') {
-    return '';
-  }
-  if (stripos($host, 'www.') === 0) {
-    return '.' . substr($host, 4);
-  }
-  return '.' . $host;
+  // Force a single canonical domain for cookies
+  return '.shuklaapp.info';
 }
 
 function remember_set_cookie($token, $secure) {
