@@ -20,6 +20,14 @@ body.mobile-home-body .navbar {
   box-shadow: 0 10px 26px rgba(18, 25, 52, 0.16);
 }
 
+body.mobile-home-body .navbar .btn-home {
+  margin-left: 16px !important;
+}
+
+body.mobile-home-body .navbar .mobile-menu-icon {
+  margin-right: 0 !important;
+}
+
 body.mobile-home-body .navbar .navbar-brand span {
   color: #fff;
   font-weight: 700;
