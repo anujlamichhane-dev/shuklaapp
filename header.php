@@ -2,13 +2,22 @@
 if (!ob_get_level()) {
   ob_start();
 }
+require_once './src/remember.php';
+$secure = remember_cookie_secure();
+$cookieDomain = remember_cookie_domain();
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',
+  'domain' => $cookieDomain,
+  'secure' => $secure,
+  'httponly' => true,
+  'samesite' => 'Lax',
+]);
 session_start();
 require_once './src/i18n.php';
 require_once './src/Database.php';
-require_once './src/remember.php';
 
 $db = Database::getInstance();
-$secure = remember_cookie_secure();
 
 if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
     $rememberUser = remember_login($db, $secure);

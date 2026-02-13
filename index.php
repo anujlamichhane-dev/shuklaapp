@@ -1,19 +1,9 @@
 <?php
-$remember = isset($_POST['remember']) && $_POST['remember'] === '1';
-$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-  || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
-  || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
-$cookieDomain = '';
-$cookieHost = $_SERVER['HTTP_HOST'] ?? '';
-$cookieHost = preg_replace('/:\d+$/', '', $cookieHost);
-if ($cookieHost !== '' && !filter_var($cookieHost, FILTER_VALIDATE_IP) && $cookieHost !== 'localhost') {
-  $cookieDomain = stripos($cookieHost, 'www.') === 0 ? '.' . substr($cookieHost, 4) : '.' . $cookieHost;
-}
-$cookieLifetime = $remember ? 60 * 60 * 24 * 30 : 0;
-$gcLifetime = $remember ? 60 * 60 * 24 * 30 : 1440;
-ini_set('session.gc_maxlifetime', (string)$gcLifetime);
+require_once './src/remember.php';
+$secure = remember_cookie_secure();
+$cookieDomain = remember_cookie_domain();
 session_set_cookie_params([
-  'lifetime' => $cookieLifetime,
+  'lifetime' => 0,
   'path' => '/',
   'domain' => $cookieDomain,
   'secure' => $secure,
@@ -21,6 +11,7 @@ session_set_cookie_params([
   'samesite' => 'Lax',
 ]);
 session_start();
+$remember = isset($_POST['remember']) && $_POST['remember'] === '1';
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
