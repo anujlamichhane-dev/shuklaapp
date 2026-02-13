@@ -83,6 +83,8 @@ if (isset($_POST['submit'])) {
 
             $_SESSION['user'] = $user;
 
+            $stmt->close();
+
             if ($remember) {
               remember_create_token($db, $user->id, $secure);
             } else {
@@ -95,7 +97,6 @@ if (isset($_POST['submit'])) {
               remember_clear_cookie($secure);
             }
 
-            $stmt->close();
             header('Location: ./mobile-home.php');
             exit();
           } else {
