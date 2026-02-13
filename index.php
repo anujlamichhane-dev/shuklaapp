@@ -1,13 +1,21 @@
 <?php
 $remember = isset($_POST['remember']) && $_POST['remember'] === '1';
-$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+  || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+  || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+$cookieDomain = '';
+$cookieHost = $_SERVER['HTTP_HOST'] ?? '';
+$cookieHost = preg_replace('/:\d+$/', '', $cookieHost);
+if ($cookieHost !== '' && !filter_var($cookieHost, FILTER_VALIDATE_IP) && $cookieHost !== 'localhost') {
+  $cookieDomain = stripos($cookieHost, 'www.') === 0 ? '.' . substr($cookieHost, 4) : '.' . $cookieHost;
+}
 $cookieLifetime = $remember ? 60 * 60 * 24 * 30 : 0;
 $gcLifetime = $remember ? 60 * 60 * 24 * 30 : 1440;
 ini_set('session.gc_maxlifetime', (string)$gcLifetime);
 session_set_cookie_params([
   'lifetime' => $cookieLifetime,
   'path' => '/',
-  'domain' => '',
+  'domain' => $cookieDomain,
   'secure' => $secure,
   'httponly' => true,
   'samesite' => 'Lax',

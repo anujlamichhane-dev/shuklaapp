@@ -1,14 +1,30 @@
 <?php
 
 function remember_cookie_secure() {
-  return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+  if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) {
+    return true;
+  }
+  return (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+}
+
+function remember_cookie_domain() {
+  $host = $_SERVER['HTTP_HOST'] ?? '';
+  $host = preg_replace('/:\d+$/', '', $host);
+  if ($host === '' || filter_var($host, FILTER_VALIDATE_IP) || $host === 'localhost') {
+    return '';
+  }
+  if (stripos($host, 'www.') === 0) {
+    return '.' . substr($host, 4);
+  }
+  return '.' . $host;
 }
 
 function remember_set_cookie($token, $secure) {
+  $domain = remember_cookie_domain();
   setcookie('remember_token', $token, [
     'expires' => time() + (60 * 60 * 24 * 30),
     'path' => '/',
-    'domain' => '',
+    'domain' => $domain,
     'secure' => $secure,
     'httponly' => true,
     'samesite' => 'Lax',
@@ -16,10 +32,11 @@ function remember_set_cookie($token, $secure) {
 }
 
 function remember_clear_cookie($secure) {
+  $domain = remember_cookie_domain();
   setcookie('remember_token', '', [
     'expires' => time() - 3600,
     'path' => '/',
-    'domain' => '',
+    'domain' => $domain,
     'secure' => $secure,
     'httponly' => true,
     'samesite' => 'Lax',
