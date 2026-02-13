@@ -1,4 +1,17 @@
 <?php
+$remember = isset($_POST['remember']) && $_POST['remember'] === '1';
+$secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+$cookieLifetime = $remember ? 60 * 60 * 24 * 30 : 0;
+$gcLifetime = $remember ? 60 * 60 * 24 * 30 : 1440;
+ini_set('session.gc_maxlifetime', (string)$gcLifetime);
+session_set_cookie_params([
+  'lifetime' => $cookieLifetime,
+  'path' => '/',
+  'domain' => '',
+  'secure' => $secure,
+  'httponly' => true,
+  'samesite' => 'Lax',
+]);
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -48,6 +61,7 @@ if (isset($_POST['submit'])) {
         if ($stmt->fetch()) {
           if (password_verify($password, $u_password)) {
             $_SESSION['logged-in'] = true;
+            session_regenerate_id(true);
 
             // create user object similar to your old code
             $user = new stdClass();
@@ -275,7 +289,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
           <div class="d-flex justify-content-between align-items-center mb-3">
             <a class="link-muted" href="./forgot-password.php"><?php echo htmlspecialchars(i18n_t('login.forgot'), ENT_QUOTES, 'UTF-8'); ?></a>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="rememberMe" value="remember-me">
+              <input class="form-check-input" type="checkbox" id="rememberMe" name="remember" value="1">
               <label class="form-check-label" for="rememberMe"><?php echo htmlspecialchars(i18n_t('login.remember'), ENT_QUOTES, 'UTF-8'); ?></label>
             </div>
           </div>
