@@ -185,8 +185,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
         --auth-input-text: #e7eef9;
         --auth-border: #2a354c;
         --auth-link: #c9d4ea;
-        --auth-header-bg: #f5f7fb;
-        --auth-header-text: #1f2b4d;
+        --auth-header-bg: var(--auth-card);
+        --auth-header-text: var(--auth-text);
         --auth-outline-text: #e7eef9;
         --auth-outline-border: #40506b;
       }
@@ -201,8 +201,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
       --auth-input-text: #e7eef9;
       --auth-border: #2a354c;
       --auth-link: #c9d4ea;
-      --auth-header-bg: #f5f7fb;
-      --auth-header-text: #1f2b4d;
+      --auth-header-bg: var(--auth-card);
+      --auth-header-text: var(--auth-text);
       --auth-outline-text: #e7eef9;
       --auth-outline-border: #40506b;
     }
