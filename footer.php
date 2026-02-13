@@ -90,7 +90,10 @@
 </script>
 
 <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
-<zapier-interfaces-chatbot-embed is-popup='false' chatbot-id='cmli3f63z00anafk5l3zuaaqo' height='600px' width='400px'></zapier-interfaces-chatbot-embed>
+<style>
+  zapier-interfaces-chatbot-embed { position: fixed; left: 16px; bottom: 16px; z-index: 9999; }
+</style>
+<zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmli3f63z00anafk5l3zuaaqo'></zapier-interfaces-chatbot-embed>
 
 </body>
 
