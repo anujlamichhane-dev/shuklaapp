@@ -124,10 +124,10 @@ $langUrlNe = $path . '?' . http_build_query($query);
     .trust-bullets li+li{margin-top:.35rem}
     .support-block{margin-top:1.2rem;padding:.9rem 1rem;background:var(--gov-sky);border-left:4px solid var(--gov-navy);border-radius:12px;font-size:.95rem;color:#0b2540}
     .auth-card{border:none;border-radius:18px;box-shadow:0 22px 60px rgba(15,23,42,.18);overflow:hidden}
-    .auth-card .card-header{background:linear-gradient(120deg,var(--gov-navy),#0f3c64,var(--gov-red));color:#fff;border:none;letter-spacing:.5px}
-    .card-header .card-kicker{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
-    .card-header .card-title{font-size:1.4rem;font-weight:700;margin:.25rem 0 0}
-    .card-header .card-subtitle{font-size:.95rem;opacity:.92}
+    .auth-card .card-header{background:var(--auth-header-bg);color:var(--auth-header-text);border:none;letter-spacing:.5px}
+    .card-header .card-kicker{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;color:var(--auth-header-text)}
+    .card-header .card-title{font-size:1.4rem;font-weight:700;margin:.25rem 0 0;color:var(--auth-header-text)}
+    .card-header .card-subtitle{font-size:.95rem;opacity:.92;color:var(--auth-header-text)}
     .auth-card .card-body{background:#fff;color:#212529;padding:1.75rem}
     .form-control{border-radius:10px;border-color:#d8deea}
     .form-control:focus{border-color:var(--gov-navy);box-shadow:0 0 0 .1rem rgba(11,46,76,.15)}
@@ -135,8 +135,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
     .helper-text{font-size:.85rem;color:#6c757d}
     .btn-gov-primary{background:linear-gradient(120deg,var(--gov-red),#b10f1a);border:none;border-radius:12px;font-weight:700;padding:.75rem;color:#fff}
     .btn-gov-primary:hover,.btn-gov-primary:focus{color:#fff}
-    .btn-gov-outline{border-color:var(--gov-navy);color:var(--gov-navy);border-radius:12px;font-weight:600}
-    .btn-gov-outline:hover{background:var(--gov-navy);color:#fff}
+    .btn-gov-outline{border-color:var(--auth-outline-border);color:var(--auth-outline-text);border-radius:12px;font-weight:600;background:transparent}
+    .btn-gov-outline:hover{background:var(--auth-header-bg);color:#fff}
     .link-muted{color:var(--gov-navy);font-weight:600}
     .status-note{font-size:.9rem;color:#4b5563;margin-top:.75rem}
     .lang-switcher{position:fixed;top:14px;right:16px;display:inline-flex;background:rgba(15,23,42,.86);border:1px solid rgba(15,23,42,.08);border-radius:999px;padding:4px;z-index:1200;box-shadow:0 10px 26px rgba(15,23,42,.18)}
@@ -169,6 +169,11 @@ $langUrlNe = $path . '?' . http_build_query($query);
       --auth-input-text: #1f2b4d;
       --auth-border: #d8deea;
       --auth-link: #1f2b4d;
+
+      --auth-header-bg: linear-gradient(120deg,#1f2b4d,#0f3c64,#2f6fed);
+      --auth-header-text: #ffffff;
+      --auth-outline-text: #1f2b4d;
+      --auth-outline-border: #1f2b4d;
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -180,6 +185,10 @@ $langUrlNe = $path . '?' . http_build_query($query);
         --auth-input-text: #e7eef9;
         --auth-border: #2a354c;
         --auth-link: #c9d4ea;
+        --auth-header-bg: linear-gradient(120deg,#1f2b4d,#0f3c64,#2f6fed);
+        --auth-header-text: #ffffff;
+        --auth-outline-text: #e7eef9;
+        --auth-outline-border: #40506b;
       }
     }
     html[data-darkreader-scheme="dark"],
@@ -192,6 +201,10 @@ $langUrlNe = $path . '?' . http_build_query($query);
       --auth-input-text: #e7eef9;
       --auth-border: #2a354c;
       --auth-link: #c9d4ea;
+      --auth-header-bg: linear-gradient(120deg,#1f2b4d,#0f3c64,#2f6fed);
+      --auth-header-text: #ffffff;
+      --auth-outline-text: #e7eef9;
+      --auth-outline-border: #40506b;
     }
     body.auth-page { background: var(--auth-bg); color: var(--auth-text); }
     .auth-card .card-body { background: var(--auth-card); color: var(--auth-text); }
@@ -203,6 +216,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
     .helper-text,
     .status-note { color: var(--auth-muted); }
     .link-muted { color: var(--auth-link); }
+    label { color: var(--auth-text); }
+    .form-check-label { color: var(--auth-text); }
 </style>
 </head>
 
