@@ -76,8 +76,13 @@ function remember_login($db, $secure) {
     return null;
   }
 
-  $token = $_COOKIE['remember_token'];
-  if (strlen($token) < 20) {
+  $token = urldecode($_COOKIE['remember_token']);
+  $token = strtolower(trim($token));
+  if ($token === '' || strlen($token) < 20) {
+    remember_clear_cookie($secure);
+    return null;
+  }
+  if (!ctype_xdigit($token)) {
     remember_clear_cookie($secure);
     return null;
   }
