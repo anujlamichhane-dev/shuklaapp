@@ -93,8 +93,20 @@
 <style>
   zapier-interfaces-chatbot-embed { position: fixed; left: 16px !important; right: auto !important; bottom: calc(16px + env(safe-area-inset-bottom)) !important; z-index: 9999; }
 </style>
-<zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmli3f63z00anafk5l3zuaaqo'></zapier-interfaces-chatbot-embed>
+<zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmli3f63z00anafk5l3zuaaqo' style="position:fixed;left:16px;right:auto;bottom:calc(16px + env(safe-area-inset-bottom));z-index:9999;"></zapier-interfaces-chatbot-embed>
 
+
+<script>
+  (function forceZapierChatbotLeft(){
+    const embed = document.querySelector('zapier-interfaces-chatbot-embed');
+    if (!embed) return;
+    embed.style.position = 'fixed';
+    embed.style.left = '16px';
+    embed.style.right = 'auto';
+    embed.style.bottom = 'calc(16px + env(safe-area-inset-bottom))';
+    embed.style.zIndex = '9999';
+  })();
+</script>
 </body>
 
 </html>
