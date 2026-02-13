@@ -136,7 +136,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
     .btn-gov-primary{background:linear-gradient(120deg,var(--gov-red),#b10f1a);border:none;border-radius:12px;font-weight:700;padding:.75rem;color:#fff}
     .btn-gov-primary:hover,.btn-gov-primary:focus{color:#fff}
     .btn-gov-outline{border-color:var(--auth-outline-border);color:var(--auth-outline-text);border-radius:12px;font-weight:600;background:transparent}
-    .btn-gov-outline:hover{background:var(--auth-header-bg);color:#fff}
+    .btn-gov-outline:hover{background:#1f2b4d;color:#fff}
     .link-muted{color:var(--gov-navy);font-weight:600}
     .status-note{font-size:.9rem;color:#4b5563;margin-top:.75rem}
     .lang-switcher{position:fixed;top:14px;right:16px;display:inline-flex;background:rgba(15,23,42,.86);border:1px solid rgba(15,23,42,.08);border-radius:999px;padding:4px;z-index:1200;box-shadow:0 10px 26px rgba(15,23,42,.18)}
@@ -170,8 +170,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
       --auth-border: #d8deea;
       --auth-link: #1f2b4d;
 
-      --auth-header-bg: linear-gradient(120deg,#1f2b4d,#0f3c64,#2f6fed);
-      --auth-header-text: #ffffff;
+      --auth-header-bg: #f5f7fb;
+      --auth-header-text: #1f2b4d;
       --auth-outline-text: #1f2b4d;
       --auth-outline-border: #1f2b4d;
     }
@@ -185,8 +185,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
         --auth-input-text: #e7eef9;
         --auth-border: #2a354c;
         --auth-link: #c9d4ea;
-        --auth-header-bg: linear-gradient(120deg,#1f2b4d,#0f3c64,#2f6fed);
-        --auth-header-text: #ffffff;
+        --auth-header-bg: #f5f7fb;
+        --auth-header-text: #1f2b4d;
         --auth-outline-text: #e7eef9;
         --auth-outline-border: #40506b;
       }
@@ -201,8 +201,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
       --auth-input-text: #e7eef9;
       --auth-border: #2a354c;
       --auth-link: #c9d4ea;
-      --auth-header-bg: linear-gradient(120deg,#1f2b4d,#0f3c64,#2f6fed);
-      --auth-header-text: #ffffff;
+      --auth-header-bg: #f5f7fb;
+      --auth-header-text: #1f2b4d;
       --auth-outline-text: #e7eef9;
       --auth-outline-border: #40506b;
     }
