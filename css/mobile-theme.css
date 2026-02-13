@@ -25,18 +25,31 @@ body.mobile-home-body #content-wrapper {
 @media (max-width: 768px) {
   html { font-size: 15px; }
   body { padding: 0 6px; }
-  .navbar { padding: 8px 10px; overflow: visible; }
+  .navbar { padding: 8px 10px; overflow: visible; align-items: center; }
   .navbar .navbar-brand { font-size: 16px; }
   .navbar .nav-user-name { font-size: 14px; }
   .navbar .btn-home {
     height: 32px;
-    padding: 6px 12px;
+    padding: 5px 10px;
     border-radius: 999px;
     line-height: 1;
     white-space: nowrap;
+    font-size: 12px;
+    margin-left: 4px;
   }
   .navbar .btn-home i {
     font-size: 14px;
+  }
+  .navbar .mobile-menu-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .navbar .mobile-menu-icon i {
+    font-size: 16px;
   }
   .breadcrumb { margin: 6px 0 10px; padding: 6px 8px; }
   .card { border-radius: 14px; box-shadow: 0 10px 28px rgba(0,0,0,0.28); }

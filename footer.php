@@ -91,7 +91,7 @@
 
 <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
 <style>
-  zapier-interfaces-chatbot-embed { position: fixed; left: 16px; bottom: 16px; z-index: 9999; }
+  zapier-interfaces-chatbot-embed { position: fixed; left: 16px; right: auto; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 9999; }
 </style>
 <zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmli3f63z00anafk5l3zuaaqo'></zapier-interfaces-chatbot-embed>
 
