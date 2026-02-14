@@ -90,7 +90,7 @@
       <p>
         If you have questions about this Privacy Policy, please contact:
         <br>
-        <strong>Email:</strong> <span class="muted">[REPLACE_WITH_CONTACT_EMAIL]</span>
+        <strong>Email:</strong> <span class="muted">sanskritpaudel2064@gmail.com and lamichhaneanuj20274@gmail.com</span>
       </p>
     </div>
   </div>
