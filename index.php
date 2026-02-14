@@ -12,7 +12,7 @@ session_set_cookie_params([
 ]);
 session_start();
 $remember = isset($_POST['remember']) && $_POST['remember'] === '1';
-error_reporting(E_ALL);
+error_reporting(E_ALL);/*  */
 ini_set('display_errors', 1);
 
 if (!isset($_SESSION['logged-in'])) {
@@ -69,7 +69,7 @@ if (isset($_POST['submit'])) {
         $err = "Unable to process login right now";
       } else {
 
-        // ? NO get_result() — use bind_result + fetch
+        // ? NO get_result() ï¿½ use bind_result + fetch
         $stmt->bind_result($id, $name, $u_email, $u_password, $role);
 
         if ($stmt->fetch()) {
