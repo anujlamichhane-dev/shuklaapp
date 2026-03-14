@@ -295,7 +295,17 @@
         <article class="place-card">
           <?php if (!empty($place['images'][0])): ?>
             <div class="place-cover">
-              <img src="<?php echo htmlspecialchars($place['images'][0], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>">
+              <button
+                class="place-image-trigger"
+                type="button"
+                data-place-gallery
+                data-gallery-title="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                data-gallery-images="<?php echo htmlspecialchars(json_encode(array_values($place['images'])), ENT_QUOTES, 'UTF-8'); ?>"
+                data-gallery-start="0"
+                aria-label="Open photos for <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
+              >
+                <img src="<?php echo htmlspecialchars($place['images'][0], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>">
+              </button>
             </div>
           <?php endif; ?>
           <div class="place-content">
@@ -322,10 +332,18 @@
 
             <?php if (!empty($place['images']) && count($place['images']) > 1): ?>
               <div class="place-thumbs">
-                <?php foreach (array_slice($place['images'], 1) as $image): ?>
-                  <div class="place-thumb">
+                <?php foreach (array_slice($place['images'], 1) as $imageIndex => $image): ?>
+                  <button
+                    class="place-thumb place-image-trigger"
+                    type="button"
+                    data-place-gallery
+                    data-gallery-title="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                    data-gallery-images="<?php echo htmlspecialchars(json_encode(array_values($place['images'])), ENT_QUOTES, 'UTF-8'); ?>"
+                    data-gallery-start="<?php echo $imageIndex + 1; ?>"
+                    aria-label="Open photo <?php echo $imageIndex + 2; ?> for <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                  >
                     <img src="<?php echo htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>" alt="">
-                  </div>
+                  </button>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -341,5 +359,92 @@
     </section>
   </div>
 </div>
+
+<div class="place-lightbox" id="placeLightbox" aria-hidden="true">
+  <div class="place-lightbox-backdrop" data-lightbox-close></div>
+  <div class="place-lightbox-dialog" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <div class="place-lightbox-topbar">
+      <div class="place-lightbox-title" id="placeLightboxTitle"></div>
+      <button class="place-lightbox-close" type="button" data-lightbox-close aria-label="Close photo viewer">&times;</button>
+    </div>
+    <div class="place-lightbox-track" id="placeLightboxTrack"></div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const lightbox = document.getElementById('placeLightbox');
+    const track = document.getElementById('placeLightboxTrack');
+    const title = document.getElementById('placeLightboxTitle');
+    const triggers = document.querySelectorAll('[data-place-gallery]');
+    if (!lightbox || !track || !title || !triggers.length) {
+      return;
+    }
+
+    const closeSelectors = '[data-lightbox-close]';
+    let lastTrigger = null;
+
+    const openLightbox = (trigger) => {
+      let images = [];
+      try {
+        images = JSON.parse(trigger.getAttribute('data-gallery-images') || '[]');
+      } catch (error) {
+        images = [];
+      }
+      if (!Array.isArray(images) || !images.length) {
+        return;
+      }
+
+      track.innerHTML = '';
+      images.forEach((src, index) => {
+        const item = document.createElement('div');
+        item.className = 'place-lightbox-item';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = (trigger.getAttribute('data-gallery-title') || 'Place photo') + ' ' + (index + 1);
+
+        item.appendChild(img);
+        track.appendChild(item);
+      });
+
+      title.textContent = trigger.getAttribute('data-gallery-title') || 'Photos';
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('place-lightbox-open');
+      lastTrigger = trigger;
+
+      const startIndex = parseInt(trigger.getAttribute('data-gallery-start') || '0', 10);
+      const firstItem = track.children[startIndex];
+      if (firstItem) {
+        firstItem.scrollIntoView({ behavior: 'auto', inline: 'start', block: 'nearest' });
+      }
+    };
+
+    const closeLightbox = () => {
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('place-lightbox-open');
+      track.innerHTML = '';
+      if (lastTrigger) {
+        lastTrigger.focus();
+      }
+    };
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => openLightbox(trigger));
+    });
+
+    lightbox.querySelectorAll(closeSelectors).forEach((node) => {
+      node.addEventListener('click', closeLightbox);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && lightbox.classList.contains('is-open')) {
+        closeLightbox();
+      }
+    });
+  })();
+</script>
 
 <?php include './footer.php'; ?>
