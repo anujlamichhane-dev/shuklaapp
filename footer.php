@@ -90,16 +90,9 @@
 </script>
 
 <script>
-  var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-  (function() {
-    var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-    s1.async = true;
-    s1.src = 'https://embed.tawk.to/69b035e3be53e11c396e9a5f/1jjc550ts';
-    s1.charset = 'UTF-8';
-    s1.setAttribute('crossorigin', '*');
-    s0.parentNode.insertBefore(s1, s0);
-  })();
+  window.chtlConfig = { chatbotId: "6965689128" };
 </script>
+<script async data-id="6965689128" id="chtl-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
 </body>
 
 </html>

@@ -298,10 +298,8 @@
               <button
                 class="place-image-trigger"
                 type="button"
-                data-place-gallery
-                data-gallery-title="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
-                data-gallery-images="<?php echo htmlspecialchars(json_encode(array_values($place['images'])), ENT_QUOTES, 'UTF-8'); ?>"
-                data-gallery-start="0"
+                data-place-image="<?php echo htmlspecialchars($place['images'][0], ENT_QUOTES, 'UTF-8'); ?>"
+                data-image-title="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
                 aria-label="Open photos for <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
               >
                 <img src="<?php echo htmlspecialchars($place['images'][0], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>">
@@ -336,10 +334,8 @@
                   <button
                     class="place-thumb place-image-trigger"
                     type="button"
-                    data-place-gallery
-                    data-gallery-title="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
-                    data-gallery-images="<?php echo htmlspecialchars(json_encode(array_values($place['images'])), ENT_QUOTES, 'UTF-8'); ?>"
-                    data-gallery-start="<?php echo $imageIndex + 1; ?>"
+                    data-place-image="<?php echo htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>"
+                    data-image-title="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
                     aria-label="Open photo <?php echo $imageIndex + 2; ?> for <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
                   >
                     <img src="<?php echo htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>" alt="">
@@ -367,17 +363,19 @@
       <div class="place-lightbox-title" id="placeLightboxTitle"></div>
       <button class="place-lightbox-close" type="button" data-lightbox-close aria-label="Close photo viewer">&times;</button>
     </div>
-    <div class="place-lightbox-track" id="placeLightboxTrack"></div>
+    <div class="place-lightbox-body">
+      <img class="place-lightbox-image" id="placeLightboxImage" src="" alt="">
+    </div>
   </div>
 </div>
 
 <script>
   (function() {
     const lightbox = document.getElementById('placeLightbox');
-    const track = document.getElementById('placeLightboxTrack');
+    const image = document.getElementById('placeLightboxImage');
     const title = document.getElementById('placeLightboxTitle');
-    const triggers = document.querySelectorAll('[data-place-gallery]');
-    if (!lightbox || !track || !title || !triggers.length) {
+    const triggers = document.querySelectorAll('[data-place-image]');
+    if (!lightbox || !image || !title || !triggers.length) {
       return;
     }
 
@@ -385,47 +383,25 @@
     let lastTrigger = null;
 
     const openLightbox = (trigger) => {
-      let images = [];
-      try {
-        images = JSON.parse(trigger.getAttribute('data-gallery-images') || '[]');
-      } catch (error) {
-        images = [];
-      }
-      if (!Array.isArray(images) || !images.length) {
+      const src = trigger.getAttribute('data-place-image') || '';
+      if (!src) {
         return;
       }
 
-      track.innerHTML = '';
-      images.forEach((src, index) => {
-        const item = document.createElement('div');
-        item.className = 'place-lightbox-item';
-
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = (trigger.getAttribute('data-gallery-title') || 'Place photo') + ' ' + (index + 1);
-
-        item.appendChild(img);
-        track.appendChild(item);
-      });
-
-      title.textContent = trigger.getAttribute('data-gallery-title') || 'Photos';
+      const imageTitle = trigger.getAttribute('data-image-title') || 'Photo';
+      title.textContent = imageTitle;
+      image.src = src;
+      image.alt = imageTitle;
       lightbox.classList.add('is-open');
       lightbox.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('place-lightbox-open');
       lastTrigger = trigger;
-
-      const startIndex = parseInt(trigger.getAttribute('data-gallery-start') || '0', 10);
-      const firstItem = track.children[startIndex];
-      if (firstItem) {
-        firstItem.scrollIntoView({ behavior: 'auto', inline: 'start', block: 'nearest' });
-      }
     };
 
     const closeLightbox = () => {
       lightbox.classList.remove('is-open');
       lightbox.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('place-lightbox-open');
-      track.innerHTML = '';
+      image.src = '';
+      image.alt = '';
       if (lastTrigger) {
         lastTrigger.focus();
       }
