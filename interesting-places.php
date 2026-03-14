@@ -92,6 +92,10 @@
     return '';
   };
 
+  $buildPlacePhotoViewerUrl = function ($imagePath, $title) {
+    return 'place-photo-viewer.php?image=' . rawurlencode((string)$imagePath) . '&title=' . rawurlencode((string)$title);
+  };
+
   if ($isCreator && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['add_place'])) {
       $title = trim((string)($_POST['place_title'] ?? ''));
@@ -295,15 +299,13 @@
         <article class="place-card">
           <?php if (!empty($place['images'][0])): ?>
             <div class="place-cover">
-              <button
+              <a
                 class="place-image-trigger"
-                type="button"
-                data-place-image="<?php echo htmlspecialchars($place['images'][0], ENT_QUOTES, 'UTF-8'); ?>"
-                data-image-title="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                href="<?php echo htmlspecialchars($buildPlacePhotoViewerUrl($place['images'][0], $place['title']), ENT_QUOTES, 'UTF-8'); ?>"
                 aria-label="Open photos for <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
               >
                 <img src="<?php echo htmlspecialchars($place['images'][0], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>">
-              </button>
+              </a>
             </div>
           <?php endif; ?>
           <div class="place-content">
@@ -331,15 +333,13 @@
             <?php if (!empty($place['images']) && count($place['images']) > 1): ?>
               <div class="place-thumbs">
                 <?php foreach (array_slice($place['images'], 1) as $imageIndex => $image): ?>
-                  <button
+                  <a
                     class="place-thumb place-image-trigger"
-                    type="button"
-                    data-place-image="<?php echo htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>"
-                    data-image-title="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                    href="<?php echo htmlspecialchars($buildPlacePhotoViewerUrl($image, $place['title']), ENT_QUOTES, 'UTF-8'); ?>"
                     aria-label="Open photo <?php echo $imageIndex + 2; ?> for <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
                   >
                     <img src="<?php echo htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>" alt="">
-                  </button>
+                  </a>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -355,72 +355,5 @@
     </section>
   </div>
 </div>
-
-<div class="place-lightbox" id="placeLightbox" aria-hidden="true">
-  <div class="place-lightbox-backdrop" data-lightbox-close></div>
-  <div class="place-lightbox-dialog" role="dialog" aria-modal="true" aria-label="Photo viewer">
-    <div class="place-lightbox-topbar">
-      <div class="place-lightbox-title" id="placeLightboxTitle"></div>
-      <button class="place-lightbox-close" type="button" data-lightbox-close aria-label="Close photo viewer">&times;</button>
-    </div>
-    <div class="place-lightbox-body">
-      <img class="place-lightbox-image" id="placeLightboxImage" src="" alt="">
-    </div>
-  </div>
-</div>
-
-<script>
-  (function() {
-    const lightbox = document.getElementById('placeLightbox');
-    const image = document.getElementById('placeLightboxImage');
-    const title = document.getElementById('placeLightboxTitle');
-    const triggers = document.querySelectorAll('[data-place-image]');
-    if (!lightbox || !image || !title || !triggers.length) {
-      return;
-    }
-
-    const closeSelectors = '[data-lightbox-close]';
-    let lastTrigger = null;
-
-    const openLightbox = (trigger) => {
-      const src = trigger.getAttribute('data-place-image') || '';
-      if (!src) {
-        return;
-      }
-
-      const imageTitle = trigger.getAttribute('data-image-title') || 'Photo';
-      title.textContent = imageTitle;
-      image.src = src;
-      image.alt = imageTitle;
-      lightbox.classList.add('is-open');
-      lightbox.setAttribute('aria-hidden', 'false');
-      lastTrigger = trigger;
-    };
-
-    const closeLightbox = () => {
-      lightbox.classList.remove('is-open');
-      lightbox.setAttribute('aria-hidden', 'true');
-      image.src = '';
-      image.alt = '';
-      if (lastTrigger) {
-        lastTrigger.focus();
-      }
-    };
-
-    triggers.forEach((trigger) => {
-      trigger.addEventListener('click', () => openLightbox(trigger));
-    });
-
-    lightbox.querySelectorAll(closeSelectors).forEach((node) => {
-      node.addEventListener('click', closeLightbox);
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && lightbox.classList.contains('is-open')) {
-        closeLightbox();
-      }
-    });
-  })();
-</script>
 
 <?php include './footer.php'; ?>

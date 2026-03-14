@@ -784,6 +784,7 @@ body.mobile-home-body #content-wrapper {
   background: transparent;
   cursor: pointer;
   display: block;
+  text-decoration: none;
 }
 
 .place-cover img {
@@ -855,84 +856,6 @@ body.mobile-home-body #content-wrapper {
   justify-content: flex-end;
 }
 
-.place-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 11000;
-  display: none;
-}
-
-.place-lightbox.is-open {
-  display: block;
-}
-
-.place-lightbox-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(8, 12, 24, 0.72);
-}
-
-.place-lightbox-dialog {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  width: min(92vw, 720px);
-  max-height: 86vh;
-  background: #fff;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(8, 12, 24, 0.32);
-  display: grid;
-  grid-template-rows: auto 1fr;
-}
-
-.place-lightbox-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
-  color: var(--navy);
-  border-bottom: 1px solid rgba(31, 43, 77, 0.08);
-  background: #fff;
-}
-
-.place-lightbox-title {
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.place-lightbox-close {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  border: 0;
-  background: rgba(31, 43, 77, 0.08);
-  color: var(--navy);
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.place-lightbox-body {
-  padding: 16px;
-  background: #f7f8fc;
-  overflow: auto;
-}
-
-.place-lightbox-image {
-  width: 100%;
-  max-width: 100%;
-  max-height: calc(86vh - 88px);
-  display: flex;
-  margin: 0 auto;
-  object-fit: contain;
-  border-radius: 12px;
-  background: #fff;
-}
-
 @media (max-width: 400px) {
   .docs-editor {
     overflow-x: auto;
@@ -949,23 +872,6 @@ body.mobile-home-body #content-wrapper {
   .place-thumb {
     flex: 0 0 84px;
     scroll-snap-align: start;
-  }
-
-  .place-lightbox-topbar {
-    padding: 12px;
-  }
-
-  .place-lightbox-dialog {
-    width: calc(100vw - 20px);
-    max-height: 80vh;
-  }
-
-  .place-lightbox-body {
-    padding: 12px;
-  }
-
-  .place-lightbox-image {
-    max-height: calc(80vh - 76px);
   }
 
   .hero-image {
