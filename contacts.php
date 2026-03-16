@@ -318,7 +318,6 @@
               <?php endif; ?>
             <?php endforeach; ?>
           </div>
-          <p class="contact-hint"><?php echo htmlspecialchars(i18n_t('contacts.photos_loaded'), ENT_QUOTES, 'UTF-8'); ?></p>
         </div>
 
         <?php if ($isCreator): ?>
