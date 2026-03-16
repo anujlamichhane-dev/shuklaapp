@@ -1,0 +1,466 @@
+[
+    {
+        "id":  "mayor",
+        "photo":  "img/mayor.png",
+        "name":  "कृष्णराज पण्डित",
+        "role":  "नगर प्रमुख",
+        "email":  "mayor@shuklagandakimun.gov.np",
+        "phone":  "9856087111"
+    },
+    {
+        "id":  "deputymayor",
+        "photo":  "img/deputymayor.png",
+        "name":  "खुम बहादुर वि.क (राजु)",
+        "role":  "उप- प्रमुख",
+        "email":  "deputymayor@shuklagandakimun.gov.np",
+        "phone":  "9856081222"
+    },
+    {
+        "id":  "spokesperson",
+        "photo":  "img/spokesperson.png",
+        "name":  "सचिन भुजेल (प्रवक्ता)",
+        "role":  "वडा अध्यक्ष",
+        "email":  "ward3shukla@gmail.com",
+        "phone":  "9856087003"
+    },
+    {
+        "id":  "chief_officer",
+        "photo":  "img/chief-officer.png",
+        "name":  "शिशिर पौडेल",
+        "role":  "प्रमुख प्रशासनकीय अधिकृत",
+        "email":  "sanskritpaudel@gmail.com",
+        "phone":  "9856004111"
+    },
+    {
+        "id":  "info_officer",
+        "photo":  "img/info-officer.png",
+        "name":  "अनिल खनाल",
+        "role":  "सूचना अधिकारी",
+        "email":  "shuklasuchana@gmail.com",
+        "phone":  "9856043417"
+    },
+    {
+        "id":  "staff-5",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "नवराज चापागाई",
+        "role":  "उप-सचिव",
+        "email":  "abc@gmail.com",
+        "phone":  "9856026966"
+    },
+    {
+        "id":  "staff-8",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "कोपिला पौडेल",
+        "role":  "लेखा अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9856000215"
+    },
+    {
+        "id":  "staff-10",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सुशील नराल",
+        "role":  "शिक्षा अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9856064378"
+    },
+    {
+        "id":  "staff-11",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "अजय कुमार श्रीवास्तव",
+        "role":  "जन स्वास्थ्य अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "0000000000"
+    },
+    {
+        "id":  "staff-12",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "तारापती भट्टराई",
+        "role":  "इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9856086345"
+    },
+    {
+        "id":  "staff-13",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "राजेन्द्र सोती",
+        "role":  "प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9846065311"
+    },
+    {
+        "id":  "staff-14",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "रामचन्द्र सुवेदी",
+        "role":  "प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9846038229"
+    },
+    {
+        "id":  "staff-15",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "पुष्पराज गिरी",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9847818862"
+    },
+    {
+        "id":  "staff-16",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "लक्ष्मी सिग्देल",
+        "role":  "सि.अ.न.मी.नि.",
+        "email":  "abc@gmail.com",
+        "phone":  "9846657697"
+    },
+    {
+        "id":  "staff-17",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "ढाल बहादुर थापा",
+        "role":  "ज.स्वा.नि.",
+        "email":  "abc@gmail.com",
+        "phone":  "9856053339"
+    },
+    {
+        "id":  "staff-18",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "विनोद प्रसाद कडेल",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9856080185"
+    },
+    {
+        "id":  "staff-19",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "मन्जु सुवेदी",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9856016555"
+    },
+    {
+        "id":  "staff-20",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "युवराज पौडेल",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9846815495"
+    },
+    {
+        "id":  "staff-21",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "शिवराज ढकाल",
+        "role":  "वरिष्ठ प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9846613368"
+    },
+    {
+        "id":  "staff-22",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "देवेन्द्र बहादुर खत्री",
+        "role":  "वरिष्ठ प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9847672797"
+    },
+    {
+        "id":  "staff-23",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "महेन्द्रराज घिमिरे",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9846028540"
+    },
+    {
+        "id":  "staff-24",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सुनिता पोख्रेल",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9840017714"
+    },
+    {
+        "id":  "staff-25",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "मन्जु शर्मा",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9847740249"
+    },
+    {
+        "id":  "staff-26",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "कमल पाण्डे",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9846119847"
+    },
+    {
+        "id":  "staff-27",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "गोविन्द प्रसाद तिवारी",
+        "role":  "वरिष्ठ प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9861760746"
+    },
+    {
+        "id":  "staff-28",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सहविर थापा",
+        "role":  "वरिष्ठ प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9748338024"
+    },
+    {
+        "id":  "staff-29",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "शुष्मा गौतम",
+        "role":  "वरिष्ठ प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9846282079"
+    },
+    {
+        "id":  "staff-30",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सुर्य प्रसाद पौडेल",
+        "role":  "सहायक लेखा अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9846080667"
+    },
+    {
+        "id":  "staff-31",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "यज्ञ प्रसाद कंडेल",
+        "role":  "सहायक कम्प्यूटर अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9846435055"
+    },
+    {
+        "id":  "staff-32",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "मन्जु पौडेल",
+        "role":  "सहायक शिक्षा अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9846748519"
+    },
+    {
+        "id":  "staff-33",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सुशिल ढकाल",
+        "role":  "सिनियर सब-इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9846712448"
+    },
+    {
+        "id":  "staff-34",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "मो. तमन्ना आलम",
+        "role":  "सिनियर सब-इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9856081810"
+    },
+    {
+        "id":  "staff-35",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "कामना लम्साल",
+        "role":  "सिनियर सब-इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9846856204"
+    },
+    {
+        "id":  "staff-36",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "विश्वास देवकोटा",
+        "role":  "सिनियर सब-इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9846618734"
+    },
+    {
+        "id":  "staff-37",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सिर्जना पौडेल",
+        "role":  "सिनियर सब-इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9863416150"
+    },
+    {
+        "id":  "staff-38",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सुजता गिरी",
+        "role":  "सिनियर सब-इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9846052001"
+    },
+    {
+        "id":  "staff-39",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "आशिष के.सी.",
+        "role":  "सिनियर सब-इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9849788295"
+    },
+    {
+        "id":  "staff-40",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "हरिप्रिया जोशी",
+        "role":  "सब इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9848728379"
+    },
+    {
+        "id":  "staff-41",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "शुसिल अधिकारी",
+        "role":  "सब इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9860471965"
+    },
+    {
+        "id":  "staff-42",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सुसिल कुमार यादव",
+        "role":  "सब इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9862867088"
+    },
+    {
+        "id":  "staff-43",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "दिपेश कुमार चौधरी",
+        "role":  "सब इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9848218636"
+    },
+    {
+        "id":  "staff-44",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "भिम प्रसाद सुवेदी",
+        "role":  "इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9856063839"
+    },
+    {
+        "id":  "staff-45",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "कृष्ण भण्डारी",
+        "role":  "सिनियर सब-इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "0000000000"
+    },
+    {
+        "id":  "staff-46",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "एलिसा पोख्रेल",
+        "role":  "सब इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "0000000000"
+    },
+    {
+        "id":  "staff-47",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "इन्दिरा शर्मा",
+        "role":  "सहायक प्रशासकीय अधिकृत",
+        "email":  "abc@gmail.com",
+        "phone":  "9860908734"
+    },
+    {
+        "id":  "staff-48",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "अमृत प्रसाद रिजाल",
+        "role":  "सर्वेक्षक",
+        "email":  "abc@gmail.com",
+        "phone":  "9851160557"
+    },
+    {
+        "id":  "staff-49",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "शिवराज अधिकारी",
+        "role":  "वरिष्ठ प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9846041865"
+    },
+    {
+        "id":  "staff-50",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "कल्पना गैरे सुवेदी",
+        "role":  "वरिष्ठ प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9846330069"
+    },
+    {
+        "id":  "staff-51",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "विष्णुमाया आचार्य",
+        "role":  "प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9847585983"
+    },
+    {
+        "id":  "staff-52",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "संगिता कुमारी शर्मा",
+        "role":  "प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9860647048"
+    },
+    {
+        "id":  "staff-53",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "तुलसी कुमारी शर्मा भुषाल",
+        "role":  "वरिष्ठ प्रशासन सहायक",
+        "email":  "abc@gmail.com",
+        "phone":  "9846566556"
+    },
+    {
+        "id":  "staff-54",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "नवराज दाहाल",
+        "role":  "सहायक लेखापाल",
+        "email":  "abc@gmail.com",
+        "phone":  "9849214195"
+    },
+    {
+        "id":  "staff-55",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "जमुना शर्मा लम्साल",
+        "role":  "सहायक महिला विकास निरिक्षक",
+        "email":  "abc@gmail.com",
+        "phone":  "9861336224"
+    },
+    {
+        "id":  "staff-56",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "सरिता थापा",
+        "role":  "असिष्टेन्ट सब इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9816190639"
+    },
+    {
+        "id":  "staff-57",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "शैलेन्द्र बहादुर कुँवर",
+        "role":  "असिष्टेन्ट सब इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "9861660247"
+    },
+    {
+        "id":  "staff-58",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "पुजन गुरुङ",
+        "role":  "असिष्टेन्ट सब इन्जिनियर",
+        "email":  "abc@gmail.com",
+        "phone":  "0000000000"
+    },
+    {
+        "id":  "staff-59",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "धनमाया धिमाल",
+        "role":  "कार्यालय सहयोगी",
+        "email":  "abc@gmail.com",
+        "phone":  "0000000000"
+    },
+    {
+        "id":  "staff-60",
+        "photo":  "img/contacts/black-profile.png",
+        "name":  "ढक बहादुर आले",
+        "role":  "कार्यालय सहयोगी",
+        "email":  "abc@gmail.com",
+        "phone":  "0000000000"
+    }
+]
