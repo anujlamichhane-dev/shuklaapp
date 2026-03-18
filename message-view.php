@@ -56,8 +56,8 @@
       <div class="col-12">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-          <li class="breadcrumb-item"><a href="messages-inbox.php">Messages</a></li>
-          <li class="breadcrumb-item active">Message Detail</li>
+          <li class="breadcrumb-item"><a href="messages-inbox.php"><?php echo htmlspecialchars(i18n_t('nav.messages'), ENT_QUOTES, 'UTF-8'); ?></a></li>
+          <li class="breadcrumb-item active">समाचार विवरण</li>
         </ol>
 
         <div class="card mb-3">

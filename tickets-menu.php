@@ -8,15 +8,15 @@
   // Build ticket links for this menu.
   $ticketLinks = [];
   if ($isClient) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'नयाँ सुझाव र गुनासो', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'मेरो सुझाव र गुनासो', 'icon' => 'fa-award'];
+    $ticketLinks[] = ['href' => 'ticket.php', 'label' => i18n_t('tickets.open_new'), 'icon' => 'fa-plus-circle'];
+    $ticketLinks[] = ['href' => 'mytickets.php', 'label' => i18n_t('tickets.my'), 'icon' => 'fa-award'];
   } else {
     $ticketLinks[] = ['href' => 'dashboard.php', 'label' => i18n_t('tickets.dashboard'), 'icon' => 'fa-tachometer-alt'];
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Create New Tickets', 'icon' => 'fa-plus-circle'];
+    $ticketLinks[] = ['href' => 'ticket.php', 'label' => i18n_t('tickets.open_new'), 'icon' => 'fa-plus-circle'];
     $ticketLinks[] = ['href' => 'open.php', 'label' => i18n_t('tickets.open'), 'icon' => 'fa-lock-open'];
     $ticketLinks[] = ['href' => 'solved.php', 'label' => i18n_t('tickets.solved'), 'icon' => 'fa-anchor'];
     $ticketLinks[] = ['href' => 'closed.php', 'label' => i18n_t('tickets.closed'), 'icon' => 'fa-times-circle'];
-    $ticketLinks[] = ['href' => 'pending.php', 'label' => 'Pending', 'icon' => 'fa-adjust'];
+    $ticketLinks[] = ['href' => 'pending.php', 'label' => i18n_t('tickets.pending'), 'icon' => 'fa-adjust'];
     $ticketLinks[] = ['href' => 'unassigned.php', 'label' => i18n_t('tickets.unassigned'), 'icon' => 'fa-at'];
     if (!$isModerator) {
       $ticketLinks[] = ['href' => 'mytickets.php', 'label' => i18n_t('tickets.my'), 'icon' => 'fa-award'];

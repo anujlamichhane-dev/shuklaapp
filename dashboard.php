@@ -39,7 +39,7 @@
       </li>
       <li class="breadcrumb-item active">Overview</li>
     </ol>
-    <a class="btn btn-primary my-3" href="./ticket.php"><i class="fa fa-plus"></i> New Ticket</a>
+    <a class="btn btn-primary my-3" href="./ticket.php"><i class="fa fa-plus"></i> <?php echo htmlspecialchars(i18n_t('tickets.open_new'), ENT_QUOTES, 'UTF-8'); ?></a>
     <div class="card mb-3">
       <div class="card-body">
         <div class="table-responsive">
@@ -149,4 +149,3 @@
 </body>
 
 </html>
-
