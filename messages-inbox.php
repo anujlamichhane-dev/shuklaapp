@@ -166,7 +166,7 @@
       <div class="col-12">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="dashboard.php">Dashboard</a></li>
-          <li class="breadcrumb-item active"><?php echo htmlspecialchars(i18n_t('nav.messages'), ENT_QUOTES, 'UTF-8'); ?></li>
+          <li class="breadcrumb-item active">Messages</li>
         </ol>
 
         <?php if ($statusMsg): ?>
@@ -177,7 +177,7 @@
 
         <div class="card mb-3">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="mb-0"><?php echo htmlspecialchars(i18n_t('nav.messages'), ENT_QUOTES, 'UTF-8'); ?></h3>
+            <h3 class="mb-0">Inbound Messages</h3>
             <span class="badge badge-primary"><?php echo count($messages); ?> total</span>
           </div>
           <div class="card-body">

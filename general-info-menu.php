@@ -8,7 +8,7 @@
   $infoCards = [
     [
       'href' => 'contacts.php',
-      'label' => i18n_t('contacts.title'),
+      'label' => 'Contacts',
       'sub' => 'सम्पर्कहरू',
       'icon' => 'fa-address-book'
     ],
@@ -20,7 +20,7 @@
     ],
     [
       'href' => 'documents-info.php',
-      'label' => i18n_t('docs.title'),
+      'label' => 'Documents Info',
       'sub' => 'कागजात जानकारी',
       'icon' => 'fa-file-alt'
     ],

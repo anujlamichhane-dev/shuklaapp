@@ -111,18 +111,18 @@
             <li class="breadcrumb-item">
                 <a href="#">Dashboard</a>
             </li>
-            <li class="breadcrumb-item active"><?php echo htmlspecialchars(i18n_t('tickets.open_new'), ENT_QUOTES, 'UTF-8'); ?></li>
+            <li class="breadcrumb-item active">New ticket</li>
         </ol>
 
         <div class="card mb-3">
             <div class="card-header">
                 <div class="d-flex align-items-center justify-content-between flex-wrap">
                     <div>
-                        <h3 class="mb-0"><?php echo htmlspecialchars(i18n_t('home.new_ticket'), ENT_QUOTES, 'UTF-8'); ?></h3>
+                        <h3 class="mb-0">Create a new ticket</h3>
                         <small class="text-muted">Share the issue and how we can reach you.</small>
                     </div>
                     <div class="mt-2 mt-lg-0">
-                        <a href="./mytickets.php" class="btn btn-outline-secondary btn-sm"><?php echo htmlspecialchars(i18n_t('tickets.my'), ENT_QUOTES, 'UTF-8'); ?></a>
+                        <a href="./mytickets.php" class="btn btn-outline-secondary btn-sm">My tickets</a>
                     </div>
                 </div>
             </div>
@@ -258,3 +258,4 @@
 </body>
 
 </html>
+

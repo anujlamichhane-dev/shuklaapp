@@ -221,8 +221,8 @@
   }
 
   if ($isClient) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => i18n_t('tickets.open_new'), 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'mytickets.php?status=pending', 'label' => i18n_t('tickets.pending'), 'icon' => 'fa-clock'];
+    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Open New Ticket', 'icon' => 'fa-plus-circle'];
+    $ticketLinks[] = ['href' => 'mytickets.php?status=pending', 'label' => 'My Pending Tickets', 'icon' => 'fa-clock'];
   } else {
     $ticketLinks[] = ['href' => 'dashboard.php', 'label' => 'Dashboard', 'icon' => 'fa-tachometer-alt'];
     $ticketLinks[] = ['href' => 'open.php', 'label' => 'Open', 'icon' => 'fa-lock-open'];
@@ -232,7 +232,7 @@
     $ticketLinks[] = ['href' => 'unassigned.php', 'label' => 'Unassigned', 'icon' => 'fa-at'];
 
     if (!$isModerator) {
-      $ticketLinks[] = ['href' => 'mytickets.php', 'label' => i18n_t('tickets.my'), 'icon' => 'fa-award'];
+      $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'My Tickets', 'icon' => 'fa-award'];
     }
 
     if ($isAdmin) {
@@ -241,12 +241,12 @@
     }
   }
 
-  $infoLinks[] = ['href' => 'documents-info.php', 'label' => i18n_t('docs.title'), 'icon' => 'fa-file-alt'];
-  $infoLinks[] = ['href' => 'contacts.php', 'label' => i18n_t('contacts.title'), 'icon' => 'fa-address-book'];
+  $infoLinks[] = ['href' => 'documents-info.php', 'label' => 'Documents Info', 'icon' => 'fa-file-alt'];
+  $infoLinks[] = ['href' => 'contacts.php', 'label' => 'Contacts', 'icon' => 'fa-address-book'];
 
   if ($isClient) {
     $infoLinks[] = ['href' => 'message.php', 'label' => 'Send Message', 'icon' => 'fa-paper-plane'];
-    $infoLinks[] = ['href' => 'my-messages.php', 'label' => i18n_t('home.my_messages'), 'icon' => 'fa-inbox'];
+    $infoLinks[] = ['href' => 'my-messages.php', 'label' => 'My Messages', 'icon' => 'fa-inbox'];
   } elseif ($isOfficial || $isAdmin) {
     $infoLinks[] = ['href' => 'messages-inbox.php', 'label' => 'Inbox', 'icon' => 'fa-inbox'];
   }
@@ -322,8 +322,8 @@
         <div class="menu-grid">
           <a class="menu-card poster-card" href="tickets-menu.php">
             <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
-            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
-            <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.new_ticket'), ENT_QUOTES, 'UTF-8'); ?></span>
+            <span class="menu-label">सुझाव र गुनासो</span>
+            <span class="menu-subtext">टिकट सम्बन्धी सेवा</span>
           </a>
           <a class="menu-card poster-card" href="general-info-menu.php">
             <span class="menu-icon"><i class="fas fa-info-circle"></i></span>
