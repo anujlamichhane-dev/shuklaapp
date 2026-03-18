@@ -1,4 +1,4 @@
-<?php
+﻿<?php
   $bodyClass = 'mobile-home-body';
   $extraCss = ['css/mobile-home.css'];
   $hideSidebar = false;
@@ -47,16 +47,16 @@
 
       if (!is_dir($sliderDataDir)) {
         if (!mkdir($sliderDataDir, 0755, true) && !is_dir($sliderDataDir)) {
-          $uploadError = 'Could not create the slider data folder.';
+          $uploadError = i18n_t('home.slider.error.data_dir', 'Could not create the slider data folder.');
         }
       }
 
       if (!$uploadError) {
         $payload = json_encode(array_values($sliderItems), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         if ($payload === false || file_put_contents($sliderDataPath, $payload) === false) {
-          $uploadError = 'Could not save slider list.';
+          $uploadError = i18n_t('home.slider.error.save_list', 'Could not save slider list.');
         } else {
-          $uploadMsg = 'Slide deleted.';
+          $uploadMsg = i18n_t('home.slider.deleted', 'Slide deleted.');
         }
       }
 
@@ -83,13 +83,13 @@
   if ($isCreator && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_slider'])) {
     if (!is_dir($sliderDir)) {
       if (!mkdir($sliderDir, 0755, true) && !is_dir($sliderDir)) {
-        $uploadError = 'Could not create the slider image folder.';
+        $uploadError = i18n_t('home.slider.error.image_dir', 'Could not create the slider image folder.');
       }
     }
 
     if (!$uploadError && !is_dir($sliderDataDir)) {
       if (!mkdir($sliderDataDir, 0755, true) && !is_dir($sliderDataDir)) {
-        $uploadError = 'Could not create the slider data folder.';
+        $uploadError = i18n_t('home.slider.error.data_dir', 'Could not create the slider data folder.');
       }
     }
 
@@ -107,7 +107,7 @@
       }
 
       if (!isset($_FILES['slider_photos'])) {
-        $uploadError = 'Please choose at least one photo.';
+        $uploadError = i18n_t('home.slider.error.choose_photo', 'Please choose at least one photo.');
       } else {
         $files = $_FILES['slider_photos'];
         $count = is_array($files['name']) ? count($files['name']) : 0;
@@ -123,27 +123,27 @@
             continue;
           }
           if ($error !== UPLOAD_ERR_OK) {
-            $uploadError = 'One or more uploads failed.';
+            $uploadError = i18n_t('home.slider.error.upload_failed', 'One or more uploads failed.');
             continue;
           }
           if ($size > $maxBytes) {
-            $uploadError = 'Each photo must be under 5MB.';
+            $uploadError = i18n_t('home.slider.error.too_large', 'Each photo must be under 5MB.');
             continue;
           }
           if (!is_uploaded_file($tmpName)) {
-            $uploadError = 'Invalid upload detected.';
+            $uploadError = i18n_t('home.slider.error.invalid_upload', 'Invalid upload detected.');
             continue;
           }
 
           $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
           if (!in_array($ext, $allowedExt, true)) {
-            $uploadError = 'Only JPG, PNG, or WebP files are allowed.';
+            $uploadError = i18n_t('home.slider.error.invalid_type', 'Only JPG, PNG, or WebP files are allowed.');
             continue;
           }
 
           $imageInfo = @getimagesize($tmpName);
           if ($imageInfo === false) {
-            $uploadError = 'Please upload valid image files.';
+            $uploadError = i18n_t('home.slider.error.invalid_image', 'Please upload valid image files.');
             continue;
           }
 
@@ -162,7 +162,7 @@
           $destination = $sliderDir . DIRECTORY_SEPARATOR . $filename;
 
           if (!move_uploaded_file($tmpName, $destination)) {
-            $uploadError = 'Could not save one or more photos.';
+            $uploadError = i18n_t('home.slider.error.save_photo', 'Could not save one or more photos.');
             continue;
           }
 
@@ -176,13 +176,15 @@
         if ($saved > 0 && !$uploadError) {
           $payload = json_encode(array_values($updatedSlides), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
           if ($payload === false || file_put_contents($sliderDataPath, $payload) === false) {
-            $uploadError = 'Could not save slider list.';
+            $uploadError = i18n_t('home.slider.error.save_list', 'Could not save slider list.');
           } else {
             $sliderItems = $updatedSlides;
-            $uploadMsg = $replaceExisting ? 'Slider photos replaced.' : 'Slider photos updated.';
+            $uploadMsg = $replaceExisting
+              ? i18n_t('home.slider.replaced', 'Slider photos replaced.')
+              : i18n_t('home.slider.updated', 'Slider photos updated.');
           }
         } elseif ($saved === 0 && !$uploadError) {
-          $uploadError = 'Please choose at least one photo.';
+          $uploadError = i18n_t('home.slider.error.choose_photo', 'Please choose at least one photo.');
         }
       }
     }
@@ -221,34 +223,34 @@
   }
 
   if ($isClient) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Open New Ticket', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'mytickets.php?status=pending', 'label' => 'My Pending Tickets', 'icon' => 'fa-clock'];
+    $ticketLinks[] = ['href' => 'ticket.php', 'label' => i18n_t('tickets.open_new', 'Open New Ticket'), 'icon' => 'fa-plus-circle'];
+    $ticketLinks[] = ['href' => 'mytickets.php?status=pending', 'label' => i18n_t('tickets.pending', 'My Pending Tickets'), 'icon' => 'fa-clock'];
   } else {
-    $ticketLinks[] = ['href' => 'dashboard.php', 'label' => 'Dashboard', 'icon' => 'fa-tachometer-alt'];
-    $ticketLinks[] = ['href' => 'open.php', 'label' => 'Open', 'icon' => 'fa-lock-open'];
-    $ticketLinks[] = ['href' => 'solved.php', 'label' => 'Solved', 'icon' => 'fa-anchor'];
-    $ticketLinks[] = ['href' => 'closed.php', 'label' => 'Closed', 'icon' => 'fa-times-circle'];
-    $ticketLinks[] = ['href' => 'pending.php', 'label' => 'Pending', 'icon' => 'fa-adjust'];
-    $ticketLinks[] = ['href' => 'unassigned.php', 'label' => 'Unassigned', 'icon' => 'fa-at'];
+    $ticketLinks[] = ['href' => 'dashboard.php', 'label' => i18n_t('common.dashboard', 'Dashboard'), 'icon' => 'fa-tachometer-alt'];
+    $ticketLinks[] = ['href' => 'open.php', 'label' => i18n_status_label('open'), 'icon' => 'fa-lock-open'];
+    $ticketLinks[] = ['href' => 'solved.php', 'label' => i18n_status_label('solved'), 'icon' => 'fa-anchor'];
+    $ticketLinks[] = ['href' => 'closed.php', 'label' => i18n_status_label('closed'), 'icon' => 'fa-times-circle'];
+    $ticketLinks[] = ['href' => 'pending.php', 'label' => i18n_status_label('pending'), 'icon' => 'fa-adjust'];
+    $ticketLinks[] = ['href' => 'unassigned.php', 'label' => i18n_t('tickets.unassigned', 'Unassigned'), 'icon' => 'fa-at'];
 
     if (!$isModerator) {
-      $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'My Tickets', 'icon' => 'fa-award'];
+      $ticketLinks[] = ['href' => 'mytickets.php', 'label' => i18n_t('tickets.my', 'My Tickets'), 'icon' => 'fa-award'];
     }
 
     if ($isAdmin) {
-      $ticketLinks[] = ['href' => 'team.php', 'label' => 'Teams', 'icon' => 'fa-users'];
-      $ticketLinks[] = ['href' => 'users.php', 'label' => 'Users', 'icon' => 'fa-users'];
+      $ticketLinks[] = ['href' => 'team.php', 'label' => i18n_t('team.title', 'Team'), 'icon' => 'fa-users'];
+      $ticketLinks[] = ['href' => 'users.php', 'label' => i18n_t('users.title', 'Users'), 'icon' => 'fa-users'];
     }
   }
 
-  $infoLinks[] = ['href' => 'documents-info.php', 'label' => 'Documents Info', 'icon' => 'fa-file-alt'];
-  $infoLinks[] = ['href' => 'contacts.php', 'label' => 'Contacts', 'icon' => 'fa-address-book'];
+  $infoLinks[] = ['href' => 'documents-info.php', 'label' => i18n_t('docs.title', 'Documents Info'), 'icon' => 'fa-file-alt'];
+  $infoLinks[] = ['href' => 'contacts.php', 'label' => i18n_t('contacts.title', 'Contacts'), 'icon' => 'fa-address-book'];
 
   if ($isClient) {
-    $infoLinks[] = ['href' => 'message.php', 'label' => 'Send Message', 'icon' => 'fa-paper-plane'];
-    $infoLinks[] = ['href' => 'my-messages.php', 'label' => 'My Messages', 'icon' => 'fa-inbox'];
+    $infoLinks[] = ['href' => 'message.php', 'label' => i18n_t('message.submit', 'Send Message'), 'icon' => 'fa-paper-plane'];
+    $infoLinks[] = ['href' => 'my-messages.php', 'label' => i18n_t('mymessages.title', 'My Messages'), 'icon' => 'fa-inbox'];
   } elseif ($isOfficial || $isAdmin) {
-    $infoLinks[] = ['href' => 'messages-inbox.php', 'label' => 'Inbox', 'icon' => 'fa-inbox'];
+    $infoLinks[] = ['href' => 'messages-inbox.php', 'label' => i18n_t('common.inbox', 'Inbox'), 'icon' => 'fa-inbox'];
   }
 
 ?>
@@ -266,7 +268,7 @@
         <div class="hero-slider" data-rotation="6500">
           <?php foreach ($sliderItems as $index => $item): ?>
             <div class="hero-slide <?php echo $index === 0 ? 'is-active' : ''; ?>">
-              <img src="<?php echo htmlspecialchars($item['src'], ENT_QUOTES, 'UTF-8'); ?>" alt="Slider photo <?php echo $index + 1; ?>" class="hero-photo">
+              <img src="<?php echo htmlspecialchars($item['src'], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars(i18n_t('home.slider.alt_prefix', 'Slider photo'), ENT_QUOTES, 'UTF-8') . ' ' . ($index + 1); ?>" class="hero-photo">
               <span class="hero-slide-caption" data-caption="<?php echo htmlspecialchars($item['caption'], ENT_QUOTES, 'UTF-8'); ?>"></span>
             </div>
           <?php endforeach; ?>
@@ -275,30 +277,30 @@
         <?php if (count($sliderItems) > 1): ?>
           <div class="hero-dots">
             <?php foreach ($sliderItems as $index => $item): ?>
-              <button class="dot <?php echo $index === 0 ? 'active' : ''; ?>" type="button" aria-label="Show slide <?php echo $index + 1; ?>"></button>
+              <button class="dot <?php echo $index === 0 ? 'active' : ''; ?>" type="button" aria-label="<?php echo htmlspecialchars(i18n_t('home.slide.show', 'Show slide'), ENT_QUOTES, 'UTF-8') . ' ' . ($index + 1); ?>"></button>
             <?php endforeach; ?>
           </div>
         <?php endif; ?>
 
         <?php if ($isCreator): ?>
           <form class="slider-uploader" method="POST" enctype="multipart/form-data">
-            <div class="slider-upload-title">Update slider photos</div>
+            <div class="slider-upload-title"><?php echo htmlspecialchars(i18n_t('home.slider.update', 'Update slider photos'), ENT_QUOTES, 'UTF-8'); ?></div>
             <div class="slider-upload-row">
               <input type="file" name="slider_photos[]" accept="image/*" multiple required>
-              <button class="btn btn-sm btn-primary" type="submit" name="upload_slider">Upload</button>
+              <button class="btn btn-sm btn-primary" type="submit" name="upload_slider"><?php echo htmlspecialchars(i18n_t('home.slider.upload', 'Upload'), ENT_QUOTES, 'UTF-8'); ?></button>
             </div>
-            <label class="slider-upload-label" for="slider-captions">Captions (one per line, in file order)</label>
-            <textarea id="slider-captions" name="slider_captions" rows="3" placeholder="Example: Main office opening"></textarea>
+            <label class="slider-upload-label" for="slider-captions"><?php echo htmlspecialchars(i18n_t('home.slider.captions', 'Captions (one per line, in file order)'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <textarea id="slider-captions" name="slider_captions" rows="3" placeholder="<?php echo htmlspecialchars(i18n_t('home.slider.caption_placeholder', 'Example: Main office opening'), ENT_QUOTES, 'UTF-8'); ?>"></textarea>
             <label class="slider-upload-option">
               <input type="checkbox" name="replace_slides" value="1">
-              Replace existing slides
+              <?php echo htmlspecialchars(i18n_t('home.slider.replace', 'Replace existing slides'), ENT_QUOTES, 'UTF-8'); ?>
             </label>
-            <div class="slider-upload-hint">JPG, PNG, or WebP up to 5MB each. Captions become the filename.</div>
+            <div class="slider-upload-hint"><?php echo htmlspecialchars(i18n_t('home.slider.hint', 'JPG, PNG, or WebP up to 5MB each. Captions become the filename.'), ENT_QUOTES, 'UTF-8'); ?></div>
           </form>
 
           <?php if (!empty($sliderItems)): ?>
             <div class="slider-manager">
-              <div class="slider-upload-title">Existing slides</div>
+              <div class="slider-upload-title"><?php echo htmlspecialchars(i18n_t('home.slider.existing', 'Existing slides'), ENT_QUOTES, 'UTF-8'); ?></div>
               <?php foreach ($sliderItems as $index => $item): ?>
                 <div class="slider-manager-row">
                   <div class="slider-manager-text">
@@ -309,7 +311,7 @@
                   </div>
                   <form method="POST" class="slider-manager-actions">
                     <input type="hidden" name="slide_index" value="<?php echo $index; ?>">
-                    <button class="btn btn-sm btn-outline-danger" type="submit" name="delete_slide">Delete</button>
+                    <button class="btn btn-sm btn-outline-danger" type="submit" name="delete_slide"><?php echo htmlspecialchars(i18n_t('home.slider.delete', 'Delete'), ENT_QUOTES, 'UTF-8'); ?></button>
                   </form>
                 </div>
               <?php endforeach; ?>
@@ -322,13 +324,13 @@
         <div class="menu-grid">
           <a class="menu-card poster-card" href="tickets-menu.php">
             <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
-            <span class="menu-label">सुझाव र गुनासो</span>
-            <span class="menu-subtext">टिकट सम्बन्धी सेवा</span>
+            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.poster.tickets', 'Suggestions & Complaints'), ENT_QUOTES, 'UTF-8'); ?></span>
+            <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.poster.tickets.sub', 'Ticket-related services'), ENT_QUOTES, 'UTF-8'); ?></span>
           </a>
           <a class="menu-card poster-card" href="general-info-menu.php">
             <span class="menu-icon"><i class="fas fa-info-circle"></i></span>
-            <span class="menu-label">सामान्य जानकारी</span>
-            <span class="menu-subtext">दस्तावेज र सम्पर्क</span>
+            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.poster.info', 'General Information'), ENT_QUOTES, 'UTF-8'); ?></span>
+            <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.poster.info.sub', 'Documents and contacts'), ENT_QUOTES, 'UTF-8'); ?></span>
           </a>
         </div>
       </section>
@@ -339,7 +341,7 @@
           <a class="menu-card" href="tickets-menu.php">
             <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
             <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
-            <span class="menu-subtext"><?php echo $isClient ? htmlspecialchars(i18n_t('home.tickets.sub'), ENT_QUOTES, 'UTF-8') : 'All ticket views'; ?></span>
+            <span class="menu-subtext"><?php echo $isClient ? htmlspecialchars(i18n_t('home.tickets.sub'), ENT_QUOTES, 'UTF-8') : htmlspecialchars(i18n_t('home.all_ticket_views', 'All ticket views'), ENT_QUOTES, 'UTF-8'); ?></span>
           </a>
           <?php if ($isClient): ?>
             <a class="menu-card" href="ticket.php">
@@ -361,9 +363,9 @@
           <?php if ($isOfficial || $isAdmin): ?>
             <a class="menu-card" href="messages-inbox.php">
               <span class="menu-icon"><i class="fas fa-inbox"></i></span>
-              <span class="menu-label">Inbox</span>
+              <span class="menu-label"><?php echo htmlspecialchars(i18n_t('common.inbox', 'Inbox'), ENT_QUOTES, 'UTF-8'); ?></span>
               <span class="menu-subtext">
-                <?php echo $inboxCount > 0 ? $inboxCount . ' message' . ($inboxCount === 1 ? '' : 's') : 'No messages yet'; ?>
+                <?php echo $inboxCount > 0 ? $inboxCount . ' ' . htmlspecialchars(i18n_t('nav.messages', 'Messages'), ENT_QUOTES, 'UTF-8') : htmlspecialchars(i18n_t('home.inbox.none', 'No messages yet'), ENT_QUOTES, 'UTF-8'); ?>
               </span>
             </a>
           <?php endif; ?>
@@ -382,8 +384,8 @@
           <?php if ($isCreator || $isAdmin): ?>
             <a class="menu-card" href="users.php">
               <span class="menu-icon"><i class="fas fa-users-cog"></i></span>
-              <span class="menu-label">Users</span>
-              <span class="menu-subtext">Manage accounts &amp; roles</span>
+              <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.users', 'Users'), ENT_QUOTES, 'UTF-8'); ?></span>
+              <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.users.sub', 'Manage accounts and roles'), ENT_QUOTES, 'UTF-8'); ?></span>
             </a>
           <?php endif; ?>
         </div>
@@ -441,3 +443,6 @@
   })();
 
 </script>
+
+
+

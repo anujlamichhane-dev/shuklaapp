@@ -247,35 +247,35 @@
 <div id="content-wrapper">
   <div class="app-shell">
     <section class="docs-hero">
-      <div class="section-title">Shuklagandaki Municipality Introduction</div>
+      <div class="section-title"><?php echo htmlspecialchars(i18n_t('intro.title', 'Shuklagandaki Municipality Introduction'), ENT_QUOTES, 'UTF-8'); ?></div>
       <?php if ($saveError): ?>
         <div class="alert alert-danger mb-2"><?php echo htmlspecialchars($saveError, ENT_QUOTES, 'UTF-8'); ?></div>
       <?php endif; ?>
       <?php if ($saveMsg): ?>
         <div class="alert alert-success mb-2"><?php echo htmlspecialchars($saveMsg, ENT_QUOTES, 'UTF-8'); ?></div>
       <?php endif; ?>
-      <p class="docs-subtext">शुक्लागण्डकी नगरपालिका परिचय सामग्री यहाँ देखाइनेछ।</p>
+      <p class="docs-subtext"><?php echo htmlspecialchars(i18n_t('intro.subtitle', 'Municipality introduction content is shown here.'), ENT_QUOTES, 'UTF-8'); ?></p>
       <?php if ($isCreator): ?>
         <form class="docs-editor" method="POST" enctype="multipart/form-data">
-          <div class="docs-editor-title">Add Introduction Entry</div>
-          <label>Title</label>
-          <input type="text" name="intro_title" placeholder="Title" required>
-          <label>Description</label>
-          <textarea name="intro_description" rows="3" placeholder="Description" required></textarea>
-          <label>Photos</label>
+          <div class="docs-editor-title"><?php echo htmlspecialchars(i18n_t('intro.add_title', 'Add Introduction Entry'), ENT_QUOTES, 'UTF-8'); ?></div>
+          <label><?php echo htmlspecialchars(i18n_t('places.place_name', 'Title'), ENT_QUOTES, 'UTF-8'); ?></label>
+          <input type="text" name="intro_title" placeholder="<?php echo htmlspecialchars(i18n_t('places.place_name', 'Title'), ENT_QUOTES, 'UTF-8'); ?>" required>
+          <label><?php echo htmlspecialchars(i18n_t('places.description', 'Description'), ENT_QUOTES, 'UTF-8'); ?></label>
+          <textarea name="intro_description" rows="3" placeholder="<?php echo htmlspecialchars(i18n_t('places.description', 'Description'), ENT_QUOTES, 'UTF-8'); ?>" required></textarea>
+          <label><?php echo htmlspecialchars(i18n_t('places.photos', 'Photos'), ENT_QUOTES, 'UTF-8'); ?></label>
           <input type="file" name="intro_photos[]" accept="image/*" multiple>
-          <label>Video URL (optional)</label>
+          <label><?php echo htmlspecialchars(i18n_t('places.video_url', 'Video URL (optional)'), ENT_QUOTES, 'UTF-8'); ?></label>
           <input type="url" name="intro_video_url" placeholder="https://www.youtube.com/watch?v=...">
-          <label>Or upload video (optional)</label>
+          <label><?php echo htmlspecialchars(i18n_t('places.video_upload', 'Or upload video (optional)'), ENT_QUOTES, 'UTF-8'); ?></label>
           <input type="file" name="intro_video" accept="video/mp4,video/webm,video/ogg">
-          <button class="btn btn-sm btn-primary" type="submit" name="add_intro">Add Entry</button>
+          <button class="btn btn-sm btn-primary" type="submit" name="add_intro"><?php echo htmlspecialchars(i18n_t('intro.add_button', 'Add Entry'), ENT_QUOTES, 'UTF-8'); ?></button>
         </form>
       <?php endif; ?>
     </section>
 
     <section class="places-section">
       <?php if (empty($entries)): ?>
-        <div class="alert alert-info">No introduction entries yet.</div>
+        <div class="alert alert-info"><?php echo htmlspecialchars(i18n_t('intro.empty', 'No introduction entries yet.'), ENT_QUOTES, 'UTF-8'); ?></div>
       <?php endif; ?>
       <?php foreach ($entries as $index => $entry): ?>
         <article class="place-card">
@@ -303,7 +303,7 @@
                 <iframe src="<?php echo htmlspecialchars($embedUrl, ENT_QUOTES, 'UTF-8'); ?>" allowfullscreen></iframe>
               </div>
             <?php elseif ($videoUrl !== ''): ?>
-              <a class="place-video-link" href="<?php echo htmlspecialchars($videoUrl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">Watch video</a>
+              <a class="place-video-link" href="<?php echo htmlspecialchars($videoUrl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo htmlspecialchars(i18n_t('intro.watch_video', 'Watch video'), ENT_QUOTES, 'UTF-8'); ?></a>
             <?php endif; ?>
 
             <?php if (!empty($entry['images']) && count($entry['images']) > 1): ?>
@@ -319,7 +319,7 @@
           <?php if ($isCreator): ?>
             <form class="place-actions" method="POST">
               <input type="hidden" name="intro_index" value="<?php echo $index; ?>">
-              <button class="btn btn-sm btn-outline-danger" type="submit" name="delete_intro" onclick="return confirm('Delete this entry?');">Delete</button>
+              <button class="btn btn-sm btn-outline-danger" type="submit" name="delete_intro" onclick="return confirm(<?php echo json_encode(i18n_t('intro.delete_confirm', 'Delete this entry?')); ?>);"><?php echo htmlspecialchars(i18n_t('intro.delete', 'Delete'), ENT_QUOTES, 'UTF-8'); ?></button>
             </form>
           <?php endif; ?>
         </article>
@@ -329,3 +329,5 @@
 </div>
 
 <?php include './footer.php'; ?>
+
+

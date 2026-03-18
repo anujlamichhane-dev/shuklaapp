@@ -1,158 +1,100 @@
 <?php
-    include './header.php';
-   
-    require_once './src/user.php';
+require_once './src/i18n.php';
+$pageTitle = i18n_t('users.title', 'Users');
+include './header.php';
 
-    $err = '';
-    $msg = '';
-    if(($isAdmin || $isCreator) && isset($_POST['update_role'], $_POST['user_id'], $_POST['role'])) {
-      $targetId = (int)$_POST['user_id'];
-      $newRole = $_POST['role'];
-      $allowedRoles = ['member','client','moderator','admin','creator','mayor','deputymayor','spokesperson','chief_officer','info_officer'];
-      if(in_array($newRole, $allowedRoles, true)) {
+require_once './src/user.php';
+
+$err = '';
+$msg = '';
+
+if (($isAdmin || $isCreator) && isset($_POST['update_role'], $_POST['user_id'], $_POST['role'])) {
+    $targetId = (int)$_POST['user_id'];
+    $newRole = (string)$_POST['role'];
+    $allowedRoles = ['member', 'client', 'moderator', 'admin', 'creator', 'mayor', 'deputymayor', 'spokesperson', 'chief_officer', 'info_officer'];
+    if (in_array($newRole, $allowedRoles, true)) {
         try {
-          User::updateRole($targetId, $newRole);
-          $msg = 'Role updated.';
-        } catch(Exception $e) {
-          $err = 'Could not update role.';
+            User::updateRole($targetId, $newRole);
+            $msg = i18n_t('users.role_updated', 'Role updated.');
+        } catch (Exception $e) {
+            $err = i18n_t('users.role_update_failed', 'Could not update role.');
         }
-      } else {
-        $err = 'Invalid role.';
-      }
+    } else {
+        $err = i18n_t('users.invalid_role', 'Invalid role.');
     }
+}
 
-    $users =  User::findAll();
-
-
-
-    
-
- 
-
-
-
-
+$users = User::findAll();
+$roles = ['member', 'client', 'moderator', 'admin', 'creator', 'mayor', 'deputymayor', 'spokesperson', 'chief_officer', 'info_officer'];
 ?>
 <div id="content-wrapper">
-
   <div class="container-fluid">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="#">Users</a>
+        <a href="./users.php"><?php echo htmlspecialchars(i18n_t('users.title', 'Users'), ENT_QUOTES, 'UTF-8'); ?></a>
       </li>
-      <li class="breadcrumb-item active">Overview</li>
+      <li class="breadcrumb-item active"><?php echo htmlspecialchars(i18n_t('common.overview', 'Overview'), ENT_QUOTES, 'UTF-8'); ?></li>
     </ol>
-    <?php if($isAdmin || $isCreator): ?>
-      <a class="btn btn-primary my-3" href="./newuser.php"><i class="fa fa-plus"></i>Create New User</a>
+
+    <?php if ($isAdmin || $isCreator): ?>
+      <a class="btn btn-primary my-3" href="./newuser.php"><i class="fa fa-plus"></i> <?php echo htmlspecialchars(i18n_t('users.create_new', 'Create New User'), ENT_QUOTES, 'UTF-8'); ?></a>
     <?php endif; ?>
+
     <div class="card mb-3">
-            <div class="card-body">
-                <?php if($err): ?><div class="alert alert-danger"><?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
-                <?php if($msg): ?><div class="alert alert-success"><?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
-                <div class="table-responsive users-table">
-                    <table class="table table-bordered table-sm" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Created at</th>
-                                <?php if($isAdmin || $isCreator): ?>
-                                  <th>Actions</th>
-                                <?php endif; ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                         <?php foreach($users as $user): ?>
-                            <tr>
-                                <td data-label="Name"><?php echo $user->name ?></td>
-                                <td data-label="Role"><?php echo $user->role ?></td>
-                                <td data-label="Email"><?php echo $user->email ?></td>
-                                <td data-label="Phone"><?php echo $user->phone ?></td>
-                                <?php $date = new DateTime($user->created_at) ?>
-                                <td data-label="Created at"><?php echo $date->format('d-m-Y H:i:s') ?></td>
-                                <?php if($isAdmin || $isCreator): ?>
-                                  <td data-label="Actions">
-                                    <form method="POST" action="users.php">
-                                      <input type="hidden" name="user_id" value="<?php echo $user->id; ?>">
-                                      <select name="role" class="form-control form-control-sm d-inline-block" style="width:auto;">
-                                        <?php
-                                          $roles = ['member','client','moderator','admin','creator','mayor','deputymayor','spokesperson','chief_officer','info_officer'];
-                                          foreach($roles as $r){
-                                            $sel = $r === $user->role ? 'selected' : '';
-                                            echo "<option value=\"$r\" $sel>$r</option>";
-                                          }
-                                        ?>
-                                      </select>
-                                      <button class="btn btn-sm btn-primary" type="submit" name="update_role">Update</button>
-                                    </form>
-                                  </td>
-                                <?php endif; ?>
-                            </tr>
-                          <?php endforeach ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      <div class="card-body">
+        <?php if ($err !== ''): ?>
+          <div class="alert alert-danger"><?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?></div>
+        <?php endif; ?>
+        <?php if ($msg !== ''): ?>
+          <div class="alert alert-success"><?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'); ?></div>
+        <?php endif; ?>
+
+        <div class="table-responsive users-table">
+          <table class="table table-bordered table-sm table-mobile-stack" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                <th><?php echo htmlspecialchars(i18n_t('common.name', 'Name'), ENT_QUOTES, 'UTF-8'); ?></th>
+                <th><?php echo htmlspecialchars(i18n_t('common.role', 'Role'), ENT_QUOTES, 'UTF-8'); ?></th>
+                <th><?php echo htmlspecialchars(i18n_t('common.email', 'Email'), ENT_QUOTES, 'UTF-8'); ?></th>
+                <th><?php echo htmlspecialchars(i18n_t('common.phone', 'Phone'), ENT_QUOTES, 'UTF-8'); ?></th>
+                <th><?php echo htmlspecialchars(i18n_t('common.created_on', 'Created at'), ENT_QUOTES, 'UTF-8'); ?></th>
+                <?php if ($isAdmin || $isCreator): ?>
+                  <th><?php echo htmlspecialchars(i18n_t('common.actions', 'Actions'), ENT_QUOTES, 'UTF-8'); ?></th>
+                <?php endif; ?>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($users as $listedUser): ?>
+                <?php $date = new DateTime($listedUser->created_at); ?>
+                <tr>
+                  <td data-label="<?php echo htmlspecialchars(i18n_t('common.name', 'Name'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($listedUser->name, ENT_QUOTES, 'UTF-8'); ?></td>
+                  <td data-label="<?php echo htmlspecialchars(i18n_t('common.role', 'Role'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars(i18n_role_label($listedUser->role), ENT_QUOTES, 'UTF-8'); ?></td>
+                  <td data-label="<?php echo htmlspecialchars(i18n_t('common.email', 'Email'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($listedUser->email, ENT_QUOTES, 'UTF-8'); ?></td>
+                  <td data-label="<?php echo htmlspecialchars(i18n_t('common.phone', 'Phone'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($listedUser->phone, ENT_QUOTES, 'UTF-8'); ?></td>
+                  <td data-label="<?php echo htmlspecialchars(i18n_t('common.created_on', 'Created at'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($date->format('d-m-Y H:i:s'), ENT_QUOTES, 'UTF-8'); ?></td>
+                  <?php if ($isAdmin || $isCreator): ?>
+                    <td data-label="<?php echo htmlspecialchars(i18n_t('common.actions', 'Actions'), ENT_QUOTES, 'UTF-8'); ?>">
+                      <form method="POST" action="users.php" class="form-inline">
+                        <input type="hidden" name="user_id" value="<?php echo (int)$listedUser->id; ?>">
+                        <select name="role" class="form-control form-control-sm d-inline-block mr-2" style="width:auto;">
+                          <?php foreach ($roles as $roleValue): ?>
+                            <option value="<?php echo htmlspecialchars($roleValue, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $roleValue === $listedUser->role ? 'selected' : ''; ?>>
+                              <?php echo htmlspecialchars(i18n_role_label($roleValue), ENT_QUOTES, 'UTF-8'); ?>
+                            </option>
+                          <?php endforeach; ?>
+                        </select>
+                        <button class="btn btn-sm btn-primary" type="submit" name="update_role"><?php echo htmlspecialchars(i18n_t('common.update', 'Update'), ENT_QUOTES, 'UTF-8'); ?></button>
+                      </form>
+                    </td>
+                  <?php endif; ?>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
         </div>
-
-  </div>
-  <!-- /.container-fluid -->
-
-  
-
-</div>
-<!-- /.content-wrapper -->
-
-</div>
-<!-- /#wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-  <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-primary" href="./index.php">Logout</a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- Core plugin JavaScript-->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-<!-- Page level plugin JavaScript-->
-<script src="vendor/chart.js/Chart.min.js"></script>
-<script src="vendor/datatables/jquery.dataTables.js"></script>
-<script src="vendor/datatables/dataTables.bootstrap4.js"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="js/sb-admin.min.js"></script>
-
-<!-- Demo scripts for this page-->
-<script src="js/demo/datatables-demo.js"></script>
-<script src="js/demo/chart-area-demo.js"></script>
-
-</body>
-
-</html>
-
+<?php include './footer.php'; ?>

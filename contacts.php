@@ -17,7 +17,7 @@
       'id' => 'mayor',
       'photo' => 'img/mayor.png',
       'name' => 'कृष्णराज पण्डित',
-      'role' => 'नगर प्रमुख',
+      'role' => i18n_role_label('mayor'),
       'email' => 'mayor@shuklagandakimun.gov.np',
       'phone' => '9856087111'
     ],
@@ -25,7 +25,7 @@
       'id' => 'deputymayor',
       'photo' => 'img/deputymayor.png',
       'name' => 'खुम बहादुर वि.क (राजु)',
-      'role' => 'उप- प्रमुख',
+      'role' => i18n_role_label('deputymayor'),
       'email' => 'deputymayor@shuklagandakimun.gov.np',
       'phone' => '9856081222'
     ],
@@ -33,7 +33,7 @@
       'id' => 'spokesperson',
       'photo' => 'img/spokesperson.png',
       'name' => 'सचिन भुजेल (प्रवक्ता)',
-      'role' => 'वडा अध्यक्ष',
+      'role' => i18n_role_label('spokesperson'),
       'email' => 'ward3shukla@gmail.com',
       'phone' => '9856087003'
     ],
@@ -41,7 +41,7 @@
       'id' => 'chief_officer',
       'photo' => 'img/chief-officer.png',
       'name' => 'शिशिर पौडेल',
-      'role' => 'प्रमुख प्रशासनकीय अधिकृत',
+      'role' => i18n_role_label('chief_officer'),
       'email' => 'sanskritpaudel@gmail.com',
       'phone' => '9856004111'
     ],
@@ -49,19 +49,61 @@
       'id' => 'info_officer',
       'photo' => 'img/info-officer.png',
       'name' => 'अनिल खनाल',
-      'role' => 'सूचना अधिकारी',
+      'role' => i18n_role_label('info_officer'),
       'email' => 'shuklasuchana@gmail.com',
       'phone' => '9856043417'
     ]
   ];
 
   $contacts = $defaultContacts;
+  $repairContactText = function ($value) {
+    if (!is_string($value) || strpos($value, 'à') === false) {
+      return $value;
+    }
+
+    if (function_exists('iconv')) {
+      $converted = @iconv('Windows-1252', 'UTF-8//IGNORE', $value);
+      if (is_string($converted) && preg_match('/[\x{0900}-\x{097F}]/u', $converted)) {
+        return $converted;
+      }
+    }
+
+    if (function_exists('mb_convert_encoding')) {
+      $converted = @mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
+      if (is_string($converted) && preg_match('/[\x{0900}-\x{097F}]/u', $converted)) {
+        return $converted;
+      }
+    }
+
+    return $value;
+  };
   if (is_readable($contactsDataPath)) {
     $decoded = json_decode(file_get_contents($contactsDataPath), true);
     if (is_array($decoded) && !empty($decoded)) {
       $contacts = $decoded;
     }
   }
+
+  $defaultContactsById = [];
+  foreach ($defaultContacts as $defaultContact) {
+    $defaultContactsById[$defaultContact['id']] = $defaultContact;
+  }
+
+  foreach ($contacts as &$contact) {
+    if (isset($contact['name'])) {
+      $contact['name'] = $repairContactText($contact['name']);
+    }
+    if (isset($contact['role'])) {
+      $contact['role'] = $repairContactText($contact['role']);
+    }
+
+    $contactId = $contact['id'] ?? '';
+    if (isset($defaultContactsById[$contactId])) {
+      $contact['name'] = $defaultContactsById[$contactId]['name'];
+      $contact['role'] = $defaultContactsById[$contactId]['role'];
+    }
+  }
+  unset($contact);
 
   $getInitials = function ($name) {
     $name = trim((string)$name);

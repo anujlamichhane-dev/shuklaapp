@@ -1,25 +1,26 @@
 <?php
+  require_once './src/i18n.php';
   $bodyClass = 'mobile-home-body';
+  $pageTitle = i18n_t('tickets.menu.title', 'Tickets');
   $extraCss = ['css/mobile-home.css'];
   $hideSidebar = true;
   $hideSidebarToggle = true;
   include './header.php';
 
-  // Build ticket links for this menu.
   $ticketLinks = [];
   if ($isClient) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'नयाँ सुझाव र गुनासो', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'मेरो सुझाव र गुनासो', 'icon' => 'fa-award'];
+    $ticketLinks[] = ['href' => 'ticket.php', 'label' => i18n_t('tickets.new_client', 'New Suggestion / Complaint'), 'icon' => 'fa-plus-circle'];
+    $ticketLinks[] = ['href' => 'mytickets.php', 'label' => i18n_t('tickets.my_client', 'My Suggestions / Complaints'), 'icon' => 'fa-award'];
   } else {
-    $ticketLinks[] = ['href' => 'dashboard.php', 'label' => i18n_t('tickets.dashboard'), 'icon' => 'fa-tachometer-alt'];
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Create New Tickets', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'open.php', 'label' => i18n_t('tickets.open'), 'icon' => 'fa-lock-open'];
-    $ticketLinks[] = ['href' => 'solved.php', 'label' => i18n_t('tickets.solved'), 'icon' => 'fa-anchor'];
-    $ticketLinks[] = ['href' => 'closed.php', 'label' => i18n_t('tickets.closed'), 'icon' => 'fa-times-circle'];
-    $ticketLinks[] = ['href' => 'pending.php', 'label' => 'Pending', 'icon' => 'fa-adjust'];
-    $ticketLinks[] = ['href' => 'unassigned.php', 'label' => i18n_t('tickets.unassigned'), 'icon' => 'fa-at'];
+    $ticketLinks[] = ['href' => 'dashboard.php', 'label' => i18n_t('tickets.dashboard', 'Dashboard'), 'icon' => 'fa-tachometer-alt'];
+    $ticketLinks[] = ['href' => 'ticket.php', 'label' => i18n_t('tickets.create_new', 'Create New Tickets'), 'icon' => 'fa-plus-circle'];
+    $ticketLinks[] = ['href' => 'open.php', 'label' => i18n_t('tickets.open', 'Open'), 'icon' => 'fa-lock-open'];
+    $ticketLinks[] = ['href' => 'solved.php', 'label' => i18n_t('tickets.solved', 'Solved'), 'icon' => 'fa-anchor'];
+    $ticketLinks[] = ['href' => 'closed.php', 'label' => i18n_t('tickets.closed', 'Closed'), 'icon' => 'fa-times-circle'];
+    $ticketLinks[] = ['href' => 'pending.php', 'label' => i18n_status_label('pending'), 'icon' => 'fa-adjust'];
+    $ticketLinks[] = ['href' => 'unassigned.php', 'label' => i18n_t('tickets.unassigned', 'Unassigned'), 'icon' => 'fa-at'];
     if (!$isModerator) {
-      $ticketLinks[] = ['href' => 'mytickets.php', 'label' => i18n_t('tickets.my'), 'icon' => 'fa-award'];
+      $ticketLinks[] = ['href' => 'mytickets.php', 'label' => i18n_t('tickets.my', 'My Tickets'), 'icon' => 'fa-award'];
     }
   }
 ?>
@@ -27,7 +28,7 @@
 <div id="content-wrapper">
   <div class="app-shell">
     <section class="menu-section">
-      <div class="section-title"><?php echo htmlspecialchars(i18n_t('tickets.menu.title'), ENT_QUOTES, 'UTF-8'); ?></div>
+      <div class="section-title"><?php echo htmlspecialchars(i18n_t('tickets.menu.title', 'Tickets'), ENT_QUOTES, 'UTF-8'); ?></div>
       <?php if ($isClient): ?>
         <div class="menu-grid">
           <?php foreach ($ticketLinks as $link): ?>

@@ -44,6 +44,7 @@ $showBackBtn = false;
 $hideSidebar = false;
 $hideSidebarToggle = false;
 $bodyClass = $bodyClass ?? 'mobile-home-body';
+$pageTitle = $pageTitle ?? i18n_t('common.dashboard', 'Dashboard');
 $extraCss = $extraCss ?? [];
 if (!is_array($extraCss)) {
   $extraCss = [];
@@ -85,17 +86,8 @@ if ($isModerator && $currentPage === 'mytickets.php') {
 ?>
 <?php
   $currentLang = i18n_lang();
-  $requestUri = $_SERVER['REQUEST_URI'] ?? '';
-  $parsed = parse_url($requestUri);
-  $path = $parsed['path'] ?? '';
-  $query = [];
-  if (!empty($parsed['query'])) {
-    parse_str($parsed['query'], $query);
-  }
-  $query['lang'] = 'en';
-  $langUrlEn = $path . '?' . http_build_query($query);
-  $query['lang'] = 'ne';
-  $langUrlNe = $path . '?' . http_build_query($query);
+  $langUrlEn = i18n_url_with_lang('en');
+  $langUrlNe = i18n_url_with_lang('ne');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($currentLang, ENT_QUOTES, 'UTF-8'); ?>">
@@ -108,7 +100,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Shuklagandaki Municipality - Dashboard</title>
+  <title>Shuklagandaki Municipality - <?php echo htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8'); ?></title>
   <link rel="icon" type="image/png" href="img/shuklagandaki_logo.png">
 
   <!-- Custom fonts for this template-->
@@ -133,13 +125,13 @@ if ($isModerator && $currentPage === 'mytickets.php') {
 
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
     <?php if ($showBackBtn): ?>
-      <a class="btn btn-sm btn-outline-light mr-2 d-inline-flex align-items-center btn-home" href="./mobile-home.php" aria-label="Go to home">
+      <a class="btn btn-sm btn-outline-light mr-2 d-inline-flex align-items-center btn-home" href="./mobile-home.php" aria-label="<?php echo htmlspecialchars(i18n_t('common.go_home', 'Go to home'), ENT_QUOTES, 'UTF-8'); ?>">
         <i class="fas fa-home mr-1"></i>
-        <span>Home</span>
+        <span><?php echo htmlspecialchars(i18n_t('nav.home', 'Home'), ENT_QUOTES, 'UTF-8'); ?></span>
       </a>
     <?php endif; ?>
     <?php if (!$hideSidebarToggle): ?>
-      <button class="btn btn-link btn-sm text-white mr-2 mobile-menu-icon" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+      <button class="btn btn-link btn-sm text-white mr-2 mobile-menu-icon" id="sidebarToggle" type="button" aria-label="<?php echo htmlspecialchars(i18n_t('common.toggle_sidebar', 'Toggle sidebar'), ENT_QUOTES, 'UTF-8'); ?>">
         <i class="fas fa-bars"></i>
       </button>
     <?php endif; ?>
@@ -173,8 +165,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
           <span class="nav-user-name"><?php echo $user->name?></span>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-          
-          <a class="dropdown-item" href="./logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+          <a class="dropdown-item" href="./logout.php" data-toggle="modal" data-target="#logoutModal"><?php echo htmlspecialchars(i18n_t('nav.logout', 'Logout'), ENT_QUOTES, 'UTF-8'); ?></a>
         </div>
       </li>
     </ul>

@@ -262,38 +262,38 @@
 <div id="content-wrapper">
   <div class="app-shell">
     <section class="docs-hero">
-      <div class="section-title">Interesting Places</div>
+      <div class="section-title"><?php echo htmlspecialchars(i18n_t('places.title', 'Interesting Places'), ENT_QUOTES, 'UTF-8'); ?></div>
       <?php if ($saveError): ?>
         <div class="alert alert-danger mb-2"><?php echo htmlspecialchars($saveError, ENT_QUOTES, 'UTF-8'); ?></div>
       <?php endif; ?>
       <?php if ($saveMsg): ?>
         <div class="alert alert-success mb-2"><?php echo htmlspecialchars($saveMsg, ENT_QUOTES, 'UTF-8'); ?></div>
       <?php endif; ?>
-      <p class="docs-subtext">रोचक ठाउँहरूको जानकारी यहाँ देखाइनेछ।</p>
+      <p class="docs-subtext"><?php echo htmlspecialchars(i18n_t('places.subtitle', 'Information about interesting places is shown here.'), ENT_QUOTES, 'UTF-8'); ?></p>
       <?php if ($isCreator): ?>
         <form class="docs-editor" method="POST" enctype="multipart/form-data">
-          <div class="docs-editor-title">Add Interesting Place</div>
-          <label>Title</label>
-          <input type="text" name="place_title" placeholder="Place name" required>
-          <label>Description</label>
-          <textarea name="place_description" rows="3" placeholder="Describe this place" required></textarea>
-          <label>Photos</label>
+          <div class="docs-editor-title"><?php echo htmlspecialchars(i18n_t('places.add_title', 'Add Interesting Place'), ENT_QUOTES, 'UTF-8'); ?></div>
+          <label><?php echo htmlspecialchars(i18n_t('places.place_name', 'Title'), ENT_QUOTES, 'UTF-8'); ?></label>
+          <input type="text" name="place_title" placeholder="<?php echo htmlspecialchars(i18n_t('places.place_name', 'Title'), ENT_QUOTES, 'UTF-8'); ?>" required>
+          <label><?php echo htmlspecialchars(i18n_t('places.description', 'Description'), ENT_QUOTES, 'UTF-8'); ?></label>
+          <textarea name="place_description" rows="3" placeholder="<?php echo htmlspecialchars(i18n_t('places.description', 'Description'), ENT_QUOTES, 'UTF-8'); ?>" required></textarea>
+          <label><?php echo htmlspecialchars(i18n_t('places.photos', 'Photos'), ENT_QUOTES, 'UTF-8'); ?></label>
           <div class="docs-upload-scroll">
             <input type="file" name="place_photos[]" accept="image/*" multiple>
           </div>
-          <div class="docs-input-hint">Upload up to <?php echo $maxPlacePhotos; ?> photos. JPG, PNG, and WebP only.</div>
-          <label>Video URL (optional)</label>
+          <div class="docs-input-hint"><?php echo htmlspecialchars(i18n_t('places.photos_hint', 'Upload up to 10 photos. JPG, PNG, and WebP only.'), ENT_QUOTES, 'UTF-8'); ?></div>
+          <label><?php echo htmlspecialchars(i18n_t('places.video_url', 'Video URL (optional)'), ENT_QUOTES, 'UTF-8'); ?></label>
           <input type="url" name="place_video_url" placeholder="https://www.youtube.com/watch?v=...">
-          <label>Or upload video (optional)</label>
+          <label><?php echo htmlspecialchars(i18n_t('places.video_upload', 'Or upload video (optional)'), ENT_QUOTES, 'UTF-8'); ?></label>
           <input type="file" name="place_video" accept="video/mp4,video/webm,video/ogg">
-          <button class="btn btn-sm btn-primary" type="submit" name="add_place">Add Place</button>
+          <button class="btn btn-sm btn-primary" type="submit" name="add_place"><?php echo htmlspecialchars(i18n_t('places.add_button', 'Add Place'), ENT_QUOTES, 'UTF-8'); ?></button>
         </form>
       <?php endif; ?>
     </section>
 
     <section class="places-section">
       <?php if (empty($places)): ?>
-        <div class="alert alert-info">No places added yet.</div>
+        <div class="alert alert-info"><?php echo htmlspecialchars(i18n_t('places.empty', 'No places added yet.'), ENT_QUOTES, 'UTF-8'); ?></div>
       <?php endif; ?>
       <?php foreach ($places as $index => $place): ?>
         <article class="place-card">
@@ -302,7 +302,7 @@
               <a
                 class="place-image-trigger"
                 href="<?php echo htmlspecialchars($buildPlacePhotoViewerUrl($place['images'][0], $place['title']), ENT_QUOTES, 'UTF-8'); ?>"
-                aria-label="Open photos for <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                aria-label="<?php echo htmlspecialchars(i18n_t('places.open_photos', 'Open photos for'), ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
               >
                 <img src="<?php echo htmlspecialchars($place['images'][0], ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>">
               </a>
@@ -327,7 +327,7 @@
                 <iframe src="<?php echo htmlspecialchars($embedUrl, ENT_QUOTES, 'UTF-8'); ?>" allowfullscreen></iframe>
               </div>
             <?php elseif ($videoUrl !== ''): ?>
-              <a class="place-video-link" href="<?php echo htmlspecialchars($videoUrl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">Watch video</a>
+              <a class="place-video-link" href="<?php echo htmlspecialchars($videoUrl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo htmlspecialchars(i18n_t('places.watch_video', 'Watch video'), ENT_QUOTES, 'UTF-8'); ?></a>
             <?php endif; ?>
 
             <?php if (!empty($place['images']) && count($place['images']) > 1): ?>
@@ -336,7 +336,7 @@
                   <a
                     class="place-thumb place-image-trigger"
                     href="<?php echo htmlspecialchars($buildPlacePhotoViewerUrl($image, $place['title']), ENT_QUOTES, 'UTF-8'); ?>"
-                    aria-label="Open photo <?php echo $imageIndex + 2; ?> for <?php echo htmlspecialchars($place['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                    aria-label="<?php echo htmlspecialchars(i18n_t('places.open_photo', 'Open photo'), ENT_QUOTES, 'UTF-8'); ?> <?php echo $imageIndex + 2; ?>"
                   >
                     <img src="<?php echo htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>" alt="">
                   </a>
@@ -347,7 +347,7 @@
           <?php if ($isCreator): ?>
             <form class="place-actions" method="POST">
               <input type="hidden" name="place_index" value="<?php echo $index; ?>">
-              <button class="btn btn-sm btn-outline-danger" type="submit" name="delete_place" onclick="return confirm('Delete this place?');">Delete</button>
+              <button class="btn btn-sm btn-outline-danger" type="submit" name="delete_place" onclick="return confirm(<?php echo json_encode(i18n_t('places.delete_confirm', 'Delete this place?')); ?>);"><?php echo htmlspecialchars(i18n_t('places.delete', 'Delete'), ENT_QUOTES, 'UTF-8'); ?></button>
             </form>
           <?php endif; ?>
         </article>
@@ -357,3 +357,5 @@
 </div>
 
 <?php include './footer.php'; ?>
+
+

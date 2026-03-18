@@ -4,6 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 session_start();
 
+require_once './src/i18n.php';
 require_once './src/Database.php';
 
 $db = Database::getInstance();
@@ -21,56 +22,53 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'] ?? '';
 
     if (strlen($name) < 1) {
-        $err = 'Please enter your name';
+        $err = i18n_t('register.error.name', 'Please enter your name');
     } elseif (strlen($email) < 1) {
-        $err = 'Please enter email address';
+        $err = i18n_t('register.error.email', 'Please enter email address');
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $err = 'Please enter a valid email address';
+        $err = i18n_t('register.error.valid_email', 'Please enter a valid email address');
     } elseif (strlen($phone) < 1) {
-        $err = 'Please enter phone number';
+        $err = i18n_t('register.error.phone', 'Please enter phone number');
     } elseif (!preg_match('/^[0-9]{10}$/', $phone)) {
-        $err = 'Phone number should contain exactly 10 digits';
+        $err = i18n_t('register.error.valid_phone', 'Phone number should contain exactly 10 digits');
     } elseif (strlen($password) < 1) {
-        $err = 'Please enter your password';
+        $err = i18n_t('register.error.password', 'Please enter your password');
     } elseif (strlen($password) < 8) {
-        $err = 'Password must be at least 8 characters';
+        $err = i18n_t('register.error.password_short', 'Password must be at least 8 characters');
     } else {
-
-        // ✅ Check if email already exists (NO get_result)
         $stmt = $db->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
         if ($stmt === false) {
-            $err = 'Unable to create account right now';
+            $err = i18n_t('register.error.create_failed', 'Unable to create account right now');
         } else {
             $stmt->bind_param('s', $email);
 
             if (!$stmt->execute()) {
-                $err = 'Unable to create account right now';
+                $err = i18n_t('register.error.create_failed', 'Unable to create account right now');
             } else {
-                // store_result lets us use num_rows without mysqlnd
                 $stmt->store_result();
                 if ($stmt->num_rows > 0) {
-                    $err = 'Account with this email already exists';
+                    $err = i18n_t('register.error.account_exists', 'Account with this email already exists');
                 }
             }
             $stmt->close();
         }
 
-        // ✅ Insert new user
         if (strlen($err) < 1) {
             $hashed = password_hash($password, PASSWORD_DEFAULT);
 
             $insert = $db->prepare("INSERT INTO users (name, email, phone, password, role, last_password) VALUES (?, ?, ?, ?, 'client', ?)");
             if ($insert === false) {
-                $err = 'Unable to create account right now';
+                $err = i18n_t('register.error.create_failed', 'Unable to create account right now');
             } else {
                 $insert->bind_param('sssss', $name, $email, $phone, $hashed, $hashed);
 
                 if ($insert->execute()) {
-                    $msg = 'Account created successfully. You can now log in.';
-                    // optional: clear form after success
-                    $name = $email = $phone = '';
+                    $msg = i18n_t('register.success', 'Account created successfully. You can now log in.');
+                    $name = '';
+                    $email = '';
+                    $phone = '';
                 } else {
-                    $err = 'Unable to create account right now';
+                    $err = i18n_t('register.error.create_failed', 'Unable to create account right now');
                 }
                 $insert->close();
             }
@@ -79,23 +77,19 @@ if (isset($_POST['submit'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo htmlspecialchars(i18n_lang(), ENT_QUOTES, 'UTF-8'); ?>">
 
 <head>
-
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Municipal Service Portal - Create Account</title>
+  <title>Municipal Service Portal - <?php echo htmlspecialchars(i18n_t('register.header.title', 'Create Account'), ENT_QUOTES, 'UTF-8'); ?></title>
   <link rel="icon" type="image/png" href="img/shuklagandaki_logo.png">
 
-  <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-
-  <!-- Custom styles for this template-->
   <link href="css/sb-admin.css" rel="stylesheet">
   <style>
     :root {
@@ -193,7 +187,7 @@ if (isset($_POST['submit'])) {
     .btn-gov-outline { border-color: var(--gov-navy); color: var(--gov-navy); border-radius: 12px; font-weight: 600; }
     .btn-gov-outline:hover { background: var(--gov-navy); color: #fff; }
     .status-note { font-size: 0.9rem; color: #4b5563; margin-top: 0.75rem; }
-  
+
     @media (max-width: 768px) {
       body.auth-page { align-items: flex-start; padding: 2.75rem 1rem 1.5rem; }
       .auth-shell { max-width: 100%; gap: 1rem; }
@@ -209,8 +203,7 @@ if (isset($_POST['submit'])) {
       .lead-copy { font-size: 0.95rem; }
       .support-block { font-size: 0.9rem; }
     }
-</style>
-
+  </style>
 </head>
 
 <body class="auth-page">
@@ -219,83 +212,79 @@ if (isset($_POST['submit'])) {
       <div class="brand-badge">
         <img src="img/shuklagandaki_logo.png" alt="Municipality emblem">
         <div>
-          <div class="brand-kicker">Government of Nepal</div>
-          <div class="brand-name">Shuklagandaki Municipality</div>
-          <div class="brand-sub">Citizen Service Portal</div>
+          <div class="brand-kicker"><?php echo htmlspecialchars(i18n_t('login.brand.kicker', 'Government of Nepal'), ENT_QUOTES, 'UTF-8'); ?></div>
+          <div class="brand-name"><?php echo htmlspecialchars(i18n_t('login.brand.name', 'Shuklagandaki Municipality'), ENT_QUOTES, 'UTF-8'); ?></div>
+          <div class="brand-sub"><?php echo htmlspecialchars(i18n_t('login.brand.sub', 'Citizen Service Portal'), ENT_QUOTES, 'UTF-8'); ?></div>
         </div>
       </div>
-      <p class="lead-copy">
-        Create your account to submit service requests, track progress, and receive notifications from your ward office.
-      </p>
+      <p class="lead-copy"><?php echo htmlspecialchars(i18n_t('register.lead', 'Create your account to submit service requests, track progress, and receive notifications from your ward office.'), ENT_QUOTES, 'UTF-8'); ?></p>
       <ul class="trust-bullets">
-        <li>Use an email and phone number you can access for verification and updates.</li>
-        <li>Accounts are personal—please do not share your password.</li>
-        <li>We will contact you if we need more information to approve your registration.</li>
+        <li><?php echo htmlspecialchars(i18n_t('register.bullet1', 'Use an email and phone number you can access for verification and updates.'), ENT_QUOTES, 'UTF-8'); ?></li>
+        <li><?php echo htmlspecialchars(i18n_t('register.bullet2', 'Accounts are personal, so please do not share your password.'), ENT_QUOTES, 'UTF-8'); ?></li>
+        <li><?php echo htmlspecialchars(i18n_t('register.bullet3', 'We will contact you if we need more information to approve your registration.'), ENT_QUOTES, 'UTF-8'); ?></li>
       </ul>
-      <div class="support-block">
-        If you already registered but cannot sign in, use "Forgot password" on the login page rather than creating a new profile.
-      </div>
+      <div class="support-block"><?php echo htmlspecialchars(i18n_t('register.support', 'If you already registered but cannot sign in, use "Forgot password" on the login page rather than creating a new profile.'), ENT_QUOTES, 'UTF-8'); ?></div>
     </section>
 
     <div class="card auth-card mx-auto">
       <div class="card-header text-center">
-        <div class="card-kicker">New Users</div>
-        <div class="card-title">Create Account</div>
-        <div class="card-subtitle">Provide your details to get started.</div>
+        <div class="card-kicker"><?php echo htmlspecialchars(i18n_t('register.header.kicker', 'New Users'), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="card-title"><?php echo htmlspecialchars(i18n_t('register.header.title', 'Create Account'), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="card-subtitle"><?php echo htmlspecialchars(i18n_t('register.header.subtitle', 'Provide your details to get started.'), ENT_QUOTES, 'UTF-8'); ?></div>
       </div>
       <div class="card-body">
 
         <?php if (strlen($err) > 1) : ?>
           <div class="alert alert-danger text-center mb-3" role="alert">
-            <strong>Request failed:</strong> <?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?>
+            <strong><?php echo htmlspecialchars(i18n_t('common.request_failed', 'Request failed:'), ENT_QUOTES, 'UTF-8'); ?></strong> <?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?>
           </div>
         <?php endif; ?>
 
         <?php if (strlen($msg) > 1) : ?>
           <div class="alert alert-success text-center mb-3" role="alert">
-            <strong>Success:</strong> <?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'); ?>
+            <strong><?php echo htmlspecialchars(i18n_t('common.success', 'Success!'), ENT_QUOTES, 'UTF-8'); ?></strong> <?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'); ?>
           </div>
         <?php endif; ?>
 
         <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
           <div class="form-group">
-            <label for="inputName">Full name</label>
-            <input type="text" id="inputName" name="name" class="form-control" placeholder="Your full name"
+            <label for="inputName"><?php echo htmlspecialchars(i18n_t('register.name.label', 'Full name'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <input type="text" id="inputName" name="name" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('register.name.placeholder', 'Your full name'), ENT_QUOTES, 'UTF-8'); ?>"
               value="<?php echo htmlspecialchars($name ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
           </div>
 
           <div class="form-group">
-            <label for="inputEmail">Email address</label>
-            <input type="email" id="inputEmail" name="email" class="form-control" placeholder="name@example.com"
+            <label for="inputEmail"><?php echo htmlspecialchars(i18n_t('register.email.label', 'Email address'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <input type="email" id="inputEmail" name="email" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('register.email.placeholder', 'name@example.com'), ENT_QUOTES, 'UTF-8'); ?>"
               value="<?php echo htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
           </div>
 
           <div class="form-group">
-            <label for="inputPhone">Phone number</label>
-            <input type="tel" id="inputPhone" name="phone" class="form-control" placeholder="10-digit mobile number"
+            <label for="inputPhone"><?php echo htmlspecialchars(i18n_t('register.phone.label', 'Phone number'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <input type="tel" id="inputPhone" name="phone" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('register.phone.placeholder', '10-digit mobile number'), ENT_QUOTES, 'UTF-8'); ?>"
               value="<?php echo htmlspecialchars($phone ?? '', ENT_QUOTES, 'UTF-8'); ?>" pattern="\d{10}" inputmode="numeric" required>
-            <small class="helper-text">Digits only, exactly 10 digits.</small>
+            <small class="helper-text"><?php echo htmlspecialchars(i18n_t('register.phone.help', 'Digits only, exactly 10 digits.'), ENT_QUOTES, 'UTF-8'); ?></small>
           </div>
 
           <div class="form-group">
-            <label for="inputPassword">Password</label>
+            <label for="inputPassword"><?php echo htmlspecialchars(i18n_t('register.password.label', 'Password'), ENT_QUOTES, 'UTF-8'); ?></label>
             <div class="input-group">
-              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Create a strong password" minlength="8" required>
+              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('register.password.placeholder', 'Create a strong password'), ENT_QUOTES, 'UTF-8'); ?>" minlength="8" required>
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="inputPassword" aria-label="Show password">
+                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="inputPassword" aria-label="<?php echo htmlspecialchars(i18n_t('auth.show_password', 'Show password'), ENT_QUOTES, 'UTF-8'); ?>">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
             </div>
-            <small class="helper-text">Must be at least 8 characters.</small>
+            <small class="helper-text"><?php echo htmlspecialchars(i18n_t('register.password.help', 'Must be at least 8 characters.'), ENT_QUOTES, 'UTF-8'); ?></small>
           </div>
 
-          <button type="submit" name="submit" class="btn btn-gov-primary btn-block mb-2">Create account</button>
-          <a href="./index.php" class="btn btn-gov-outline btn-block">Back to login</a>
+          <button type="submit" name="submit" class="btn btn-gov-primary btn-block mb-2"><?php echo htmlspecialchars(i18n_t('register.submit', 'Create account'), ENT_QUOTES, 'UTF-8'); ?></button>
+          <a href="./index.php" class="btn btn-gov-outline btn-block"><?php echo htmlspecialchars(i18n_t('register.back_login', 'Back to login'), ENT_QUOTES, 'UTF-8'); ?></a>
         </form>
 
         <div class="status-note text-center">
-          New accounts may need verification. We will notify you when your profile is ready.
+          <?php echo htmlspecialchars(i18n_t('register.status', 'New accounts may need verification. We will notify you when your profile is ready.'), ENT_QUOTES, 'UTF-8'); ?>
         </div>
       </div>
     </div>
@@ -313,12 +302,12 @@ if (isset($_POST['submit'])) {
           target.type = 'text';
           icon.classList.remove('fa-eye');
           icon.classList.add('fa-eye-slash');
-          this.setAttribute('aria-label', 'Hide password');
+          this.setAttribute('aria-label', <?php echo json_encode(i18n_t('auth.hide_password', 'Hide password')); ?>);
         } else {
           target.type = 'password';
           icon.classList.remove('fa-eye-slash');
           icon.classList.add('fa-eye');
-          this.setAttribute('aria-label', 'Show password');
+          this.setAttribute('aria-label', <?php echo json_encode(i18n_t('auth.show_password', 'Show password')); ?>);
         }
       });
     });
@@ -326,4 +315,3 @@ if (isset($_POST['submit'])) {
 
 </body>
 </html>
-

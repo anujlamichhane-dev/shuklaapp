@@ -48,25 +48,25 @@ if (isset($_POST['submit'])) {
   $password = $_POST['password'] ?? '';
 
   if (strlen($email) < 1) {
-    $err = 'Please enter email address';
+    $err = i18n_t('login.error.email', 'Please enter email address');
   } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $err = 'Please enter a valid email adddress';
+    $err = i18n_t('login.error.valid_email', 'Please enter a valid email address');
   } else if (strlen($password) < 1) {
-    $err = "Please enter your password";
+    $err = i18n_t('login.error.password', 'Please enter your password');
   } else if (strlen($password) < 8) {
-    $err = "Password must be at least 8 characters";
+    $err = i18n_t('login.error.password_short', 'Password must be at least 8 characters');
   } else {
 
     $stmt = $db->prepare("SELECT id, name, email, password, role FROM users WHERE email = ? LIMIT 1");
 
     if ($stmt === false) {
-      $err = "Unable to process login right now";
+      $err = i18n_t('login.error.unavailable', 'Unable to process login right now');
     } else {
 
       $stmt->bind_param('s', $email);
 
       if (!$stmt->execute()) {
-        $err = "Unable to process login right now";
+        $err = i18n_t('login.error.unavailable', 'Unable to process login right now');
       } else {
 
         // ? NO get_result() � use bind_result + fetch
@@ -103,10 +103,10 @@ if (isset($_POST['submit'])) {
             header('Location: ./mobile-home.php');
             exit();
           } else {
-            $err = "Wrong username or password";
+            $err = i18n_t('login.error.invalid_credentials', 'Wrong username or password');
           }
         } else {
-          $err = "No user found";
+          $err = i18n_t('login.error.no_user', 'No user found');
         }
       }
 
@@ -118,17 +118,8 @@ if (isset($_POST['submit'])) {
 
 <?php
 $currentLang = i18n_lang();
-$requestUri = $_SERVER['REQUEST_URI'] ?? '';
-$parsed = parse_url($requestUri);
-$path = $parsed['path'] ?? '';
-$query = [];
-if (!empty($parsed['query'])) {
-  parse_str($parsed['query'], $query);
-}
-$query['lang'] = 'en';
-$langUrlEn = $path . '?' . http_build_query($query);
-$query['lang'] = 'ne';
-$langUrlNe = $path . '?' . http_build_query($query);
+$langUrlEn = i18n_url_with_lang('en');
+$langUrlNe = i18n_url_with_lang('ne');
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($currentLang, ENT_QUOTES, 'UTF-8'); ?>">
@@ -305,7 +296,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
             <div class="input-group">
               <input type="password" id="inputPassword" name="password" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('login.password.placeholder'), ENT_QUOTES, 'UTF-8'); ?>" minlength="8" required>
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="inputPassword">
+                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="inputPassword" aria-label="<?php echo htmlspecialchars(i18n_t('auth.show_password', 'Show password'), ENT_QUOTES, 'UTF-8'); ?>">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
@@ -323,7 +314,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
 
           <?php if (strlen($err) > 1) : ?>
             <div class="alert alert-danger text-center mb-3" role="alert">
-              <strong>Login failed:</strong> <?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?>
+              <strong><?php echo htmlspecialchars(i18n_t('common.login_failed', 'Login failed:'), ENT_QUOTES, 'UTF-8'); ?></strong> <?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?>
             </div>
           <?php endif; ?>
 
@@ -340,4 +331,3 @@ $langUrlNe = $path . '?' . http_build_query($query);
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

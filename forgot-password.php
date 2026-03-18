@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once './src/i18n.php';
 
 require_once './src/Database.php';
 
@@ -16,48 +17,48 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'] ?? '';
 
     if (strlen($email) < 1) {
-        $err = 'Please enter email address';
+        $err = i18n_t('register.error.email', 'Please enter email address');
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $err = 'Please enter a valid email address';
+        $err = i18n_t('register.error.valid_email', 'Please enter a valid email address');
     } elseif (strlen($phone) < 1) {
-        $err = 'Please enter phone number';
+        $err = i18n_t('register.error.phone', 'Please enter phone number');
     } elseif (!preg_match('/^[0-9]{10}$/', $phone)) {
-        $err = 'Phone number should contain exactly 10 digits';
+        $err = i18n_t('register.error.valid_phone', 'Phone number should contain exactly 10 digits');
     } elseif (strlen($password) < 1) {
-        $err = 'Please enter your new password';
+        $err = i18n_t('login.error.password', 'Please enter your password');
     } elseif (strlen($password) < 8) {
-        $err = 'Password must be at least 8 characters';
+        $err = i18n_t('login.error.password_short', 'Password must be at least 8 characters');
     } else {
         $stmt = $db->prepare("SELECT id, phone FROM users WHERE email = ?");
         if ($stmt === false) {
-            $err = 'Unable to process request right now';
+            $err = i18n_t('reset.error.unavailable', 'Unable to process request right now');
         } else {
             $stmt->bind_param('s', $email);
             if (!$stmt->execute()) {
-                $err = 'Unable to process request right now';
+                $err = i18n_t('reset.error.unavailable', 'Unable to process request right now');
             } else {
                 $res = $stmt->get_result();
                 if ($res && $res->num_rows > 0) {
                     $user = $res->fetch_object();
                     if ($user->phone !== $phone) {
-                        $err = 'Phone number does not match our records';
+                        $err = i18n_t('reset.error.phone_mismatch', 'Phone number does not match our records');
                     } else {
                         $hashed = password_hash($password, PASSWORD_DEFAULT);
                         $update = $db->prepare("UPDATE users SET password = ?, last_password = ? WHERE id = ?");
                         if ($update === false) {
-                            $err = 'Unable to update password right now';
+                            $err = i18n_t('reset.error.update_failed', 'Unable to update password right now');
                         } else {
                             $update->bind_param('ssi', $hashed, $hashed, $user->id);
                             if ($update->execute()) {
-                                $msg = 'Password updated successfully. You can now log in.';
+                                $msg = i18n_t('reset.success', 'Password updated successfully. You can now log in.');
                             } else {
-                                $err = 'Unable to update password right now';
+                                $err = i18n_t('reset.error.update_failed', 'Unable to update password right now');
                             }
                             $update->close();
                         }
                     }
                 } else {
-                    $err = 'No account found with that email';
+                    $err = i18n_t('reset.error.no_account', 'No account found with that email');
                 }
             }
             $stmt->close();
@@ -66,7 +67,7 @@ if (isset($_POST['submit'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo htmlspecialchars(i18n_lang(), ENT_QUOTES, 'UTF-8'); ?>">
 
 <head>
 
@@ -76,7 +77,7 @@ if (isset($_POST['submit'])) {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Municipal Service Portal - Reset Password</title>
+  <title>Municipal Service Portal - <?php echo htmlspecialchars(i18n_t('reset.header.title', 'Reset Password'), ENT_QUOTES, 'UTF-8'); ?></title>
   <link rel="icon" type="image/png" href="img/shuklagandaki_logo.png">
 
   <!-- Custom fonts for this template-->
@@ -289,69 +290,65 @@ if (isset($_POST['submit'])) {
       <div class="brand-badge">
         <img src="img/shuklagandaki_logo.png" alt="Municipality emblem">
         <div>
-          <div class="brand-kicker">Government of Nepal</div>
-          <div class="brand-name">Shuklagandaki Municipality</div>
-          <div class="brand-sub">Citizen Service Portal</div>
+          <div class="brand-kicker"><?php echo htmlspecialchars(i18n_t('login.brand.kicker', 'Government of Nepal'), ENT_QUOTES, 'UTF-8'); ?></div>
+          <div class="brand-name"><?php echo htmlspecialchars(i18n_t('login.brand.name', 'Shuklagandaki Municipality'), ENT_QUOTES, 'UTF-8'); ?></div>
+          <div class="brand-sub"><?php echo htmlspecialchars(i18n_t('login.brand.sub', 'Citizen Service Portal'), ENT_QUOTES, 'UTF-8'); ?></div>
         </div>
       </div>
-      <p class="lead-copy">
-        Reset your password to continue tracking your municipal services securely.
-      </p>
+      <p class="lead-copy"><?php echo htmlspecialchars(i18n_t('reset.lead', 'Reset your password to continue tracking your municipal services securely.'), ENT_QUOTES, 'UTF-8'); ?></p>
       <ul class="trust-bullets">
-        <li>Use the email and phone number you registered with this portal.</li>
-        <li>Complete this process on a trusted device and network.</li>
-        <li>If your phone number changed, contact your ward office for an update.</li>
+        <li><?php echo htmlspecialchars(i18n_t('reset.bullet1', 'Use the email and phone number you registered with this portal.'), ENT_QUOTES, 'UTF-8'); ?></li>
+        <li><?php echo htmlspecialchars(i18n_t('reset.bullet2', 'Complete this process on a trusted device and network.'), ENT_QUOTES, 'UTF-8'); ?></li>
+        <li><?php echo htmlspecialchars(i18n_t('reset.bullet3', 'If your phone number changed, contact your ward office for an update.'), ENT_QUOTES, 'UTF-8'); ?></li>
       </ul>
-      <div class="support-block">
-        For urgent help or if you suspect someone else accessed your account, reset immediately and notify your ward helpdesk.
-      </div>
+      <div class="support-block"><?php echo htmlspecialchars(i18n_t('reset.support', 'For urgent help or if you suspect someone else accessed your account, reset immediately and notify your ward helpdesk.'), ENT_QUOTES, 'UTF-8'); ?></div>
     </section>
 
     <div class="card auth-card mx-auto">
       <div class="card-header text-center">
-        <div class="card-kicker">Account Recovery</div>
-        <div class="card-title">Reset Password</div>
-        <div class="card-subtitle">Verify your details to set a new password.</div>
+        <div class="card-kicker"><?php echo htmlspecialchars(i18n_t('reset.header.kicker', 'Account Recovery'), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="card-title"><?php echo htmlspecialchars(i18n_t('reset.header.title', 'Reset Password'), ENT_QUOTES, 'UTF-8'); ?></div>
+        <div class="card-subtitle"><?php echo htmlspecialchars(i18n_t('reset.header.subtitle', 'Verify your details to set a new password.'), ENT_QUOTES, 'UTF-8'); ?></div>
       </div>
       <div class="card-body">
         <?php if(strlen($err) > 1) :?>
           <div class="alert alert-danger text-center mb-3" role="alert" aria-live="assertive">
-            <strong>Request failed:</strong> <?php echo $err;?>
+            <strong><?php echo htmlspecialchars(i18n_t('common.request_failed', 'Request failed:'), ENT_QUOTES, 'UTF-8'); ?></strong> <?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?>
           </div>
         <?php endif?>
 
         <?php if(strlen($msg) > 1) :?>
           <div class="alert alert-success text-center mb-3" role="alert" aria-live="polite">
-            <strong>Success:</strong> <?php echo $msg;?>
+            <strong><?php echo htmlspecialchars(i18n_t('common.success', 'Success!'), ENT_QUOTES, 'UTF-8'); ?></strong> <?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'); ?>
           </div>
         <?php endif?>
         <form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>">
           <div class="form-group">
-            <label for="inputEmail">Email address</label>
-            <input type="email" id="inputEmail" name="email" class="form-control" placeholder="name@example.com" autofocus="autofocus" value="<?php echo htmlspecialchars($email ?? '') ?>" required>
+            <label for="inputEmail"><?php echo htmlspecialchars(i18n_t('reset.email.label', 'Email address'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <input type="email" id="inputEmail" name="email" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('reset.email.placeholder', 'name@example.com'), ENT_QUOTES, 'UTF-8'); ?>" autofocus="autofocus" value="<?php echo htmlspecialchars($email ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
           </div>
           <div class="form-group">
-            <label for="inputPhone">Phone number</label>
-            <input type="tel" id="inputPhone" name="phone" class="form-control" placeholder="10-digit mobile number" value="<?php echo htmlspecialchars($phone ?? '') ?>" pattern="\d{10}" inputmode="numeric" required>
-            <small class="helper-text">Digits only, exactly 10 digits.</small>
+            <label for="inputPhone"><?php echo htmlspecialchars(i18n_t('reset.phone.label', 'Phone number'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <input type="tel" id="inputPhone" name="phone" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('reset.phone.placeholder', '10-digit mobile number'), ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars($phone ?? '', ENT_QUOTES, 'UTF-8'); ?>" pattern="\d{10}" inputmode="numeric" required>
+            <small class="helper-text"><?php echo htmlspecialchars(i18n_t('reset.phone.help', 'Digits only, exactly 10 digits.'), ENT_QUOTES, 'UTF-8'); ?></small>
           </div>
           <div class="form-group">
-            <label for="inputPassword">New password</label>
+            <label for="inputPassword"><?php echo htmlspecialchars(i18n_t('reset.password.label', 'New password'), ENT_QUOTES, 'UTF-8'); ?></label>
             <div class="input-group">
-              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Create a strong password" minlength="8" required>
+              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('reset.password.placeholder', 'Create a strong password'), ENT_QUOTES, 'UTF-8'); ?>" minlength="8" required>
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="inputPassword" aria-label="Show password">
+                <button class="btn btn-outline-secondary toggle-password" type="button" data-target="inputPassword" aria-label="<?php echo htmlspecialchars(i18n_t('auth.show_password', 'Show password'), ENT_QUOTES, 'UTF-8'); ?>">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
             </div>
-            <small class="helper-text">Must be at least 8 characters.</small>
+            <small class="helper-text"><?php echo htmlspecialchars(i18n_t('reset.password.help', 'Must be at least 8 characters.'), ENT_QUOTES, 'UTF-8'); ?></small>
           </div>
-          <button type="submit" name="submit" class="btn btn-gov-primary btn-block mb-2">Update password</button>
-          <a href="./index.php" class="btn btn-gov-outline btn-block">Back to login</a>
+          <button type="submit" name="submit" class="btn btn-gov-primary btn-block mb-2"><?php echo htmlspecialchars(i18n_t('reset.submit', 'Update password'), ENT_QUOTES, 'UTF-8'); ?></button>
+          <a href="./index.php" class="btn btn-gov-outline btn-block"><?php echo htmlspecialchars(i18n_t('reset.back_login', 'Back to login'), ENT_QUOTES, 'UTF-8'); ?></a>
         </form>
         <div class="status-note text-center">
-          If you did not request a reset, please ignore this page and contact your ward office.
+          <?php echo htmlspecialchars(i18n_t('reset.status', 'If you did not request a reset, please ignore this page and contact your ward office.'), ENT_QUOTES, 'UTF-8'); ?>
         </div>
       </div>
     </div>
@@ -367,4 +364,3 @@ if (isset($_POST['submit'])) {
 </body>
 
 </html>
-

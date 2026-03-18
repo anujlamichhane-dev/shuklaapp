@@ -1,5 +1,9 @@
+<?php
+require_once './src/i18n.php';
+$currentLang = i18n_lang();
+?>
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="<?php echo htmlspecialchars($currentLang, ENT_QUOTES, 'UTF-8'); ?>">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,8 +40,8 @@
                 </div>
               </div>
             </div>
-            <h2 class="slide-title">सिफारिस</h2>
-            <p class="slide-text">तपाईंको मोबाइलबाट सबै प्रकारका सिफारिसहरू पहुँच गर्नुहोस्।</p>
+            <h2 class="slide-title"><?php echo htmlspecialchars(i18n_t('landing.slide1.title', 'Recommendations'), ENT_QUOTES, 'UTF-8'); ?></h2>
+            <p class="slide-text"><?php echo htmlspecialchars(i18n_t('landing.slide1.text', 'Access municipal recommendation and certificate services directly from your mobile phone.'), ENT_QUOTES, 'UTF-8'); ?></p>
           </div>
 
           <div class="carousel-item">
@@ -51,8 +55,8 @@
                 </div>
               </div>
             </div>
-            <h2 class="slide-title">आपतकालिन सम्पर्क नं.</h2>
-            <p class="slide-text">आफ्नो स्थानीय स्वास्थ्य आपतकालीन सेवाहरुमा छिटो पहुँच प्राप्त गर्नुहोस्।</p>
+            <h2 class="slide-title"><?php echo htmlspecialchars(i18n_t('landing.slide2.title', 'Emergency Contacts'), ENT_QUOTES, 'UTF-8'); ?></h2>
+            <p class="slide-text"><?php echo htmlspecialchars(i18n_t('landing.slide2.text', 'Reach important local support and emergency contacts quickly when you need them.'), ENT_QUOTES, 'UTF-8'); ?></p>
           </div>
 
           <div class="carousel-item">
@@ -66,18 +70,18 @@
                 </div>
               </div>
             </div>
-            <h2 class="slide-title">गुनासो</h2>
-            <p class="slide-text">बुझ्नुहोस् वा जानकारी दर्ता गर्नुहोस् सहज र सुरक्षित रूपमा।</p>
+            <h2 class="slide-title"><?php echo htmlspecialchars(i18n_t('landing.slide3.title', 'Complaints'), ENT_QUOTES, 'UTF-8'); ?></h2>
+            <p class="slide-text"><?php echo htmlspecialchars(i18n_t('landing.slide3.text', 'Submit complaints or requests safely and track them more easily.'), ENT_QUOTES, 'UTF-8'); ?></p>
           </div>
         </div>
 
         <a class="carousel-control-prev" href="#featureCarousel" role="button" data-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
+          <span class="sr-only"><?php echo htmlspecialchars(i18n_t('landing.prev', 'Previous'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
         <a class="carousel-control-next" href="#featureCarousel" role="button" data-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
+          <span class="sr-only"><?php echo htmlspecialchars(i18n_t('landing.next', 'Next'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
       </div>
     </main>
@@ -87,7 +91,7 @@
         <div class="home-indicator"></div>
       </div>
       <a class="btn btn-primary shadow start-button" href="index.php">
-        सुरु गर्नुस्
+        <?php echo htmlspecialchars(i18n_t('landing.start', 'Get Started'), ENT_QUOTES, 'UTF-8'); ?>
         <span class="ml-2"><i class="fas fa-arrow-right"></i></span>
       </a>
     </footer>
@@ -98,4 +102,3 @@
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 </body>
 </html>
-

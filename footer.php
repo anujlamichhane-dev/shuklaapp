@@ -13,15 +13,15 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
+                <h5 class="modal-title" id="exampleModalLabel"><?php echo htmlspecialchars(i18n_t('common.logout_title', 'Ready to Leave?'), ENT_QUOTES, 'UTF-8'); ?></h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="<?php echo htmlspecialchars(i18n_t('common.close', 'Close'), ENT_QUOTES, 'UTF-8'); ?>">
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+            <div class="modal-body"><?php echo htmlspecialchars(i18n_t('common.logout_body', 'Select "Logout" below if you are ready to end your current session.'), ENT_QUOTES, 'UTF-8'); ?></div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="./logout.php">Logout</a>
+                <button class="btn btn-secondary" type="button" data-dismiss="modal"><?php echo htmlspecialchars(i18n_t('common.cancel', 'Cancel'), ENT_QUOTES, 'UTF-8'); ?></button>
+                <a class="btn btn-primary" href="./logout.php"><?php echo htmlspecialchars(i18n_t('nav.logout', 'Logout'), ENT_QUOTES, 'UTF-8'); ?></a>
             </div>
         </div>
     </div>
@@ -58,16 +58,19 @@
     if (toggle && sidebar) {
       toggle.addEventListener('click', function(e) {
         e.preventDefault();
-        // Let sb-admin.js handle the class toggle; only sync the backdrop state.
         setTimeout(() => {
-          if (backdrop) backdrop.classList.toggle('is-open', sidebar.classList.contains('toggled'));
+          if (backdrop) {
+            backdrop.classList.toggle('is-open', sidebar.classList.contains('toggled'));
+          }
         }, 0);
       });
     }
     if (closeBtn && sidebar) {
       closeBtn.addEventListener('click', function() {
         sidebar.classList.remove('toggled');
-        if (backdrop) backdrop.classList.remove('is-open');
+        if (backdrop) {
+          backdrop.classList.remove('is-open');
+        }
       });
     }
     if (backdrop && sidebar) {
@@ -76,7 +79,6 @@
         backdrop.classList.remove('is-open');
       });
     }
-
   })();
 </script>
 

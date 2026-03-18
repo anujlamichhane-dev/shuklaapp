@@ -1,219 +1,149 @@
 <?php
-  include './header.php';
- 
-  require_once './src/user.php';
-  require './src/helper-functions.php';
+require_once './src/i18n.php';
+$pageTitle = i18n_t('newuser.title', 'New user');
+include './header.php';
 
-  $err = '';
-  $msg = '';
+require_once './src/user.php';
+require './src/helper-functions.php';
 
-  if(isset($_POST['submit'])) {
+$err = '';
+$msg = '';
+$form = [
+    'name' => '',
+    'email' => '',
+    'phone' => '',
+    'role' => 'member',
+];
 
+if (isset($_POST['submit'])) {
+    $form['name'] = trim($_POST['name'] ?? '');
+    $form['email'] = trim($_POST['email'] ?? '');
+    $form['phone'] = trim($_POST['phone'] ?? '');
+    $form['role'] = trim($_POST['role'] ?? 'member');
+    $password = $_POST['password'] ?? '';
+    $confirmPass = $_POST['confirm-password'] ?? '';
 
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $password = $_POST['password'];
-    $confirm_pass = $_POST['confirm-password'];
+    if (strlen($form['name']) < 1) {
+        $err = i18n_t('newuser.error.name', 'Please enter user name');
+    } elseif (strlen($form['email']) < 1) {
+        $err = i18n_t('newuser.error.email', 'Please enter email');
+    } elseif (!isValidEmail($form['email'])) {
+        $err = i18n_t('newuser.error.valid_email', 'Please enter a valid email');
+    } elseif (strlen($form['phone']) < 1) {
+        $err = i18n_t('newuser.error.phone', 'Please enter phone number');
+    } elseif (!isValidPhone($form['phone'])) {
+        $err = i18n_t('newuser.error.valid_phone', 'Please enter a valid phone number');
+    } elseif (strlen($password) < 1) {
+        $err = i18n_t('newuser.error.password', 'Please enter a password');
+    } elseif (strlen($password) < 8) {
+        $err = i18n_t('newuser.error.password_short', 'Password should be at least 8 characters');
+    } elseif ($password !== $confirmPass) {
+        $err = i18n_t('newuser.error.password_match', 'Passwords do not match');
+    } else {
+        $allowedRoles = ['member', 'client', 'moderator', 'admin', 'creator', 'mayor', 'deputymayor', 'spokesperson', 'chief_officer', 'info_officer'];
+        $chosenRole = in_array($form['role'], $allowedRoles, true) ? $form['role'] : 'member';
 
-
-   if(strlen($name) < 1 ){
-       $err = "Please enter user name";
-   } else if(strlen($email) < 1 ){
-       $err = "please enter email";
-   }else if(!isValidEmail($email) ) {
-       $err = "please enter a valid email";
-   } else if(strlen($phone) < 1 ) {
-     $err = "please enter phone no";
-
-   } else if(!isValidPhone($phone)){
-       $err = "please enter a valid phone no";
-   } else if(strlen($password) < 1){
-       $err = "please enter a password";
-   }else if(strlen($password) < 8 ) {
-       $err = "please should be atleast 8 character";
-   } else if($password != $confirm_pass) {
-       $err = "password doesnot match";
-   } else {
-
-    $roleInput = $_POST['role'] ?? 'member';
-    $allowedRoles = ['member','client','moderator','admin','creator','mayor','deputymayor','spokesperson','chief_officer','info_officer'];
-    $chosenRole = in_array($roleInput, $allowedRoles, true) ? $roleInput : 'member';
-
-    try {
-
-        $user = new User([
-
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone,
-            'password' => password_hash($password, PASSWORD_DEFAULT),
-            'role' => $chosenRole,
-            'last_password' => password_hash($password, PASSWORD_DEFAULT)
-        ]);
-
-        $user->save();
-        $msg = "User Created successfully";
-
-    } catch (Exception $e) {
-       $err = "Unable to create user";
+        try {
+            $newUser = new User([
+                'name' => $form['name'],
+                'email' => $form['email'],
+                'phone' => $form['phone'],
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'role' => $chosenRole,
+                'last_password' => password_hash($password, PASSWORD_DEFAULT),
+            ]);
+            $newUser->save();
+            $msg = i18n_t('newuser.success', 'User created successfully');
+            $form = ['name' => '', 'email' => '', 'phone' => '', 'role' => 'member'];
+        } catch (Exception $e) {
+            $err = i18n_t('newuser.error.create_failed', 'Unable to create user');
+        }
     }
-
-    
-}
 }
 
- ?>
+$roles = ['member', 'client', 'moderator', 'admin', 'creator', 'mayor', 'deputymayor', 'spokesperson', 'chief_officer', 'info_officer'];
+?>
 <div id="content-wrapper">
+  <div class="container-fluid">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="./dashboard.php"><?php echo htmlspecialchars(i18n_t('common.dashboard', 'Dashboard'), ENT_QUOTES, 'UTF-8'); ?></a>
+      </li>
+      <li class="breadcrumb-item active"><?php echo htmlspecialchars(i18n_t('newuser.title', 'New user'), ENT_QUOTES, 'UTF-8'); ?></li>
+    </ol>
 
-    <div class="container-fluid">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="#">Dashboard</a>
-            </li>
-            <li class="breadcrumb-item active">New ticket</li>
-        </ol>
+    <div class="card mb-3">
+      <div class="card-header">
+        <h3 class="mb-1"><?php echo htmlspecialchars(i18n_t('newuser.card_title', 'Create a new user'), ENT_QUOTES, 'UTF-8'); ?></h3>
+        <small class="text-muted"><?php echo htmlspecialchars(i18n_t('newuser.card_subtitle', 'Add a user account and assign an access role.'), ENT_QUOTES, 'UTF-8'); ?></small>
+      </div>
+      <div class="card-body">
+        <?php if ($err !== ''): ?>
+          <div class="alert alert-danger text-center my-3" role="alert"><strong><?php echo htmlspecialchars(i18n_t('common.failed', 'Failed!'), ENT_QUOTES, 'UTF-8'); ?></strong> <?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?></div>
+        <?php endif; ?>
 
-        <div class="card mb-3">
-            <div class="card-header">
-                <h3>Create a new ticket</h3>
+        <?php if ($msg !== ''): ?>
+          <div class="alert alert-success text-center my-3" role="alert"><strong><?php echo htmlspecialchars(i18n_t('common.success', 'Success!'), ENT_QUOTES, 'UTF-8'); ?></strong> <?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'); ?></div>
+        <?php endif; ?>
+
+        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+          <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
+            <label for="name" class="col-sm-12 col-lg-3 col-md-3 col-form-label"><?php echo htmlspecialchars(i18n_t('newuser.name', 'Name'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <div class="col-sm-9">
+              <input type="text" name="name" id="name" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('newuser.name', 'Name'), ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars($form['name'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
-            <div class="card-body">
-               
-              <?php if(strlen($err) > 1) :?>
-                <div class="alert alert-danger text-center my-3" role="alert"> <strong>Failed! </strong> <?php echo $err;?></div>
-                <?php endif?>
+          </div>
 
-                <?php if(strlen($msg) > 1) :?>
-                <div class="alert alert-success text-center my-3" role="alert"> <strong>Success! </strong> <?php echo $msg;?></div>
-                <?php endif?>
-
-                <form method="POST" action="<?php echo $_SERVER['PHP_SELF']?>">
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="name" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Name</label>
-                        <div class="col-sm-8">
-                            <input type="text" name="name" class="form-control" id="" placeholder="Enter name">
-                        </div>
-                    </div>
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="email" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Email</label>
-                        <div class="col-sm-8">
-                            <input type="text" name="email" class="form-control" id="" placeholder="Enter email">
-                        </div>
-                    </div>
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="email" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Phone</label>
-                        <div class="col-sm-8">
-                            <input type="text" name="phone" class="form-control" id="" placeholder="Enter phone number">
-                        </div>
-                    </div>
-                 
-                   
-                 
-                <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="email" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Password</label>
-                        <div class="col-sm-8">
-                            <input type="password" name="password" class="form-control" id="" placeholder="Enter password">
-                        </div>
-                    </div>
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="email" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Confirm Password </label>
-                        <div class="col-sm-8">
-                            <input type="password" name="confirm-password" class="form-control" id="" placeholder="Enter confirm password">
-                        </div>
-                    </div>
-                    <?php if($isAdmin): ?>
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label class="col-sm-12 col-lg-2 col-md-2 col-form-label">Role</label>
-                        <div class="col-sm-8">
-                            <select name="role" class="form-control">
-                                <option value="member">Member (default)</option>
-                                <option value="client">Client</option>
-                                <option value="moderator">Moderator</option>
-                                <option value="admin">Admin</option>
-                                <option value="creator">Creator</option>
-                                <option value="mayor">Mayor</option>
-                                <option value="deputymayor">Deputy Mayor</option>
-                                <option value="spokesperson">Spokesperson</option>
-                                <option value="chief_officer">Chief Officer</option>
-                                <option value="info_officer">Information Officer</option>
-                            </select>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-                 
-                 
-                   
-                    <div class="text-center">
-                        <button type="submit" name="submit" class="btn btn-lg btn-primary"> Create</button>
-                    </div>
-                </form>
+          <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
+            <label for="email" class="col-sm-12 col-lg-3 col-md-3 col-form-label"><?php echo htmlspecialchars(i18n_t('newuser.email', 'Email'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <div class="col-sm-9">
+              <input type="text" name="email" id="email" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('newuser.email', 'Email'), ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars($form['email'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
-        </div>
+          </div>
 
+          <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
+            <label for="phone" class="col-sm-12 col-lg-3 col-md-3 col-form-label"><?php echo htmlspecialchars(i18n_t('newuser.phone', 'Phone'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <div class="col-sm-9">
+              <input type="text" name="phone" id="phone" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('newuser.phone', 'Phone'), ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars($form['phone'], ENT_QUOTES, 'UTF-8'); ?>">
+            </div>
+          </div>
+
+          <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
+            <label for="password" class="col-sm-12 col-lg-3 col-md-3 col-form-label"><?php echo htmlspecialchars(i18n_t('newuser.password', 'Password'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <div class="col-sm-9">
+              <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('newuser.password', 'Password'), ENT_QUOTES, 'UTF-8'); ?>">
+            </div>
+          </div>
+
+          <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
+            <label for="confirm-password" class="col-sm-12 col-lg-3 col-md-3 col-form-label"><?php echo htmlspecialchars(i18n_t('newuser.confirm_password', 'Confirm Password'), ENT_QUOTES, 'UTF-8'); ?></label>
+            <div class="col-sm-9">
+              <input type="password" name="confirm-password" id="confirm-password" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('newuser.confirm_password', 'Confirm Password'), ENT_QUOTES, 'UTF-8'); ?>">
+            </div>
+          </div>
+
+          <?php if ($isAdmin): ?>
+            <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
+              <label for="role" class="col-sm-12 col-lg-3 col-md-3 col-form-label"><?php echo htmlspecialchars(i18n_t('newuser.role', 'Role'), ENT_QUOTES, 'UTF-8'); ?></label>
+              <div class="col-sm-9">
+                <select name="role" id="role" class="form-control">
+                  <?php foreach ($roles as $roleValue): ?>
+                    <option value="<?php echo htmlspecialchars($roleValue, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $roleValue === $form['role'] ? 'selected' : ''; ?>>
+                      <?php echo htmlspecialchars(i18n_role_label($roleValue), ENT_QUOTES, 'UTF-8'); ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+            </div>
+          <?php endif; ?>
+
+          <div class="text-center">
+            <button type="submit" name="submit" class="btn btn-lg btn-primary"><?php echo htmlspecialchars(i18n_t('newuser.create', 'Create'), ENT_QUOTES, 'UTF-8'); ?></button>
+          </div>
+        </form>
+      </div>
     </div>
-    <!-- /.container-fluid -->
-
-    <!-- Sticky Footer -->
-    <footer class="sticky-footer">
-        <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-            <span>Copyright © Synchlab Coding</span>
-            </div>
-        </div>
-    </footer>
-
-</div>
-<!-- /.content-wrapper -->
-
-</div>
-<!-- /#wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="./index.php">Logout</a>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- Core plugin JavaScript-->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-<!-- Page level plugin JavaScript-->
-<script src="vendor/chart.js/Chart.min.js"></script>
-<script src="vendor/datatables/jquery.dataTables.js"></script>
-<script src="vendor/datatables/dataTables.bootstrap4.js"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="js/sb-admin.min.js"></script>
-
-<!-- Demo scripts for this page-->
-<script src="js/demo/datatables-demo.js"></script>
-<script src="js/demo/chart-area-demo.js"></script>
-
-</body>
-
-</html>
-
+<?php include './footer.php'; ?>

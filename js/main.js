@@ -1,3 +1,15 @@
+const currentLang = document.documentElement.lang === 'ne' ? 'ne' : 'en';
+const uiText = currentLang === 'ne'
+    ? {
+        selectPlaceholder: '--छान्नुहोस्--',
+        showPassword: 'पासवर्ड देखाउनुहोस्',
+        hidePassword: 'पासवर्ड लुकाउनुहोस्'
+    }
+    : {
+        selectPlaceholder: '--select--',
+        showPassword: 'Show password',
+        hidePassword: 'Hide password'
+    };
 
 const getTeamMember = function (teamId){
     $.ajax({
@@ -8,21 +20,19 @@ const getTeamMember = function (teamId){
         'success': function(response){
             let result = JSON.parse(response);
             const options = [];
-            let option = `<option value="none">--select--</option>`;
+            let option = `<option value="none">${uiText.selectPlaceholder}</option>`;
             options.push(option);
             for(let i = 0; i< result.length; i++){
-                let option = `<option value="${result[i].id}">${result[i].name}</option>`;
+                option = `<option value="${result[i].id}">${result[i].name}</option>`;
                 options.push(option);
             }
 
             $('#team-member-dropdown').html(options.join(''));
-
         }
     });
-}
+};
 
 const ensureBackHomeButton = () => {
-    // Back-to-home button removed per request; keep function to avoid runtime errors.
     return;
 };
 
@@ -54,8 +64,11 @@ const initPasswordToggle = () => {
 
         const icon = toggleButton.querySelector('i');
         const isHidden = targetInput.type === 'password';
+        const showLabel = toggleButton.dataset.showLabel || uiText.showPassword;
+        const hideLabel = toggleButton.dataset.hideLabel || uiText.hidePassword;
+
         targetInput.type = isHidden ? 'text' : 'password';
-        toggleButton.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        toggleButton.setAttribute('aria-label', isHidden ? hideLabel : showLabel);
         toggleButton.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
 
         if (icon) {

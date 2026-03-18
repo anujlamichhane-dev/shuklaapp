@@ -1,5 +1,7 @@
-<?php
+﻿<?php
+  require_once './src/i18n.php';
   $bodyClass = 'mobile-home-body';
+  $pageTitle = i18n_t('message.title', 'Message Officials');
   $extraCss = ['css/mobile-home.css'];
   $hideSidebar = true;
   $hideSidebarToggle = true;
@@ -7,12 +9,12 @@
   require_once './src/Database.php';
 
   $recipients = [
-    'mayor' => ['label' => 'कृष्णराज पण्डित (नगर प्रमुख)', 'email' => 'mayor@shuklagandakimun.gov.np'],
-    'deputymayor' => ['label' => 'खुम बहादुर बि.क (उप– प्रमुख)', 'email' => 'deputymayor@shuklagandakimun.gov.np'],
-    'spokesperson' => ['label' => 'सचिन भुजेल (वडा अध्यक्ष)', 'email' => 'ward3shukla@gmail.com'],
-    'chief_officer' => ['label' => 'शिशिर पौडेल (प्रमुख प्रशासनकीय अधिकृत)', 'email' => 'sanskritpaudel@gmail.com'],
-    'info_officer' => ['label' => 'अनिल खनाल (सूचना अधिकारी)', 'email' => 'shuklasuchana@gmail.com'],
-    'office_info' => ['label' => 'नगर कार्यालय (info@)', 'email' => 'info@shuklagandakimun.gov.np'],
+    'mayor' => ['label' => i18n_t('message.recipient.mayor', 'Krishnaraj Pandit (Mayor)'), 'email' => 'mayor@shuklagandakimun.gov.np'],
+    'deputymayor' => ['label' => i18n_t('message.recipient.deputymayor', 'Khum Bahadur B.K. (Deputy Mayor)'), 'email' => 'deputymayor@shuklagandakimun.gov.np'],
+    'spokesperson' => ['label' => i18n_t('message.recipient.spokesperson', 'Sachin Bhujel (Spokesperson)'), 'email' => 'ward3shukla@gmail.com'],
+    'chief_officer' => ['label' => i18n_t('message.recipient.chief_officer', 'Shishir Paudel (Chief Officer)'), 'email' => 'sanskritpaudel@gmail.com'],
+    'info_officer' => ['label' => i18n_t('message.recipient.info_officer', 'Anil Khanal (Information Officer)'), 'email' => 'shuklasuchana@gmail.com'],
+    'office_info' => ['label' => i18n_t('message.recipient.office_info', 'Municipal Office (info@)'), 'email' => 'info@shuklagandakimun.gov.np'],
   ];
 
   $statusMsg = '';
@@ -40,22 +42,22 @@
     $recipient = $_POST['recipient'] ?? '';
 
     if (!isset($recipients[$recipient])) {
-      $statusMsg = 'Please choose a recipient.';
+      $statusMsg = i18n_t('message.error.choose_recipient', 'Please choose a recipient.');
       $statusType = 'error';
     } elseif (strlen($name) < 2) {
-      $statusMsg = 'Enter your name.';
+      $statusMsg = i18n_t('message.error.enter_name', 'Enter your name.');
       $statusType = 'error';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      $statusMsg = 'Enter a valid email address.';
+      $statusMsg = i18n_t('message.error.valid_email', 'Enter a valid email address.');
       $statusType = 'error';
     } elseif (strlen($subject) < 3) {
-      $statusMsg = 'Subject must be at least 3 characters.';
+      $statusMsg = i18n_t('message.error.subject_min', 'Subject must be at least 3 characters.');
       $statusType = 'error';
     } elseif (strlen($message) < 10) {
-      $statusMsg = 'Message must be at least 10 characters.';
+      $statusMsg = i18n_t('message.error.body_min', 'Message must be at least 10 characters.');
       $statusType = 'error';
     } elseif ($hasUpload && ($_FILES['attachment']['error'] !== UPLOAD_ERR_OK)) {
-      $statusMsg = 'File upload failed. Please try again.';
+      $statusMsg = i18n_t('message.error.upload_failed', 'File upload failed. Please try again.');
       $statusType = 'error';
     } elseif ($hasUpload) {
       $uploadName = $_FILES['attachment']['name'] ?? '';
@@ -65,13 +67,13 @@
       $ext = strtolower(pathinfo($uploadName, PATHINFO_EXTENSION));
 
       if (!in_array($ext, $allowedExt, true)) {
-        $statusMsg = 'Unsupported file type. Allowed: pdf, images, office docs, txt, csv.';
+        $statusMsg = i18n_t('message.error.unsupported_attachment', 'Unsupported file type. Allowed: PDF, images, Office docs, TXT, CSV.');
         $statusType = 'error';
       } elseif ($uploadSize > $maxBytes) {
-        $statusMsg = 'File is too large. Max 10MB.';
+        $statusMsg = i18n_t('message.error.attachment_large', 'File is too large. Max 10MB.');
         $statusType = 'error';
       } elseif (!is_uploaded_file($tmpName)) {
-        $statusMsg = 'Invalid upload. Please try again.';
+        $statusMsg = i18n_t('message.error.invalid_upload', 'Invalid upload. Please try again.');
         $statusType = 'error';
       } else {
         $safeSlug = preg_replace('/[^a-zA-Z0-9-_]/', '_', pathinfo($uploadName, PATHINFO_FILENAME));
@@ -80,7 +82,7 @@
         if (move_uploaded_file($tmpName, $dest)) {
           $uploadPathRel = 'data/message_uploads/' . $uniqueName;
         } else {
-          $statusMsg = 'Could not save the uploaded file.';
+          $statusMsg = i18n_t('message.error.could_not_save', 'Could not save the uploaded file.');
           $statusType = 'error';
         }
       }
@@ -152,7 +154,7 @@
         $stmt->close();
       }
 
-      $statusMsg = 'Message sent to official inbox.';
+      $statusMsg = i18n_t('message.success.sent', 'Message sent to official inbox.');
       $statusType = 'success';
     }
   }
@@ -218,3 +220,4 @@
   </div>
 
 <?php include './footer.php'; ?>
+
