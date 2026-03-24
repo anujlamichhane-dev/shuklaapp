@@ -1,0 +1,42 @@
+[
+    {
+        "id": "mayor",
+        "photo": "img/mayor.png",
+        "name": "कृष्णराज पण्डित",
+        "role": "नगर प्रमुख",
+        "email": "mayor@shuklagandakimun.gov.np",
+        "phone": "9856087111"
+    },
+    {
+        "id": "deputymayor",
+        "photo": "img/deputymayor.png",
+        "name": "खुम बहादुर वि.क (राजु)",
+        "role": "उप- प्रमुख",
+        "email": "deputymayor@shuklagandakimun.gov.np",
+        "phone": "9856081222"
+    },
+    {
+        "id": "spokesperson",
+        "photo": "img/spokesperson.png",
+        "name": "सचिन भुजेल (प्रवक्ता)",
+        "role": "वडा अध्यक्ष",
+        "email": "ward3shukla@gmail.com",
+        "phone": "9856087003"
+    },
+    {
+        "id": "chief_officer",
+        "photo": "img/chief-officer.png",
+        "name": "शिशिर पौडेल",
+        "role": "प्रमुख प्रशासनकीय अधिकृत",
+        "email": "sanskritpaudel@gmail.com",
+        "phone": "9856004111"
+    },
+    {
+        "id": "info_officer",
+        "photo": "img/info-officer.png",
+        "name": "अनिल खनाल",
+        "role": "सूचना अधिकारी",
+        "email": "shuklasuchana@gmail.com",
+        "phone": "9856043417"
+    }
+]

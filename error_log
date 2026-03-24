@@ -1,0 +1,244 @@
+[11-Feb-2026 17:35:06 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:36:24 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:37:05 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:38:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:39:22 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:39:32 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:54:42 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:54:42 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:54:48 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:59:59 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 17:59:59 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:00:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:02:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:07:18 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:07:18 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:17:30 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:17:37 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:18:41 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:18:42 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:26:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:26:32 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:28:15 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:28:16 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:28:44 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:29:00 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:29:02 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home8/shuklaap/public_html/src/Database.php:14
+Stack trace:
+#0 /home8/shuklaap/public_html/src/Database.php(14): mysqli->__construct()
+#1 /home8/shuklaap/public_html/index.php(11): Database::getInstance()
+#2 {main}
+  thrown in /home8/shuklaap/public_html/src/Database.php on line 14
+[11-Feb-2026 18:49:46 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:49:46 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:49:46 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:49:46 UTC] PHP Warning:  Undefined variable $langUrlEn in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:49:46 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:49:46 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:49:46 UTC] PHP Warning:  Undefined variable $langUrlNe in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:49:46 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:50:02 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/index.php on line 51
+[11-Feb-2026 18:51:05 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:51:05 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:51:05 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:05 UTC] PHP Warning:  Undefined variable $langUrlEn in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:05 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:05 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:51:05 UTC] PHP Warning:  Undefined variable $langUrlNe in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:51:05 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:51:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/index.php:51
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/index.php on line 51
+[11-Feb-2026 18:51:08 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:51:08 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:51:08 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:08 UTC] PHP Warning:  Undefined variable $langUrlEn in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:08 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:08 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:51:08 UTC] PHP Warning:  Undefined variable $langUrlNe in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:51:08 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:51:18 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:51:18 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:51:18 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:18 UTC] PHP Warning:  Undefined variable $langUrlEn in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:18 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:51:18 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:51:18 UTC] PHP Warning:  Undefined variable $langUrlNe in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:51:18 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:52:17 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:52:17 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:52:17 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:52:17 UTC] PHP Warning:  Undefined variable $langUrlEn in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:52:17 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:52:17 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:52:17 UTC] PHP Warning:  Undefined variable $langUrlNe in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:52:17 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:52:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/new.php:43
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/new.php on line 43
+[11-Feb-2026 18:52:36 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:52:36 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 79
+[11-Feb-2026 18:52:36 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:52:36 UTC] PHP Warning:  Undefined variable $langUrlEn in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:52:36 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 306
+[11-Feb-2026 18:52:36 UTC] PHP Warning:  Undefined variable $currentLang in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:52:36 UTC] PHP Warning:  Undefined variable $langUrlNe in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:52:36 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home8/shuklaap/public_html/index.php on line 307
+[11-Feb-2026 18:53:23 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/new.php:43
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/new.php on line 43
+[11-Feb-2026 18:55:24 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/new.php:43
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/new.php on line 43
+[11-Feb-2026 18:55:32 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/new.php:43
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/new.php on line 43
+[11-Feb-2026 18:55:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/new.php:43
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/new.php on line 43
+[11-Feb-2026 18:56:22 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/new.php:43
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/new.php on line 43
+[11-Feb-2026 18:59:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/new.php:43
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/new.php on line 43
+[11-Feb-2026 19:01:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method mysqli_stmt::get_result() in /home8/shuklaap/public_html/new.php:46
+Stack trace:
+#0 {main}
+  thrown in /home8/shuklaap/public_html/new.php on line 46
