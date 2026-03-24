@@ -72,36 +72,68 @@
       } else {
         try{
             $db = Database::getInstance();
-            $existingRequester = Requester::findByEmail($email);
-            $savedRequester = $existingRequester;
-
-            if (!$existingRequester) {
-                $requester = new Requester([
-                    'name' => $name,
-                    'email' => $email,
-                    'phone' => $phone,
-                    'user_id' => $user->id ?? null
-                ]); //this obj has no id
-                
-                $savedRequester = $requester->save(); //this obj has the id,because of save();cz it returns an obj
-            } else if (
-                $existingRequester->hasUserIdColumn()
-                && ($existingRequester->user_id ?? null) === null
-                && isset($user->id)
-            ) {
-                $db->query("UPDATE requester SET user_id = " . (int)$user->id . " WHERE id = " . (int)$existingRequester->id);
-                $existingRequester->user_id = $user->id;
+            $hasUserIdColumn = false;
+            $colCheck = $db->query("SHOW COLUMNS FROM requester LIKE 'user_id'");
+            if ($colCheck && $colCheck->num_rows > 0) {
+                $hasUserIdColumn = true;
             }
-      
-            $ticket = new Ticket([
-                'title' => $subject,
-                'body' => $comment,
-                'requester' => $savedRequester->id,
-                'team' => (int)$team,
-                'priority' => $priority
-            ]); 
-      
-            $savedTicket = $ticket->save();
+
+            if ($hasUserIdColumn) {
+                $insertRequester = $db->prepare(
+                    "INSERT INTO requester (name, email, phone, user_id)
+                     VALUES (?, ?, ?, ?)"
+                );
+            } else {
+                $insertRequester = $db->prepare(
+                    "INSERT INTO requester (name, email, phone)
+                     VALUES (?, ?, ?)"
+                );
+            }
+
+            if ($insertRequester === false) {
+                throw new Exception('Failed to prepare requester insert');
+            }
+
+            if ($hasUserIdColumn) {
+                $requesterUserId = isset($user->id) ? (int)$user->id : null;
+                $insertRequester->bind_param('sssi', $name, $email, $phone, $requesterUserId);
+            } else {
+                $insertRequester->bind_param('sss', $name, $email, $phone);
+            }
+
+            if (!$insertRequester->execute()) {
+                $requesterError = $insertRequester->error ?: $db->error;
+                $insertRequester->close();
+                throw new Exception($requesterError);
+            }
+
+            $requesterId = (int)$db->insert_id;
+            $insertRequester->close();
+
+            $teamId = (int)$team;
+            $insertTicket = $db->prepare(
+                "INSERT INTO ticket (title, body, requester, team, status, priority)
+                 VALUES (?, ?, ?, ?, 'open', ?)"
+            );
+
+            if ($insertTicket === false) {
+                throw new Exception('Failed to prepare ticket insert');
+            }
+
+            $insertTicket->bind_param('ssiis', $subject, $comment, $requesterId, $teamId, $priority);
+
+            if (!$insertTicket->execute()) {
+                $ticketError = $insertTicket->error ?: $db->error;
+                $insertTicket->close();
+                throw new Exception($ticketError);
+            }
+
+            $savedTicketId = (int)$db->insert_id;
+            $insertTicket->close();
+
+            $savedTicket = new stdClass();
+            $savedTicket->id = $savedTicketId;
+
             try {
                 $event = new Event([
                     'ticket' => $savedTicket->id, 
