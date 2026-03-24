@@ -10,6 +10,34 @@
   $err = '';
   $msg = '';
 
+  function redirectAfterCreate($target)
+  {
+      if (ob_get_level()) {
+          while (ob_get_level()) {
+              ob_end_clean();
+          }
+      }
+
+      header('Location: ' . $target, true, 302);
+      ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="0;url=<?php echo htmlspecialchars($target, ENT_QUOTES, 'UTF-8'); ?>">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <script>
+        window.location.replace(<?php echo json_encode($target); ?>);
+    </script>
+    <a href="<?php echo htmlspecialchars($target, ENT_QUOTES, 'UTF-8'); ?>">Continue</a>
+</body>
+</html>
+      <?php
+      exit();
+  }
+
   // Pre-fill fields to avoid undefined notices and improve UX after validation errors
   $prefillName = '';
   $prefillEmail = '';
@@ -145,8 +173,7 @@
                 error_log('Ticket event logging failed for ticket ' . (int)$savedTicket->id . ': ' . $eventError->getMessage());
             }
 
-            header('Location: ./ticket-details.php?id=' . (int)$savedTicket->id . '&created=1');
-            exit();
+            redirectAfterCreate('./mytickets.php');
         } catch(Throwable $e){
             error_log('Ticket creation failed for user ' . ($user->id ?? 'unknown') . ': ' . $e->getMessage());
             $err = "Failed to generate ticket";
