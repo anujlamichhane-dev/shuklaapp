@@ -38,14 +38,48 @@ class Ticket
 
     public function save(): Ticket
     {
-        $sql = "INSERT INTO ticket (title, body, requester, team, team_member, status, priority)
-                VALUES ('$this->title', '$this->body', '$this->requester', '$this->team', '$this->team_member', '$this->status', '$this->priority')";
+        $stmt = $this->db->prepare(
+            "INSERT INTO ticket (title, body, requester, team, team_member, status, priority)
+             VALUES (?, ?, ?, ?, ?, ?, ?)"
+        );
 
-        if ($this->db->query($sql) === false) {
+        if ($stmt === false) {
             throw new Exception($this->db->error);
         }
-        $id = $this->db->insert_id;
-        return self::find($id);
+
+        $requester = $this->requester !== null ? (int)$this->requester : 0;
+        $team = $this->team !== null ? (int)$this->team : null;
+        $teamMember = $this->team_member !== null && $this->team_member !== '' ? (string)$this->team_member : null;
+        $status = $this->status ?? 'open';
+        $priority = $this->priority ?? 'low';
+
+        $stmt->bind_param(
+            'ssiisss',
+            $this->title,
+            $this->body,
+            $requester,
+            $team,
+            $teamMember,
+            $status,
+            $priority
+        );
+
+        if (!$stmt->execute()) {
+            $error = $stmt->error ?: $this->db->error;
+            $stmt->close();
+            throw new Exception($error);
+        }
+
+        $this->id = $this->db->insert_id;
+        $this->requester = $requester;
+        $this->team = $team;
+        $this->team_member = $teamMember;
+        $this->status = $status;
+        $this->priority = $priority;
+        $this->created_at = date('Y-m-d H:i:s');
+        $stmt->close();
+
+        return $this;
     }
 
     public static function find($id): Ticket
@@ -155,16 +189,50 @@ class Ticket
 
     public function update($id): Ticket
     {
+        $stmt = $this->db->prepare(
+            "UPDATE ticket
+             SET team_member = ?, title = ?, body = ?, requester = ?, team = ?, status = ?, priority = ?
+             WHERE id = ?"
+        );
 
-        $sql = "UPDATE ticket set `team_member` = '$this->team_member', `title` = '$this->title',`body` = '$this->body',
-         `requester`='$this->requester', `team`= '$this->team', `status`= '$this->status', `priority`='$this->priority'
-          Where id = '$id'";
-
-        if ($this->db->query($sql) === false) {
+        if ($stmt === false) {
             throw new Exception($this->db->error);
         }
 
-        return self::find($id);
+        $ticketId = (int)$id;
+        $requester = $this->requester !== null ? (int)$this->requester : 0;
+        $team = $this->team !== null ? (int)$this->team : null;
+        $teamMember = $this->team_member !== null && $this->team_member !== '' ? (string)$this->team_member : null;
+        $status = $this->status ?? 'open';
+        $priority = $this->priority ?? 'low';
+
+        $stmt->bind_param(
+            'sssiissi',
+            $teamMember,
+            $this->title,
+            $this->body,
+            $requester,
+            $team,
+            $status,
+            $priority,
+            $ticketId
+        );
+
+        if (!$stmt->execute()) {
+            $error = $stmt->error ?: $this->db->error;
+            $stmt->close();
+            throw new Exception($error);
+        }
+
+        $this->id = $ticketId;
+        $this->requester = $requester;
+        $this->team = $team;
+        $this->team_member = $teamMember;
+        $this->status = $status;
+        $this->priority = $priority;
+        $stmt->close();
+
+        return $this;
 
     }
 

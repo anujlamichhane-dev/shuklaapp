@@ -29,21 +29,38 @@ class Requester{
     public function save() : Requester
     {
         if ($this->hasUserIdColumn()) {
-            $userId = $this->user_id !== null ? (int)$this->user_id : 'NULL';
-            $sql = "INSERT INTO requester (name, email, phone, user_id)
-                    VALUES ('$this->name', '$this->email', '$this->phone', $userId);
-            ";
+            $stmt = $this->db->prepare(
+                "INSERT INTO requester (name, email, phone, user_id)
+                 VALUES (?, ?, ?, ?)"
+            );
         } else {
-            $sql = "INSERT INTO requester (name, email, phone)
-                    VALUES ('$this->name', '$this->email', '$this->phone');
-            ";
+            $stmt = $this->db->prepare(
+                "INSERT INTO requester (name, email, phone)
+                 VALUES (?, ?, ?)"
+            );
         }
 
-        if($this->db->query($sql) === false) {
+        if ($stmt === false) {
             throw new Exception($this->db->error);
         }
-        $id = $this->db->insert_id;
-        return self::find($id);
+
+        if ($this->hasUserIdColumn()) {
+            $userId = $this->user_id !== null ? (int)$this->user_id : null;
+            $stmt->bind_param('sssi', $this->name, $this->email, $this->phone, $userId);
+        } else {
+            $stmt->bind_param('sss', $this->name, $this->email, $this->phone);
+        }
+
+        if (!$stmt->execute()) {
+            $error = $stmt->error ?: $this->db->error;
+            $stmt->close();
+            throw new Exception($error);
+        }
+
+        $this->id = $this->db->insert_id;
+        $stmt->close();
+
+        return $this;
 
     }
 

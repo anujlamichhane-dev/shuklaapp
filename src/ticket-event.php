@@ -26,15 +26,32 @@ class Event{
 
     public function save() : Event 
     {
-        $sql = "INSERT INTO ticket_event (ticket, user,  body)
-                VALUES ('$this->ticket', '$this->user', '$this->body');
-        ";
-        
-        if($this->db->query($sql) === false) {
+        $stmt = $this->db->prepare(
+            "INSERT INTO ticket_event (ticket, user, body)
+             VALUES (?, ?, ?)"
+        );
+
+        if ($stmt === false) {
             throw new Exception($this->db->error);
         }
-        $id = $this->db->insert_id;
-        return self::find($id);
+
+        $ticketId = (int)$this->ticket;
+        $userId = (int)$this->user;
+        $stmt->bind_param('iis', $ticketId, $userId, $this->body);
+
+        if (!$stmt->execute()) {
+            $error = $stmt->error ?: $this->db->error;
+            $stmt->close();
+            throw new Exception($error);
+        }
+
+        $this->id = $this->db->insert_id;
+        $this->ticket = $ticketId;
+        $this->user = $userId;
+        $this->created_at = date('Y-m-d H:i:s');
+        $stmt->close();
+
+        return $this;
     }
 
     public static function find($id) : Event

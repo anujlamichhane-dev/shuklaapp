@@ -102,13 +102,16 @@
             ]); 
       
             $savedTicket = $ticket->save();
-
-            $event = new Event([
-                'ticket' => $savedTicket->id, 
-                'user' => $user->id, 
-                'body' => 'Ticket created'
-            ]);
-            $event->save();
+            try {
+                $event = new Event([
+                    'ticket' => $savedTicket->id, 
+                    'user' => $user->id ?? 0, 
+                    'body' => 'Ticket created'
+                ]);
+                $event->save();
+            } catch (Throwable $eventError) {
+                error_log('Ticket event logging failed for ticket ' . (int)$savedTicket->id . ': ' . $eventError->getMessage());
+            }
 
             header('Location: ./ticket-details.php?id=' . (int)$savedTicket->id . '&created=1');
             exit();
