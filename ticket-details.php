@@ -28,10 +28,7 @@ if ($isClient && !$isClientOwner) {
 }
 
 $teams = Team::findAll();
-
-$events = Event::findByTicket($ticket->id);
-
-$comments = Comment::findByTicket($ticket->id);
+$commentDraft = '';
 
 if (isset($_POST['submit'])) {
 
@@ -72,25 +69,34 @@ if (isset($_POST['submit'])) {
 
 if (isset($_POST['comment'])) {
 
-    $body = $_POST["body"];
+    $commentDraft = trim($_POST['body'] ?? '');
 
     try {
+        if ($commentDraft === '') {
+            throw new Exception('Please enter comment');
+        }
+
         $comment = new Comment([
             'ticket-id' => $ticket->id,
-            'team-member' => $ticket->team_member,
-            'body' => $body,
+            'team-member' => $user->id ?? null,
+            'body' => $commentDraft,
 
         ]);
         $comment->save();
-        //  print_r($cv);die();
         $msg = "Successfully comment on the ticket";
+        $commentDraft = '';
 
     } catch (Exception $e) {
-        var_dump($e);
-        $err = "Failed to comment on the ticket";
+        $err = $e->getMessage() ?: "Failed to comment on the ticket";
     }
 
 }
+
+$events = Event::findByTicket($ticket->id);
+$comments = Comment::findByTicket($ticket->id);
+$originalCommentBody = trim((string)($ticket->body ?? ''));
+$originalCommentAuthor = trim((string)($requesterOwner->name ?? 'Requester'));
+$ticketCreatedAt = !empty($ticket->created_at) ? new DateTime($ticket->created_at) : null;
 
 ?>
 <div id="content-wrapper">
@@ -107,9 +113,10 @@ if (isset($_POST['comment'])) {
                 <div class="row mx-auto">
                     <div>
                         <?php echo $ticket->displayStatusBadge()?>
-                        <small class="text-info ml-2"><?php echo $ticket->title?> <span class="text-muted">
-                                <?php $date = new DateTime($ticket->created_at ?? '' );?>
-                                <?php echo $date->format('d-m-Y H:i:s')?>
+                        <small class="text-info ml-2"><?php echo htmlspecialchars((string)$ticket->title, ENT_QUOTES, 'UTF-8')?> <span class="text-muted">
+                                <?php if ($ticketCreatedAt instanceof DateTime): ?>
+                                <?php echo $ticketCreatedAt->format('d-m-Y H:i:s')?>
+                                <?php endif; ?>
                             </span></small>
                     </div>
                   
@@ -117,16 +124,17 @@ if (isset($_POST['comment'])) {
 
             </div>
             <div class="card-body">
+                <?php if(strlen($err) > 1) :?>
+                <div class="alert alert-danger text-center my-3" role="alert"> <strong>Failed! </strong> <?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8');?></div>
+                <?php endif?>
+
+                <?php if(strlen($msg) > 1) :?>
+                <div class="alert alert-success text-center my-3" role="alert"> <strong>Success! </strong> <?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8');?></div>
+                <?php endif?>
+
                 <?php if(!$isClient): ?>
                     <form method="post">
                         <div class="col-lg-8 col-md-8 col-sm-12 offset-lg-2 offset-md-2">
-                        <?php if(strlen($err) > 1) :?>
-                    <div class="alert alert-danger text-center my-3" role="alert"> <strong>Failed! </strong> <?php echo $err;?></div>
-                    <?php endif?>
-
-                    <?php if(strlen($msg) > 1) :?>
-                    <div class="alert alert-success text-center my-3" role="alert"> <strong>Success! </strong> <?php echo $msg;?></div>
-                    <?php endif?>
                             <div class="form-group row">
                                 <label for="team" class="col-sm-3 col-form-label">Team</label>
                                 <div class="col-sm-8">
@@ -153,10 +161,23 @@ if (isset($_POST['comment'])) {
                         </div>
 
                     </form>
-                <?php else: ?>
-                    <?php if(strlen($msg) > 1) :?>
-                        <div class="alert alert-success text-center my-3" role="alert"> <strong>Success! </strong> <?php echo $msg;?></div>
-                    <?php endif?>
+                <?php endif; ?>
+
+                <?php if ($originalCommentBody !== ''): ?>
+                <div class="col-lg-8 col-md-8 col-sm-12 offset-lg-2 offset-md-2 mt-4">
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <small class="text-muted d-block mb-2">Original request</small>
+                            <h6 class="mb-1"><?php echo htmlspecialchars($originalCommentAuthor, ENT_QUOTES, 'UTF-8'); ?></h6>
+                            <div class="d-flex w-100 justify-content-between flex-wrap">
+                                <p class="mb-1"><?php echo nl2br(htmlspecialchars($originalCommentBody, ENT_QUOTES, 'UTF-8')); ?></p>
+                                <?php if ($ticketCreatedAt instanceof DateTime): ?>
+                                <small><?php echo $ticketCreatedAt->format('d-m-Y H:i:s'); ?></small>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <?php endif; ?>
 
             </div>
@@ -166,7 +187,7 @@ if (isset($_POST['comment'])) {
       
             <label for="team" class="col-sm-12 col-lg-3 col-md-3 col-form-label">Comment</label>
             <div class="col-sm-8">
-                <textarea class="form-control" name="body"></textarea>
+                <textarea class="form-control" name="body"><?php echo htmlspecialchars($commentDraft, ENT_QUOTES, 'UTF-8'); ?></textarea>
             </div>
             <button type="submit" name="comment" class="btn btn-success" style="height:40px;margin-left:340px;margin-top:10px">comment</button>
        </form>
@@ -202,10 +223,10 @@ if (isset($_POST['comment'])) {
             <div class="list-group">
                 <?php foreach($comments as $c):?>
                 <a href="#" class="list-group-item list-group-item-action">
-                    <h6 class="mb-1"><?php echo TeamMember::getName($c->team_member)?></h6>
+                    <h6 class="mb-1"><?php echo htmlspecialchars(TeamMember::getName($c->team_member), ENT_QUOTES, 'UTF-8')?></h6>
                     <div class="d-flex w-100 justify-content-between">
                         
-                        <p class="mb-1"><?php echo $c->body?></p>
+                        <p class="mb-1"><?php echo nl2br(htmlspecialchars($c->body, ENT_QUOTES, 'UTF-8'))?></p>
                         <?php $d = new DateTime($c->created_at)?>
                         <small><?php echo $d->format('d-m-Y H:i:s')?></small>
                     </div>
@@ -218,10 +239,10 @@ if (isset($_POST['comment'])) {
             <div class="list-group">
                 <?php foreach($events as $e):?>
                 <a href="#" class="list-group-item list-group-item-action">
-                    <h6 class="mb-1"><?php echo TeamMember::getName($e->user)?></h6>
+                    <h6 class="mb-1"><?php echo htmlspecialchars(TeamMember::getName($e->user), ENT_QUOTES, 'UTF-8')?></h6>
                     <div class="d-flex w-100 justify-content-between">
                         
-                        <p class="mb-1"><?php echo $e->body?></p>
+                        <p class="mb-1"><?php echo htmlspecialchars($e->body, ENT_QUOTES, 'UTF-8')?></p>
                         <?php $d = new DateTime($e->created_at)?>
                         <small><?php echo $d->format('d-m-Y H:i:s')?></small>
                     </div>
