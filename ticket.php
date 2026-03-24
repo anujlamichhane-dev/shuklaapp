@@ -72,11 +72,6 @@
       } else {
         try{
             $db = Database::getInstance();
-            $colCheck = $db->query("SHOW COLUMNS FROM requester LIKE 'user_id'");
-            if ($colCheck && $colCheck->num_rows === 0) {
-                $db->query("ALTER TABLE requester ADD COLUMN user_id INT DEFAULT NULL");
-            }
-
             $existingRequester = Requester::findByEmail($email);
             $savedRequester = $existingRequester;
 
@@ -89,7 +84,11 @@
                 ]); //this obj has no id
                 
                 $savedRequester = $requester->save(); //this obj has the id,because of save();cz it returns an obj
-            } else if (($existingRequester->user_id ?? null) === null && isset($user->id)) {
+            } else if (
+                $existingRequester->hasUserIdColumn()
+                && ($existingRequester->user_id ?? null) === null
+                && isset($user->id)
+            ) {
                 $db->query("UPDATE requester SET user_id = " . (int)$user->id . " WHERE id = " . (int)$existingRequester->id);
                 $existingRequester->user_id = $user->id;
             }
@@ -114,6 +113,7 @@
             header('Location: ./ticket-details.php?id=' . (int)$savedTicket->id . '&created=1');
             exit();
         } catch(Throwable $e){
+            error_log('Ticket creation failed for user ' . ($user->id ?? 'unknown') . ': ' . $e->getMessage());
             $err = "Failed to generate ticket";
         }
       }

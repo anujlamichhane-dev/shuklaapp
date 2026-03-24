@@ -149,7 +149,7 @@ class Requester{
         return $self;
     }
 
-    private function hasUserIdColumn() : bool
+    public function hasUserIdColumn() : bool
     {
         $result = $this->db->query("SHOW COLUMNS FROM requester LIKE 'user_id'");
         return $result && $result->num_rows > 0;
