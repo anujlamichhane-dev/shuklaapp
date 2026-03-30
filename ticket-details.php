@@ -189,7 +189,7 @@ $ticketCreatedAt = !empty($ticket->created_at) ? new DateTime($ticket->created_a
             <div class="col-sm-8">
                 <textarea class="form-control" name="body"><?php echo htmlspecialchars($commentDraft, ENT_QUOTES, 'UTF-8'); ?></textarea>
             </div>
-            <button type="submit" name="comment" class="btn btn-success" style="height:40px;margin-left:340px;margin-top:10px">comment</button>
+            <button type="submit" name="comment" class="btn btn-success mt-2">comment</button>
        </form>
         <div class="form-group row col-lg-8 offset-lg-2 col-md-8 col-sm-12 offset-md-2"style="margin-top:60px">
 
