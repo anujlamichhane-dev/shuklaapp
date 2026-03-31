@@ -4,7 +4,7 @@
   require_once './src/ticket.php';
   require_once './src/ticket-event.php';
   require_once './src/team.php';
-  require './src/helper-functions.php';
+  require_once './src/helper-functions.php';
 
   $isClient = ($user->role === 'client');
 
