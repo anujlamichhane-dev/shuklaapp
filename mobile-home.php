@@ -226,7 +226,7 @@
     $ticketLinks[] = ['href' => $guestTicketLoginUrl, 'label' => 'Login to Open Ticket', 'icon' => 'fa-sign-in-alt'];
     $ticketLinks[] = ['href' => $guestRegisterUrl, 'label' => 'Create Account', 'icon' => 'fa-user-plus'];
   } elseif ($isClient) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Open New Ticket', 'icon' => 'fa-plus-circle'];
+    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Open New Tickets', 'icon' => 'fa-plus-circle'];
     $ticketLinks[] = ['href' => 'mytickets.php?status=pending', 'label' => 'My Pending Tickets', 'icon' => 'fa-clock'];
   } else {
     $ticketLinks[] = ['href' => 'dashboard.php', 'label' => 'Dashboard', 'icon' => 'fa-tachometer-alt'];
@@ -429,3 +429,96 @@
 
 <?php include './footer.php'; ?>
 
+<script>
+  (function () {
+    const slider = document.querySelector('.hero-slider');
+    if (!slider) return;
+
+    const slides = Array.from(slider.querySelectorAll('.hero-slide'));
+    const dots = Array.from(document.querySelectorAll('.hero-dots .dot'));
+    const caption = document.querySelector('.hero-caption-box');
+
+    let activeIndex = 0;
+    const rotation = Number(slider.dataset.rotation || 6500);
+
+    const showSlide = (index) => {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === index);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+      if (caption) {
+        const captionSpan = slides[index].querySelector('[data-caption]');
+        caption.textContent = captionSpan ? captionSpan.dataset.caption : '';
+      }
+      activeIndex = index;
+    };
+
+    showSlide(activeIndex);
+    if (slides.length < 2) return;
+
+    const nextSlide = () => {
+      const nextIndex = (activeIndex + 1) % slides.length;
+      showSlide(nextIndex);
+    };
+
+    let timer = setInterval(nextSlide, rotation);
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        showSlide(index);
+        clearInterval(timer);
+        timer = setInterval(nextSlide, rotation);
+      });
+    });
+  })();
+
+</script>
+
+<script>
+  (function () {
+    const slider = document.querySelector('.hero-slider');
+    if (!slider) return;
+
+    const slides = Array.from(slider.querySelectorAll('.hero-slide'));
+    const dots = Array.from(document.querySelectorAll('.hero-dots .dot'));
+    const caption = document.querySelector('.hero-caption-box');
+
+    let activeIndex = 0;
+    const rotation = Number(slider.dataset.rotation || 6500);
+
+    const showSlide = (index) => {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === index);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+      if (caption) {
+        const captionSpan = slides[index].querySelector('[data-caption]');
+        caption.textContent = captionSpan ? captionSpan.dataset.caption : '';
+      }
+      activeIndex = index;
+    };
+
+    showSlide(activeIndex);
+    if (slides.length < 2) return;
+
+    const nextSlide = () => {
+      const nextIndex = (activeIndex + 1) % slides.length;
+      showSlide(nextIndex);
+    };
+
+    let timer = setInterval(nextSlide, rotation);
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        showSlide(index);
+        clearInterval(timer);
+        timer = setInterval(nextSlide, rotation);
+      });
+    });
+  })();
+
+</script>
