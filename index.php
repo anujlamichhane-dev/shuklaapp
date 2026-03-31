@@ -21,22 +21,39 @@ if (!isset($_SESSION['logged-in'])) {
 
 require_once './src/Database.php';
 require_once './src/i18n.php';
+require_once './src/helper-functions.php';
 
 $db = Database::getInstance();
 
 $err = '';
+$notice = '';
+$redirectTarget = sanitizeRedirectTarget($_GET['redirect'] ?? $_POST['redirect'] ?? '', './mobile-home.php');
+$isGuestSession = isGuestUser($_SESSION['user'] ?? null);
 
-if (isset($_SESSION['logged-in']) && $_SESSION['logged-in'] == true && !empty($_SESSION['user'])) {
+if (isset($_GET['guest_required']) && $_GET['guest_required'] === '1') {
+  $notice = 'Please log in or create an account to open a new ticket.';
+}
+
+if (isset($_POST['guest_login'])) {
+  remember_clear_cookie($secure);
+  session_regenerate_id(true);
+  $_SESSION['logged-in'] = true;
+  $_SESSION['user'] = buildGuestUser();
   header('Location: ./mobile-home.php');
   exit();
 }
 
-if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
+if (isset($_SESSION['logged-in']) && $_SESSION['logged-in'] == true && !empty($_SESSION['user']) && !$isGuestSession) {
+  header('Location: ' . $redirectTarget);
+  exit();
+}
+
+if ((!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) && !isset($_POST['guest_login'])) {
   $rememberUser = remember_login($db, $secure);
   if ($rememberUser) {
     $_SESSION['logged-in'] = true;
     $_SESSION['user'] = $rememberUser;
-    header('Location: ./mobile-home.php');
+    header('Location: ' . $redirectTarget);
     exit();
   }
 }
@@ -100,7 +117,7 @@ if (isset($_POST['submit'])) {
               remember_clear_cookie($secure);
             }
 
-            header('Location: ./mobile-home.php');
+            header('Location: ' . $redirectTarget);
             exit();
           } else {
             $err = "Wrong username or password";
@@ -294,7 +311,15 @@ $langUrlNe = $path . '?' . http_build_query($query);
         <div class="card-subtitle"><?php echo htmlspecialchars(i18n_t('login.header.subtitle'), ENT_QUOTES, 'UTF-8'); ?></div>
       </div>
       <div class="card-body">
-        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+          <input type="hidden" name="redirect" value="<?php echo htmlspecialchars(ltrim($redirectTarget, './'), ENT_QUOTES, 'UTF-8'); ?>">
+
+          <?php if (strlen($notice) > 1) : ?>
+            <div class="alert alert-info text-center mb-3" role="alert">
+              <?php echo htmlspecialchars($notice, ENT_QUOTES, 'UTF-8'); ?>
+            </div>
+          <?php endif; ?>
+
           <div class="form-group">
             <label for="inputEmail"><?php echo htmlspecialchars(i18n_t('login.email.label'), ENT_QUOTES, 'UTF-8'); ?></label>
             <input type="email" id="inputEmail" name="email" class="form-control" placeholder="<?php echo htmlspecialchars(i18n_t('login.email.placeholder'), ENT_QUOTES, 'UTF-8'); ?>" autofocus required>
@@ -328,7 +353,8 @@ $langUrlNe = $path . '?' . http_build_query($query);
           <?php endif; ?>
 
           <button type="submit" name="submit" class="btn btn-gov-primary btn-block mb-2"><?php echo htmlspecialchars(i18n_t('login.submit'), ENT_QUOTES, 'UTF-8'); ?></button>
-          <a href="./new.php" class="btn btn-gov-outline btn-block"><?php echo htmlspecialchars(i18n_t('login.create'), ENT_QUOTES, 'UTF-8'); ?></a>
+          <button type="submit" name="guest_login" value="1" formnovalidate class="btn btn-gov-outline btn-block mb-2">Continue as Guest</button>
+          <a href="<?php echo htmlspecialchars(buildRegisterUrl($redirectTarget), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-gov-outline btn-block"><?php echo htmlspecialchars(i18n_t('login.create'), ENT_QUOTES, 'UTF-8'); ?></a>
         </form>
 
         <div class="status-note text-center"><?php echo htmlspecialchars(i18n_t('login.status'), ENT_QUOTES, 'UTF-8'); ?></div>

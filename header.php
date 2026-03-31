@@ -16,6 +16,7 @@ session_set_cookie_params([
 session_start();
 require_once './src/i18n.php';
 require_once './src/Database.php';
+require_once './src/helper-functions.php';
 
 $db = Database::getInstance();
 
@@ -39,6 +40,7 @@ $isAdmin = ($role === 'admin');
 $isCreator = ($role === 'creator');
 $isModerator = ($role === 'moderator');
 $isClient = ($role === 'client');
+$isGuest = ($role === 'guest');
 $isOfficial = in_array($role, $officialRoles, true);
 $showBackBtn = false;
 $hideSidebar = false;
@@ -57,7 +59,18 @@ if (!in_array('css/mobile-theme.css', $extraCss, true)) {
 
 // Simple page-level gates to keep clients and moderators in the allowed areas only.
 $currentPage = basename($_SERVER['PHP_SELF']);
+$loginForTicketUrl = buildLoginUrl('ticket.php', true);
+$registerForTicketUrl = buildRegisterUrl('ticket.php');
 $showBackBtn = !in_array($currentPage, ['index.php', 'newuser.php'], true);
+$guestAllowedPages = [
+  'mobile-home.php',
+  'tickets-menu.php',
+  'general-info-menu.php',
+  'interesting-places.php',
+  'municipality-introduction.php',
+  'contacts.php',
+  'documents-info.php'
+];
 $clientAllowedPages = [
   'mobile-home.php',
   'tickets-menu.php',
@@ -73,6 +86,18 @@ $clientAllowedPages = [
   'documents-info.php',
   'my-messages.php'
 ];
+if ($isGuest) {
+  if ($currentPage === 'ticket.php') {
+    header('Location: ' . $loginForTicketUrl);
+    exit();
+  }
+
+  if (!in_array($currentPage, $guestAllowedPages, true)) {
+    header('Location: ./mobile-home.php');
+    exit();
+  }
+}
+
 if ($isClient && !in_array($currentPage, $clientAllowedPages, true)) {
   header('Location: ./mytickets.php');
   exit();
@@ -170,11 +195,16 @@ if ($isModerator && $currentPage === 'mytickets.php') {
       <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-user-circle fa-fw"></i>
-          <span class="nav-user-name"><?php echo $user->name?></span>
+          <span class="nav-user-name"><?php echo htmlspecialchars($user->name ?? 'Guest', ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-          
-          <a class="dropdown-item" href="./logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+          <?php if ($isGuest): ?>
+            <a class="dropdown-item" href="<?php echo htmlspecialchars(buildLoginUrl(), ENT_QUOTES, 'UTF-8'); ?>">Login</a>
+            <a class="dropdown-item" href="<?php echo htmlspecialchars($registerForTicketUrl, ENT_QUOTES, 'UTF-8'); ?>">Create Account</a>
+            <a class="dropdown-item" href="./logout.php">Exit Guest Session</a>
+          <?php else: ?>
+            <a class="dropdown-item" href="./logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+          <?php endif; ?>
         </div>
       </li>
     </ul>
@@ -199,22 +229,38 @@ if ($isModerator && $currentPage === 'mytickets.php') {
           <span> <?php echo htmlspecialchars(i18n_t('nav.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
       </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="<?php echo ($isAdmin || $isOfficial) ? './messages-inbox.php' : './message.php'; ?>">
-          <i class="fas fa-fw fa-inbox"></i>
-          <span> <?php echo htmlspecialchars(i18n_t('nav.messages'), ENT_QUOTES, 'UTF-8'); ?></span>
-        </a>
-      </li>
+      <?php if (!$isGuest): ?>
+        <li class="nav-item active">
+          <a class="nav-link" href="<?php echo ($isAdmin || $isOfficial) ? './messages-inbox.php' : './message.php'; ?>">
+            <i class="fas fa-fw fa-inbox"></i>
+            <span> <?php echo htmlspecialchars(i18n_t('nav.messages'), ENT_QUOTES, 'UTF-8'); ?></span>
+          </a>
+        </li>
+      <?php endif; ?>
       <li class="nav-item active">
         <a class="nav-link" href="./contacts.php">
           <i class="fas fa-fw fa-address-book"></i>
           <span> <?php echo htmlspecialchars(i18n_t('nav.contacts'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
       </li>
+      <?php if ($isGuest): ?>
+        <li class="nav-item active">
+          <a class="nav-link" href="<?php echo htmlspecialchars(buildLoginUrl(), ENT_QUOTES, 'UTF-8'); ?>">
+            <i class="fas fa-fw fa-sign-in-alt"></i>
+            <span> Login</span>
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="<?php echo htmlspecialchars($registerForTicketUrl, ENT_QUOTES, 'UTF-8'); ?>">
+            <i class="fas fa-fw fa-user-plus"></i>
+            <span> Create Account</span>
+          </a>
+        </li>
+      <?php endif; ?>
       <li class="nav-item active sidebar-logout">
         <a class="nav-link" href="./logout.php">
           <i class="fas fa-fw fa-sign-out-alt"></i>
-          <span> <?php echo htmlspecialchars(i18n_t('nav.logout'), ENT_QUOTES, 'UTF-8'); ?></span>
+          <span> <?php echo $isGuest ? 'Exit Guest' : htmlspecialchars(i18n_t('nav.logout'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
       </li>
     </ul>

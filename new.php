@@ -5,6 +5,7 @@ error_reporting(E_ALL);
 session_start();
 
 require_once './src/Database.php';
+require_once './src/helper-functions.php';
 
 $db = Database::getInstance();
 
@@ -13,6 +14,7 @@ $msg = '';
 $name = '';
 $email = '';
 $phone = '';
+$redirectTarget = sanitizeRedirectTarget($_GET['redirect'] ?? $_POST['redirect'] ?? '', './mobile-home.php');
 
 if (isset($_POST['submit'])) {
     $name = trim($_POST['name'] ?? '');
@@ -257,7 +259,8 @@ if (isset($_POST['submit'])) {
           </div>
         <?php endif; ?>
 
-        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+          <input type="hidden" name="redirect" value="<?php echo htmlspecialchars(ltrim($redirectTarget, './'), ENT_QUOTES, 'UTF-8'); ?>">
           <div class="form-group">
             <label for="inputName">Full name</label>
             <input type="text" id="inputName" name="name" class="form-control" placeholder="Your full name"
@@ -291,7 +294,7 @@ if (isset($_POST['submit'])) {
           </div>
 
           <button type="submit" name="submit" class="btn btn-gov-primary btn-block mb-2">Create account</button>
-          <a href="./index.php" class="btn btn-gov-outline btn-block">Back to login</a>
+          <a href="<?php echo htmlspecialchars(buildLoginUrl($redirectTarget), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-gov-outline btn-block">Back to login</a>
         </form>
 
         <div class="status-note text-center">

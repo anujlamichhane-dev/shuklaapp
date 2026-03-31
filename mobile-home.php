@@ -191,6 +191,8 @@
   // Build ticket links for the Tickets menu page.
   $ticketLinks = [];
   $infoLinks = [];
+  $guestTicketLoginUrl = buildLoginUrl('ticket.php', true);
+  $guestRegisterUrl = buildRegisterUrl('ticket.php');
 
   // Inbox count for officials to surface messages at a glance.
   $inboxCount = 0;
@@ -220,7 +222,10 @@
     }
   }
 
-  if ($isClient) {
+  if ($isGuest) {
+    $ticketLinks[] = ['href' => $guestTicketLoginUrl, 'label' => 'Login to Open Ticket', 'icon' => 'fa-sign-in-alt'];
+    $ticketLinks[] = ['href' => $guestRegisterUrl, 'label' => 'Create Account', 'icon' => 'fa-user-plus'];
+  } elseif ($isClient) {
     $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Open New Ticket', 'icon' => 'fa-plus-circle'];
     $ticketLinks[] = ['href' => 'mytickets.php?status=pending', 'label' => 'My Pending Tickets', 'icon' => 'fa-clock'];
   } else {
@@ -318,6 +323,14 @@
         <?php endif; ?>
       </section>
 
+      <?php if ($isGuest): ?>
+        <section class="menu-section">
+          <div class="alert alert-info mb-0">
+            You are browsing as a guest. Login or create an account to open a new ticket.
+          </div>
+        </section>
+      <?php endif; ?>
+
       <section class="poster-links">
         <div class="menu-grid">
           <a class="menu-card poster-card" href="tickets-menu.php">
@@ -339,13 +352,34 @@
           <a class="menu-card" href="tickets-menu.php">
             <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
             <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
-            <span class="menu-subtext"><?php echo $isClient ? htmlspecialchars(i18n_t('home.tickets.sub'), ENT_QUOTES, 'UTF-8') : 'All ticket views'; ?></span>
+            <span class="menu-subtext">
+              <?php
+                if ($isClient) {
+                  echo htmlspecialchars(i18n_t('home.tickets.sub'), ENT_QUOTES, 'UTF-8');
+                } elseif ($isGuest) {
+                  echo 'Browse services and sign in to submit';
+                } else {
+                  echo 'All ticket views';
+                }
+              ?>
+            </span>
           </a>
           <?php if ($isClient): ?>
             <a class="menu-card" href="ticket.php">
               <span class="menu-icon"><i class="fas fa-plus-circle"></i></span>
               <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.new_ticket'), ENT_QUOTES, 'UTF-8'); ?></span>
               <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.new_ticket.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
+            </a>
+          <?php elseif ($isGuest): ?>
+            <a class="menu-card" href="<?php echo htmlspecialchars($guestTicketLoginUrl, ENT_QUOTES, 'UTF-8'); ?>">
+              <span class="menu-icon"><i class="fas fa-sign-in-alt"></i></span>
+              <span class="menu-label">Login to Open Ticket</span>
+              <span class="menu-subtext">Ticket submission needs an account</span>
+            </a>
+            <a class="menu-card" href="<?php echo htmlspecialchars($guestRegisterUrl, ENT_QUOTES, 'UTF-8'); ?>">
+              <span class="menu-icon"><i class="fas fa-user-plus"></i></span>
+              <span class="menu-label">Create Account</span>
+              <span class="menu-subtext">Register first, then submit your ticket</span>
             </a>
           <?php endif; ?>
           <a class="menu-card" href="documents-info.php">

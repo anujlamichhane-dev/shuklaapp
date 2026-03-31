@@ -7,7 +7,12 @@
 
   // Build ticket links for this menu.
   $ticketLinks = [];
-  if ($isClient) {
+  $guestTicketLoginUrl = buildLoginUrl('ticket.php', true);
+  $guestRegisterUrl = buildRegisterUrl('ticket.php');
+  if ($isGuest) {
+    $ticketLinks[] = ['href' => $guestTicketLoginUrl, 'label' => 'Login to Open Ticket', 'icon' => 'fa-sign-in-alt'];
+    $ticketLinks[] = ['href' => $guestRegisterUrl, 'label' => 'Create Account', 'icon' => 'fa-user-plus'];
+  } elseif ($isClient) {
     $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'नयाँ सुझाव र गुनासो', 'icon' => 'fa-plus-circle'];
     $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'मेरो सुझाव र गुनासो', 'icon' => 'fa-award'];
   } else {
@@ -28,7 +33,17 @@
   <div class="app-shell">
     <section class="menu-section">
       <div class="section-title"><?php echo htmlspecialchars(i18n_t('tickets.menu.title'), ENT_QUOTES, 'UTF-8'); ?></div>
-      <?php if ($isClient): ?>
+      <?php if ($isGuest): ?>
+        <div class="alert alert-info">Guests can browse services, but opening a new ticket requires login or account creation.</div>
+        <div class="menu-grid">
+          <?php foreach ($ticketLinks as $link): ?>
+            <a class="menu-card" href="<?php echo htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8'); ?>">
+              <span class="menu-icon"><i class="fas <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
+              <span class="menu-label"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      <?php elseif ($isClient): ?>
         <div class="menu-grid">
           <?php foreach ($ticketLinks as $link): ?>
             <a class="menu-card" href="<?php echo htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8'); ?>">
