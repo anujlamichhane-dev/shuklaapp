@@ -3,6 +3,7 @@
   require_once './src/requester.php';
   require_once './src/ticket.php';
   require_once './src/ticket-event.php';
+  require_once './src/team.php';
   require './src/helper-functions.php';
 
   $isClient = ($user->role === 'client');
@@ -54,12 +55,15 @@
       $prefillPhone = $user->phone ?? '';
   }
 
-  # getting teams 
-  $sql = "SELECT id, name FROM team ORDER BY name ASC";
-  $res = $db->query($sql);
   $teams = [];
-  while($row = $res->fetch_object()){
-      $teams[] = $row;
+  try {
+      $teams = Team::findAll();
+      usort($teams, function ($left, $right) {
+          return strcasecmp((string) ($left->name ?? ''), (string) ($right->name ?? ''));
+      });
+  } catch (Throwable $teamError) {
+      error_log('Ticket form failed to load teams: ' . $teamError->getMessage());
+      $err = 'Unable to load teams right now. Please try again later.';
   }
 
   if(isset($_POST['submit'])){
@@ -212,7 +216,13 @@
                 <div class="alert alert-success text-center my-3" role="alert"> <strong>Success! </strong> <?php echo $msg;?></div>
                 <?php endif?>
 
-                <form method="POST" action="<?php echo $_SERVER['PHP_SELF']?>" class="ticket-form">
+                <?php if (empty($teams)) : ?>
+                <div class="alert alert-warning text-center my-3" role="alert">
+                    No ticket teams are available yet. Please contact support.
+                </div>
+                <?php endif; ?>
+
+                <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>" class="ticket-form">
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="name">Name</label>
@@ -244,7 +254,7 @@
                     <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
                         <label for="name" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Team</label>
                         <div class="col-sm-8">
-                            <select name="team" class="form-control">
+                            <select name="team" class="form-control" <?php echo empty($teams) ? 'disabled' : ''; ?>>
                                 <option value="">--select--</option>
                                 <?php foreach($teams as $team):?>
                                 <option value="<?php echo $team->id?>" <?php echo (string)$prefillTeam === (string)$team->id ? 'selected' : ''; ?>> <?php echo $team->name?></option>
@@ -264,7 +274,7 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <button type="submit" name="submit" class="btn btn-lg btn-primary"> Create</button>
+                        <button type="submit" name="submit" class="btn btn-lg btn-primary" <?php echo empty($teams) ? 'disabled' : ''; ?>> Create</button>
                     </div>
                 </form>
             </div>

@@ -26,7 +26,6 @@ if ($isClient && !$isClientOwner) {
     echo '<script>window.location.href = "./mytickets.php";</script>';
     exit();
 }
-
 $teams = Team::findAll();
 $commentDraft = '';
 
