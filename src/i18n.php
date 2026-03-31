@@ -46,7 +46,7 @@ function i18n_dict(): array
             'home.tickets' => 'Tickets',
             'home.tickets.sub' => 'Open or track your tickets',
             'home.documents' => 'Documents Info',
-            'home.documents.sub' => 'Processes, documents, office timings',
+            'home.documents.sub' => 'Processes, documents and office timings',
             'home.contacts' => 'Contacts',
             'home.contacts.sub' => 'Officials & office info',
             'home.message' => 'Message',
