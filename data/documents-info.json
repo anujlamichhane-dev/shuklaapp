@@ -1,0 +1,66 @@
+{
+    "office_hours_title": "General Office Hours",
+    "office_hours_detail": "Sunday - Friday: 10:00 AM to 5:00 PM",
+    "office_hours_note": "(Closed on Saturdays and public holidays)",
+    "processes": [
+        {
+            "title": "Birth Certificate Registration",
+            "summary": "Register a birth and obtain an official certificate.",
+            "documents": [
+                "Hospital/health post birth record",
+                "Parents citizenship copy",
+                "Marriage registration copy (if available)",
+                "Ward recommendation letter"
+            ],
+            "timing": "Sun-Fri: 10:00 AM to 5:00 PM",
+            "window": "4"
+        },
+        {
+            "title": "Marriage Registration",
+            "summary": "Register a marriage and receive the official record.",
+            "documents": [
+                "Both parties citizenship copies",
+                "Passport-size photos (2 each)",
+                "Ward recommendation letter",
+                "Witness citizenship copy (1)"
+            ],
+            "timing": "Sun-Fri: 10:00 AM to 4:30 PM",
+            "window": ""
+        },
+        {
+            "title": "Property/House Tax Clearance",
+            "summary": "Apply for tax clearance for property or house.",
+            "documents": [
+                "Property ownership proof",
+                "Last tax payment receipt",
+                "Citizenship copy",
+                "Ward recommendation letter"
+            ],
+            "timing": "Sun-Fri: 10:00 AM to 5:00 PM",
+            "window": ""
+        },
+        {
+            "title": "Business Registration / Renewal",
+            "summary": "Register a new business or renew existing registration.",
+            "documents": [
+                "Business application form",
+                "Citizenship copy",
+                "Lease agreement or ownership proof",
+                "Ward recommendation letter"
+            ],
+            "timing": "Sun-Fri: 10:00 AM to 4:00 PM",
+            "window": ""
+        },
+        {
+            "title": "Recommendations / Letters",
+            "summary": "General recommendation letters (residence, character, etc.).",
+            "documents": [
+                "Citizenship copy",
+                "Proof of residence",
+                "Application request letter"
+            ],
+            "timing": "Sun-Fri: 10:00 AM to 4:30 PM",
+            "window": ""
+        }
+    ]
+}
