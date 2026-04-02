@@ -48,20 +48,17 @@
   $prefillComment = '';
   $prefillTeam = '';
   $prefillPriority = 'low';
+  $guestDefaults = guestContactDefaults();
 
   // If client is logged in, default to their stored contact info
   if ($isClient) {
       $prefillName = $user->name ?? '';
       $prefillEmail = $user->email ?? '';
       $prefillPhone = $user->phone ?? '';
-  } elseif ($isGuest && (
-      !empty($user->email)
-      || !empty($user->phone)
-      || (!empty($user->name) && $user->name !== 'Guest')
-  )) {
-      $prefillName = $user->name ?? '';
-      $prefillEmail = $user->email ?? '';
-      $prefillPhone = $user->phone ?? '';
+  } elseif ($isGuest) {
+      $prefillName = $guestDefaults['name'];
+      $prefillEmail = $guestDefaults['email'];
+      $prefillPhone = $guestDefaults['phone'];
   }
 
   $teams = [];
@@ -84,6 +81,12 @@
       $comment = trim($_POST['comment'] ?? ''); 
       $team = trim($_POST['team'] ?? '');
       $priority = trim($_POST['priority'] ?? 'low');
+
+      if ($isGuest) {
+          $name = $guestDefaults['name'];
+          $email = $guestDefaults['email'];
+          $phone = $guestDefaults['phone'];
+      }
 
       // keep user input on validation errors
       $prefillName = $name;
@@ -177,6 +180,7 @@
 
             if ($isGuest) {
                 rememberGuestContact($name, $email, $phone);
+                rememberGuestTicket($savedTicketId);
             }
 
             try {
@@ -239,17 +243,17 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="name">Name</label>
-                            <input type="text" name="name" id="name" class="form-control" placeholder="Enter name" value="<?php echo htmlspecialchars($prefillName); ?>" <?php echo $isClient ? 'readonly' : '';?>>
+                            <input type="text" name="name" id="name" class="form-control" placeholder="Enter name" value="<?php echo htmlspecialchars($prefillName); ?>" <?php echo ($isClient || $isGuest) ? 'readonly' : '';?>>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="email">Email</label>
-                            <input type="text" name="email" id="email" class="form-control" placeholder="Enter email" value="<?php echo htmlspecialchars($prefillEmail); ?>" <?php echo $isClient ? 'readonly' : '';?>>
+                            <input type="text" name="email" id="email" class="form-control" placeholder="Enter email" value="<?php echo htmlspecialchars($prefillEmail); ?>" <?php echo ($isClient || $isGuest) ? 'readonly' : '';?>>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="phone">Phone</label>
-                            <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter phone number" value="<?php echo htmlspecialchars($prefillPhone); ?>">
+                            <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter phone number" value="<?php echo htmlspecialchars($prefillPhone); ?>" <?php echo $isGuest ? 'readonly' : '';?>>
                         </div>
                     </div>
                     <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">

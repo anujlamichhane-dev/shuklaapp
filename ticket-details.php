@@ -28,7 +28,8 @@ $requesterUserId = isset($requesterOwner->user_id) ? (int)$requesterOwner->user_
 $sessionUserId = isset($user->id) ? (int)$user->id : 0;
 $ownsByUserId = $isClient && $requesterUserId > 0 && $requesterUserId === $sessionUserId;
 $ownsByEmail = $requesterEmail !== '' && $requesterEmail === $sessionEmail;
-$isRequesterOwner = $ownsByUserId || (($isClient || $isGuest) && $ownsByEmail);
+$ownsByGuestSession = $isGuest && guestOwnsTicket($ticket->id);
+$isRequesterOwner = $ownsByUserId || ($isClient && $ownsByEmail) || $ownsByGuestSession;
 $canManageTicket = !($isClient || $isGuest);
 if (($isClient || $isGuest) && !$isRequesterOwner) {
     echo '<script>window.location.href = "./mytickets.php";</script>';

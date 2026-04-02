@@ -23,13 +23,23 @@ function dnd($variable)
     die;
 }
 
+function guestContactDefaults()
+{
+    return [
+        'name' => 'Guest',
+        'email' => 'guest@gmail.com',
+        'phone' => '0000000000',
+    ];
+}
+
 function buildGuestUser($data = [])
 {
+    $defaults = guestContactDefaults();
     $guest = new stdClass();
     $guest->id = 0;
-    $guest->name = trim((string)($data['name'] ?? '')) ?: 'Guest';
-    $guest->email = trim((string)($data['email'] ?? ''));
-    $guest->phone = trim((string)($data['phone'] ?? ''));
+    $guest->name = trim((string)($data['name'] ?? '')) ?: $defaults['name'];
+    $guest->email = trim((string)($data['email'] ?? '')) ?: $defaults['email'];
+    $guest->phone = trim((string)($data['phone'] ?? '')) ?: $defaults['phone'];
     $guest->role = 'guest';
 
     return $guest;
@@ -55,6 +65,53 @@ function rememberGuestContact($name, $email, $phone = '')
         'email' => $email,
         'phone' => $phone,
     ]);
+}
+
+function getGuestTicketIds()
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        return [];
+    }
+
+    $ids = $_SESSION['guest_ticket_ids'] ?? [];
+    if (!is_array($ids)) {
+        return [];
+    }
+
+    $cleanIds = [];
+    foreach ($ids as $id) {
+        $ticketId = (int)$id;
+        if ($ticketId > 0) {
+            $cleanIds[$ticketId] = $ticketId;
+        }
+    }
+
+    return array_values($cleanIds);
+}
+
+function rememberGuestTicket($ticketId)
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        return;
+    }
+
+    if (!isGuestUser($_SESSION['user'] ?? null)) {
+        return;
+    }
+
+    $ticketId = (int)$ticketId;
+    if ($ticketId < 1) {
+        return;
+    }
+
+    $ids = getGuestTicketIds();
+    $ids[] = $ticketId;
+    $_SESSION['guest_ticket_ids'] = array_values(array_unique(array_map('intval', $ids)));
+}
+
+function guestOwnsTicket($ticketId)
+{
+    return in_array((int)$ticketId, getGuestTicketIds(), true);
 }
 
 function sanitizeRedirectTarget($target, $default = './mobile-home.php', $allowEmpty = false)

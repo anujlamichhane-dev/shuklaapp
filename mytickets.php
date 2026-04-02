@@ -12,8 +12,14 @@ $isGuest = (($user->role ?? '') === 'guest');
 if ($isClient) {
     $tickets = Ticket::findByRequesterUserId($user->id);
 } elseif ($isGuest) {
-    $guestEmail = trim((string)($user->email ?? ''));
-    $tickets = $guestEmail !== '' ? Ticket::findByRequesterEmail($guestEmail) : [];
+    $tickets = [];
+    $guestTicketIds = array_reverse(getGuestTicketIds());
+    foreach ($guestTicketIds as $guestTicketId) {
+        $ticket = Ticket::find($guestTicketId);
+        if ($ticket) {
+            $tickets[] = $ticket;
+        }
+    }
 } else {
     $tickets = Ticket::findByMember($user->id);
 }
