@@ -49,6 +49,7 @@
   $prefillTeam = '';
   $prefillPriority = 'low';
   $guestDefaults = guestContactDefaults();
+  $guestDisplayMessage = 'MAKE AN ACCOUNT IN ORDER TO PUT YOUR INFORMATION';
 
   // If client is logged in, default to their stored contact info
   if ($isClient) {
@@ -56,9 +57,9 @@
       $prefillEmail = $user->email ?? '';
       $prefillPhone = $user->phone ?? '';
   } elseif ($isGuest) {
-      $prefillName = $guestDefaults['name'];
-      $prefillEmail = $guestDefaults['email'];
-      $prefillPhone = $guestDefaults['phone'];
+      $prefillName = $guestDisplayMessage;
+      $prefillEmail = $guestDisplayMessage;
+      $prefillPhone = $guestDisplayMessage;
   }
 
   $teams = [];
