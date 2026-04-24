@@ -1,26 +1,11 @@
-Options -Indexes
-
 # General settings
 DirectoryIndex index.php index.html
 
+# Enable Rewrite Engine
 <IfModule mod_rewrite.c>
     RewriteEngine On
-
-    RewriteRule ^(?:src|database)/ - [F,L]
-    RewriteRule ^(?:header|footer)\.php$ - [F,L]
-
     # Force HTTPS (handles proxies too)
     RewriteCond %{HTTPS} !=on [OR]
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-    RewriteCond %{THE_REQUEST} \s/+index(?:\.php)?(?:[?\s]|$) [NC]
-    RewriteRule ^index(?:\.php)?$ / [L,R=301]
-
-    RewriteCond %{THE_REQUEST} \s/+([A-Za-z0-9_-]+)\.php(?:[?\s]|$) [NC]
-    RewriteRule ^([A-Za-z0-9_-]+)\.php$ /$1 [L,R=301]
-
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME}.php -f
-    RewriteRule ^([A-Za-z0-9_-]+)/?$ $1.php [L,QSA]
 </IfModule>

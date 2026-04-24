@@ -1,5 +1,5 @@
 <?php
-  $currentPage = basename($_SERVER['APP_ROUTE_FILE'] ?? $_SERVER['PHP_SELF']);
+  $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
 </div>

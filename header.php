@@ -29,7 +29,7 @@ if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
 }
 //ini_set('display_errors', 1);
 if(!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false){
-    header('Location: ' . buildLoginUrl(currentRequestTarget('mobile-home.php')));
+    header('Location: ./index.php');
     exit();
 }
 $user = $_SESSION['user'];
@@ -58,7 +58,7 @@ if (!in_array('css/mobile-theme.css', $extraCss, true)) {
 }
 
 // Simple page-level gates to keep clients and moderators in the allowed areas only.
-$currentPage = basename($_SERVER['APP_ROUTE_FILE'] ?? $_SERVER['PHP_SELF']);
+$currentPage = basename($_SERVER['PHP_SELF']);
 $loginForTicketUrl = buildLoginUrl('ticket.php', true);
 $registerForTicketUrl = buildRegisterUrl('ticket.php');
 $showBackBtn = !in_array($currentPage, ['index.php', 'newuser.php'], true);
