@@ -3,7 +3,6 @@
   require_once './src/requester.php';
   require_once './src/ticket.php';
   require_once './src/ticket-event.php';
-  require_once './src/team.php';
   require_once './src/helper-functions.php';
 
   $isClient = (($user->role ?? '') === 'client');
@@ -11,12 +10,6 @@
 
   $err = '';
   $msg = '';
-
-  function isExcludedTicketTeam($name)
-  {
-      $normalizedName = strtolower(trim((string) $name));
-      return in_array($normalizedName, ['devops', 'injamul', 'server'], true);
-  }
 
   function redirectAfterCreate($target)
   {
@@ -52,7 +45,6 @@
   $prefillPhone = '';
   $prefillSubject = '';
   $prefillComment = '';
-  $prefillTeam = '';
   $prefillPriority = 'low';
   $guestDefaults = guestContactDefaults();
   $guestDisplayMessage = 'MAKE AN ACCOUNT IN ORDER TO PUT YOUR INFORMATION';
@@ -68,24 +60,6 @@
       $prefillPhone = $guestDisplayMessage;
   }
 
-  $teams = [];
-  $availableTeamIds = [];
-  try {
-      $teams = Team::findAll();
-      $teams = array_values(array_filter($teams, function ($team) {
-          return !isExcludedTicketTeam($team->name ?? '');
-      }));
-      usort($teams, function ($left, $right) {
-          return strcasecmp((string) ($left->name ?? ''), (string) ($right->name ?? ''));
-      });
-      $availableTeamIds = array_map(function ($team) {
-          return (int) $team->id;
-      }, $teams);
-  } catch (Throwable $teamError) {
-      error_log('Ticket form failed to load teams: ' . $teamError->getMessage());
-      $err = 'Unable to load teams right now. Please try again later.';
-  }
-
   if(isset($_POST['submit'])){
     
       $name = trim($_POST['name'] ?? '');
@@ -93,7 +67,6 @@
       $phone = trim($_POST['phone'] ?? '');
       $subject = trim($_POST['subject'] ?? '');
       $comment = trim($_POST['comment'] ?? ''); 
-      $team = trim($_POST['team'] ?? '');
       $priority = trim($_POST['priority'] ?? 'low');
 
       if ($isGuest) {
@@ -108,7 +81,6 @@
       $prefillPhone = $phone;
       $prefillSubject = $subject;
       $prefillComment = $comment;
-      $prefillTeam = $team;
       $prefillPriority = $priority;
 
       if(strlen($name) < 1) {
@@ -123,10 +95,6 @@
           $err = "Please enter subject";
       } else if(strlen($comment) < 1){
           $err = "Please enter comment";
-      } else if(!ctype_digit($team) || (int)$team < 1){
-          $err = "Please select a team";
-      } else if(!in_array((int) $team, $availableTeamIds, true)){
-          $err = "Please select a team";
       } else if(!in_array($priority, ['low', 'medium', 'high'], true)) {
           $err = "Please select a valid priority";
       } else {
@@ -170,7 +138,6 @@
             $requesterId = (int)$db->insert_id;
             $insertRequester->close();
 
-            $teamId = (int)$team;
             $insertTicket = $db->prepare(
                 "INSERT INTO ticket (title, body, requester, team, status, priority)
                  VALUES (?, ?, ?, ?, 'open', ?)"
@@ -180,6 +147,7 @@
                 throw new Exception('Failed to prepare ticket insert');
             }
 
+            $teamId = null;
             $insertTicket->bind_param('ssiis', $subject, $comment, $requesterId, $teamId, $priority);
 
             if (!$insertTicket->execute()) {
@@ -249,12 +217,6 @@
                 <div class="alert alert-success text-center my-3" role="alert"> <strong>Success! </strong> <?php echo $msg;?></div>
                 <?php endif?>
 
-                <?php if (empty($teams)) : ?>
-                <div class="alert alert-warning text-center my-3" role="alert">
-                    No ticket teams are available yet. Please contact support.
-                </div>
-                <?php endif; ?>
-
                 <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>" class="ticket-form">
                     <div class="form-row">
                         <div class="form-group col-md-6">
@@ -285,18 +247,6 @@
                         </div>
                     </div>
                     <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="name" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Team</label>
-                        <div class="col-sm-8">
-                            <select name="team" class="form-control" <?php echo empty($teams) ? 'disabled' : ''; ?>>
-                                <option value="">--select--</option>
-                                <?php foreach($teams as $team):?>
-                                <option value="<?php echo $team->id?>" <?php echo (string)$prefillTeam === (string)$team->id ? 'selected' : ''; ?>> <?php echo $team->name?></option>
-                                <?php endforeach?>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
                         <label for="name" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Priority</label>
                         <div class="col-sm-8">
                             <select name="priority" class="form-control">
@@ -307,7 +257,7 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <button type="submit" name="submit" class="btn btn-lg btn-primary" <?php echo empty($teams) ? 'disabled' : ''; ?>> Create</button>
+                        <button type="submit" name="submit" class="btn btn-lg btn-primary"> Create</button>
                     </div>
                 </form>
             </div>
@@ -359,7 +309,7 @@
 <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
 
 <!-- Custom scripts for all pages-->
-<script src="js/sb-admin.min.js"></script>
+<script src="js/admin-theme.min.js"></script>
 
 <!-- Demo scripts for this page-->
 <script src="js/demo/datatables-demo.js"></script>

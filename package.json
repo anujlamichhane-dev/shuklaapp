@@ -1,11 +1,11 @@
 {
-    "title": "SB Admin",
-    "name": "startbootstrap-sb-admin",
+    "title": "Helpdesk Ticketing System",
+    "name": "helpdesk-ticketing-system",
     "version": "5.1.0",
     "scripts": {
         "start": "gulp watch"
     },
-    "description": "A one page app landing page HTML theme for Bootstrap.",
+    "description": "Helpdesk and ticket management application.",
     "keywords": [
         "css",
         "sass",
@@ -16,19 +16,17 @@
         "admin",
         "app"
     ],
-    "homepage": "https://startbootstrap.com/template-overviews/sb-admin",
+    "homepage": "",
     "bugs": {
-        "url": "https://github.com/BlackrockDigital/startbootstrap-sb-admin/issues",
-        "email": "feedback@startbootstrap.com"
+        "url": "",
+        "email": ""
     },
     "license": "MIT",
-    "author": "Start Bootstrap",
-    "contributors": [
-        "David Miller (http://davidmiller.io/)"
-    ],
+    "author": "",
+    "contributors": [],
     "repository": {
         "type": "git",
-        "url": "https://github.com/BlackrockDigital/startbootstrap-sb-admin.git"
+        "url": ""
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "5.8.2",

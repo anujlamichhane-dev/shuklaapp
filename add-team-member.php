@@ -103,15 +103,6 @@ git pull --rebase origin main<?php
     </div>
     <!-- /.container-fluid -->
 
-    <!-- Sticky Footer -->
-    <footer class="sticky-footer">
-        <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-                <span>Copyright © Your Website 2019</span>
-            </div>
-        </div>
-    </footer>
-
 </div>
 <!-- /.content-wrapper -->
 
@@ -156,7 +147,7 @@ git pull --rebase origin main<?php
 <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
 
 <!-- Custom scripts for all pages-->
-<script src="js/sb-admin.min.js"></script>
+<script src="js/admin-theme.min.js"></script>
 
 <!-- Demo scripts for this page-->
 <script src="js/demo/datatables-demo.js"></script>

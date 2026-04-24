@@ -9,7 +9,7 @@
   <title>Shuklagandaki Municipality - Home</title>
   <link rel="icon" type="image/png" href="img/shuklagandaki_logo.png">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href="css/sb-admin.css" rel="stylesheet" type="text/css">
+  <link href="css/admin-theme.css" rel="stylesheet" type="text/css">
   <link href="css/mobile-home.css" rel="stylesheet">
   <link href="css/mobile-theme.css" rel="stylesheet">
   <link href="css/home.css" rel="stylesheet">
@@ -98,4 +98,3 @@
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 </body>
 </html>
-

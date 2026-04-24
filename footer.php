@@ -40,7 +40,7 @@
 <script src="vendor/datatables/dataTables.bootstrap4.js"></script>
 
 <!-- Custom scripts for all pages-->
-<script src="js/sb-admin.min.js"></script>
+<script src="js/admin-theme.min.js"></script>
 
 <!-- Demo scripts for this page-->
 <script src="js/demo/datatables-demo.js"></script>
@@ -58,7 +58,7 @@
     if (toggle && sidebar) {
       toggle.addEventListener('click', function(e) {
         e.preventDefault();
-        // Let sb-admin.js handle the class toggle; only sync the backdrop state.
+        // Let the admin theme script handle the class toggle; only sync the backdrop state.
         setTimeout(() => {
           if (backdrop) backdrop.classList.toggle('is-open', sidebar.classList.contains('toggled'));
         }, 0);

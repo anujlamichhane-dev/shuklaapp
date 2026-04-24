@@ -83,7 +83,7 @@ if (isset($_POST['submit'])) {
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
   <!-- Custom styles for this template-->
-  <link href="css/sb-admin.css" rel="stylesheet">
+  <link href="css/admin-theme.css" rel="stylesheet">
   <link href="css/mobile-home.css" rel="stylesheet">
   <link href="css/mobile-theme.css" rel="stylesheet">
   <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>
@@ -367,4 +367,3 @@ if (isset($_POST['submit'])) {
 </body>
 
 </html>
-

@@ -98,7 +98,7 @@ if (isset($_POST['submit'])) {
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
   <!-- Custom styles for this template-->
-  <link href="css/sb-admin.css" rel="stylesheet">
+  <link href="css/admin-theme.css" rel="stylesheet">
   <style>
     :root {
       --gov-navy: #0b2e4c;
@@ -329,4 +329,3 @@ if (isset($_POST['submit'])) {
 
 </body>
 </html>
-

@@ -141,7 +141,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
   <link href="vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
 
   <!-- Custom styles for this template-->
-  <link href="css/sb-admin.css" rel="stylesheet">
+  <link href="css/admin-theme.css" rel="stylesheet">
   <link href="css/theme-purple.css" rel="stylesheet">
   <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>
   <?php if (!empty($extraCss) && is_array($extraCss)): ?>

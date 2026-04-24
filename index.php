@@ -158,7 +158,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
   <link rel="icon" type="image/png" href="img/shuklagandaki_logo.png">
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href="css/sb-admin.css" rel="stylesheet">
+  <link href="css/admin-theme.css" rel="stylesheet">
   <link href="css/theme-purple.css" rel="stylesheet">
   <link href="css/mobile-home.css" rel="stylesheet">
   <link href="css/mobile-theme.css" rel="stylesheet">
@@ -366,4 +366,3 @@ $langUrlNe = $path . '?' . http_build_query($query);
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

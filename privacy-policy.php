@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Shukla Gandaki App - Privacy Policy</title>
   <link rel="icon" type="image/png" href="img/shuklagandaki_logo.png">
-  <link href="css/sb-admin.css" rel="stylesheet">
+  <link href="css/admin-theme.css" rel="stylesheet">
   <style>
     body {
       margin: 0;
