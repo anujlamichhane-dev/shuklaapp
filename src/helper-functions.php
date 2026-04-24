@@ -118,13 +118,13 @@ function appUrl($target = '')
 {
     $target = trim((string)$target);
     if ($target === '' || $target === './' || $target === '/' || $target === 'index' || $target === 'index.php' || $target === './index.php') {
-        return './';
+        return '/';
     }
 
     $target = str_replace('\\', '/', $target);
     $parts = parse_url($target);
     if ($parts === false) {
-        return './';
+        return '/';
     }
 
     $path = trim((string)($parts['path'] ?? ''), '/');
@@ -133,7 +133,7 @@ function appUrl($target = '')
     $cleanPath = ltrim($path, './');
 
     if ($cleanPath === '' || $cleanPath === 'index' || $cleanPath === 'index.php') {
-        $url = './';
+        $url = '/';
     } else {
         $segments = array_values(array_filter(explode('/', $cleanPath), 'strlen'));
         if (!empty($segments)) {
@@ -144,9 +144,9 @@ function appUrl($target = '')
             }
         }
 
-        $url = './' . implode('/', $segments);
-        if ($url === '.') {
-            $url = './';
+        $url = '/' . implode('/', $segments) . '/';
+        if ($url === '//') {
+            $url = '/';
         }
     }
 

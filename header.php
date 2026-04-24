@@ -58,7 +58,7 @@ if (!in_array('css/mobile-theme.css', $extraCss, true)) {
 }
 
 // Simple page-level gates to keep clients and moderators in the allowed areas only.
-$currentPage = basename($_SERVER['PHP_SELF']);
+$currentPage = basename($_SERVER['APP_ROUTE_FILE'] ?? $_SERVER['PHP_SELF']);
 $loginForTicketUrl = buildLoginUrl('ticket.php', true);
 $registerForTicketUrl = buildRegisterUrl('ticket.php');
 $showBackBtn = !in_array($currentPage, ['index.php', 'newuser.php'], true);
@@ -128,6 +128,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <base href="/">
   <meta name="description" content="">
   <meta name="author" content="">
 

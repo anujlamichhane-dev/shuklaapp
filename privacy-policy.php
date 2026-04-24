@@ -7,6 +7,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <base href="/">
   <title>Shukla Gandaki App - Privacy Policy</title>
   <link rel="icon" type="image/png" href="img/shuklagandaki_logo.png">
   <link href="css/admin-theme.css" rel="stylesheet">
