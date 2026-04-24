@@ -86,7 +86,7 @@
       <div class="d-flex align-items-center">
         <div class="home-indicator"></div>
       </div>
-      <a class="btn btn-primary shadow start-button" href="index.php">
+      <a class="btn btn-primary shadow start-button" href="./">
         सुरु गर्नुस्
         <span class="ml-2"><i class="fas fa-arrow-right"></i></span>
       </a>

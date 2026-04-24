@@ -29,7 +29,7 @@ if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
 }
 //ini_set('display_errors', 1);
 if(!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false){
-    header('Location: ./index.php');
+    header('Location: ' . buildLoginUrl(currentRequestTarget('mobile-home.php')));
     exit();
 }
 $user = $_SESSION['user'];
@@ -91,18 +91,18 @@ $clientAllowedPages = [
 ];
 if ($isGuest) {
   if (!in_array($currentPage, $guestAllowedPages, true)) {
-    header('Location: ./mobile-home.php');
+    header('Location: ' . appUrl('mobile-home.php'));
     exit();
   }
 }
 
 if ($isClient && !in_array($currentPage, $clientAllowedPages, true)) {
-  header('Location: ./mytickets.php');
+  header('Location: ' . appUrl('mytickets.php'));
   exit();
 }
 
 if ($isModerator && $currentPage === 'mytickets.php') {
-  header('Location: ./dashboard.php');
+  header('Location: ' . appUrl('dashboard.php'));
   exit();
 }
 ?>
@@ -156,7 +156,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
 
   <nav class="navbar navbar-expand navbar-dark bg-dark static-top">
     <?php if ($showBackBtn): ?>
-      <a class="btn btn-sm btn-outline-light mr-2 d-inline-flex align-items-center btn-home" href="./mobile-home.php" aria-label="Go to home">
+      <a class="btn btn-sm btn-outline-light mr-2 d-inline-flex align-items-center btn-home" href="<?php echo htmlspecialchars(appUrl('mobile-home.php'), ENT_QUOTES, 'UTF-8'); ?>" aria-label="Go to home">
         <i class="fas fa-home mr-1"></i>
         <span>Home</span>
       </a>
@@ -199,9 +199,9 @@ if ($isModerator && $currentPage === 'mytickets.php') {
           <?php if ($isGuest): ?>
             <a class="dropdown-item" href="<?php echo htmlspecialchars(buildLoginUrl(), ENT_QUOTES, 'UTF-8'); ?>">Login</a>
             <a class="dropdown-item" href="<?php echo htmlspecialchars($registerForTicketUrl, ENT_QUOTES, 'UTF-8'); ?>">Create Account</a>
-            <a class="dropdown-item" href="./logout.php">Exit Guest Session</a>
+            <a class="dropdown-item" href="<?php echo htmlspecialchars(appUrl('logout.php'), ENT_QUOTES, 'UTF-8'); ?>">Exit Guest Session</a>
           <?php else: ?>
-            <a class="dropdown-item" href="./logout.php" data-toggle="modal" data-target="#logoutModal">Logout</a>
+            <a class="dropdown-item" href="<?php echo htmlspecialchars(appUrl('logout.php'), ENT_QUOTES, 'UTF-8'); ?>" data-toggle="modal" data-target="#logoutModal">Logout</a>
           <?php endif; ?>
         </div>
       </li>
@@ -216,27 +216,27 @@ if ($isModerator && $currentPage === 'mytickets.php') {
     <ul class="sidebar navbar-nav">
       <li class="sidebar-profile"></li>
       <li class="nav-item active">
-        <a class="nav-link" href="./mobile-home.php">
+        <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('mobile-home.php'), ENT_QUOTES, 'UTF-8'); ?>">
           <i class="fas fa-fw fa-home"></i>
           <span> <?php echo htmlspecialchars(i18n_t('nav.home'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="./tickets-menu.php">
+        <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
           <i class="fas fa-fw fa-ticket-alt"></i>
           <span> <?php echo htmlspecialchars(i18n_t('nav.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
       </li>
       <?php if (!$isGuest): ?>
         <li class="nav-item active">
-          <a class="nav-link" href="<?php echo ($isAdmin || $isOfficial) ? './messages-inbox.php' : './message.php'; ?>">
+          <a class="nav-link" href="<?php echo htmlspecialchars(appUrl(($isAdmin || $isOfficial) ? 'messages-inbox.php' : 'message.php'), ENT_QUOTES, 'UTF-8'); ?>">
             <i class="fas fa-fw fa-inbox"></i>
             <span> <?php echo htmlspecialchars(i18n_t('nav.messages'), ENT_QUOTES, 'UTF-8'); ?></span>
           </a>
         </li>
       <?php endif; ?>
       <li class="nav-item active">
-        <a class="nav-link" href="./contacts.php">
+        <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('contacts.php'), ENT_QUOTES, 'UTF-8'); ?>">
           <i class="fas fa-fw fa-address-book"></i>
           <span> <?php echo htmlspecialchars(i18n_t('nav.contacts'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
@@ -256,7 +256,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
         </li>
       <?php endif; ?>
       <li class="nav-item active sidebar-logout">
-        <a class="nav-link" href="./logout.php">
+        <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('logout.php'), ENT_QUOTES, 'UTF-8'); ?>">
           <i class="fas fa-fw fa-sign-out-alt"></i>
           <span> <?php echo $isGuest ? 'Exit Guest' : htmlspecialchars(i18n_t('nav.logout'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>

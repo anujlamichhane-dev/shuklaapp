@@ -39,7 +39,7 @@ if (isset($_POST['guest_login'])) {
   session_regenerate_id(true);
   $_SESSION['logged-in'] = true;
   $_SESSION['user'] = buildGuestUser();
-  header('Location: ./mobile-home.php');
+  header('Location: ' . appUrl('mobile-home.php'));
   exit();
 }
 
@@ -339,7 +339,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
           </div>
 
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <a class="link-muted" href="./forgot-password.php"><?php echo htmlspecialchars(i18n_t('login.forgot'), ENT_QUOTES, 'UTF-8'); ?></a>
+            <a class="link-muted" href="<?php echo htmlspecialchars(appUrl('forgot-password.php'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars(i18n_t('login.forgot'), ENT_QUOTES, 'UTF-8'); ?></a>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="rememberMe" name="remember" value="1">
               <label class="form-check-label" for="rememberMe"><?php echo htmlspecialchars(i18n_t('login.remember'), ENT_QUOTES, 'UTF-8'); ?></label>

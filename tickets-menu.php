@@ -35,7 +35,7 @@
         <div class="alert alert-info">Guests can open and track tickets anonymously in this session. Create an account later if you want permanent access across devices.</div>
         <div class="menu-grid">
           <?php foreach ($ticketLinks as $link): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8'); ?>">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl($link['href']), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
               <span class="menu-label"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
             </a>
@@ -44,7 +44,7 @@
       <?php elseif ($isClient): ?>
         <div class="menu-grid">
           <?php foreach ($ticketLinks as $link): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8'); ?>">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl($link['href']), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
               <span class="menu-label"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
             </a>
@@ -53,7 +53,7 @@
       <?php else: ?>
         <div class="ticket-menu-card">
           <?php foreach ($ticketLinks as $link): ?>
-            <a class="ticket-row" href="<?php echo htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8'); ?>">
+            <a class="ticket-row" href="<?php echo htmlspecialchars(appUrl($link['href']), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="ticket-icon"><i class="fas <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
               <span class="ticket-label"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
               <span class="ticket-arrow"><i class="fas fa-chevron-right"></i></span>

@@ -114,8 +114,56 @@ function guestOwnsTicket($ticketId)
     return in_array((int)$ticketId, getGuestTicketIds(), true);
 }
 
+function appUrl($target = '')
+{
+    $target = trim((string)$target);
+    if ($target === '' || $target === './' || $target === '/' || $target === 'index' || $target === 'index.php' || $target === './index.php') {
+        return './';
+    }
+
+    $target = str_replace('\\', '/', $target);
+    $parts = parse_url($target);
+    if ($parts === false) {
+        return './';
+    }
+
+    $path = trim((string)($parts['path'] ?? ''), '/');
+    $query = isset($parts['query']) ? (string)$parts['query'] : '';
+    $fragment = isset($parts['fragment']) ? (string)$parts['fragment'] : '';
+    $cleanPath = ltrim($path, './');
+
+    if ($cleanPath === '' || $cleanPath === 'index' || $cleanPath === 'index.php') {
+        $url = './';
+    } else {
+        $segments = array_values(array_filter(explode('/', $cleanPath), 'strlen'));
+        if (!empty($segments)) {
+            $last = array_pop($segments);
+            $last = preg_replace('/\.php$/i', '', $last);
+            if ($last !== '' && $last !== 'index') {
+                $segments[] = $last;
+            }
+        }
+
+        $url = './' . implode('/', $segments);
+        if ($url === '.') {
+            $url = './';
+        }
+    }
+
+    if ($query !== '') {
+        $url .= '?' . $query;
+    }
+
+    if ($fragment !== '') {
+        $url .= '#' . $fragment;
+    }
+
+    return $url;
+}
+
 function sanitizeRedirectTarget($target, $default = './mobile-home.php', $allowEmpty = false)
 {
+    $default = appUrl($default);
     $target = trim((string)$target);
     if ($target === '') {
         return $allowEmpty ? '' : $default;
@@ -127,34 +175,67 @@ function sanitizeRedirectTarget($target, $default = './mobile-home.php', $allowE
         return $default;
     }
 
-    if (strpos($target, '//') === 0 || strpos($target, '..') !== false || $target[0] === '/') {
+    if (strpos($target, '//') === 0 || strpos($target, '..') !== false) {
         return $default;
     }
 
-    $path = parse_url($target, PHP_URL_PATH);
-    if (!is_string($path) || $path === '') {
+    if ($target[0] === '/') {
+        $target = ltrim($target, '/');
+    }
+
+    $parts = parse_url($target);
+    if ($parts === false) {
         return $default;
     }
 
-    $filename = basename($path);
-    $allowedPages = [
-        'mobile-home.php',
-        'tickets-menu.php',
-        'ticket.php',
-        'index.php',
-        'new.php',
-        'general-info-menu.php',
-        'interesting-places.php',
-        'municipality-introduction.php',
-        'contacts.php',
-        'documents-info.php'
-    ];
-
-    if (!in_array($filename, $allowedPages, true)) {
+    $path = trim((string)($parts['path'] ?? ''), '/');
+    $filename = $path === '' ? 'index.php' : basename($path);
+    if ($filename === '' || !preg_match('/^[A-Za-z0-9._-]+$/', $filename)) {
         return $default;
     }
 
-    return './' . ltrim($target, './');
+    if (!preg_match('/\.php$/i', $filename)) {
+        $filename .= '.php';
+    }
+
+    $blockedPages = ['header.php', 'footer.php'];
+    $appRoot = dirname(__DIR__);
+    if (in_array($filename, $blockedPages, true) || !is_file($appRoot . DIRECTORY_SEPARATOR . $filename)) {
+        return $default;
+    }
+
+    $normalizedTarget = appUrl($filename);
+    if (!empty($parts['query'])) {
+        $normalizedTarget .= '?' . $parts['query'];
+    }
+    if (!empty($parts['fragment'])) {
+        $normalizedTarget .= '#' . $parts['fragment'];
+    }
+
+    return $normalizedTarget;
+}
+
+function currentRequestTarget($default = './mobile-home.php')
+{
+    $requestUri = trim((string)($_SERVER['REQUEST_URI'] ?? ''));
+    if ($requestUri === '') {
+        return appUrl($default);
+    }
+
+    $parts = parse_url($requestUri);
+    if ($parts === false) {
+        return appUrl($default);
+    }
+
+    $target = ltrim((string)($parts['path'] ?? ''), '/');
+    if (!empty($parts['query'])) {
+        $target .= '?' . $parts['query'];
+    }
+    if (!empty($parts['fragment'])) {
+        $target .= '#' . $parts['fragment'];
+    }
+
+    return sanitizeRedirectTarget($target, $default);
 }
 
 function buildLoginUrl($redirect = '', $guestRequired = false)
@@ -172,15 +253,15 @@ function buildLoginUrl($redirect = '', $guestRequired = false)
 
     $query = http_build_query($params);
 
-    return './index.php' . ($query !== '' ? '?' . $query : '');
+    return appUrl('index.php') . ($query !== '' ? '?' . $query : '');
 }
 
 function buildRegisterUrl($redirect = '')
 {
     $safeRedirect = sanitizeRedirectTarget($redirect, '', true);
     if ($safeRedirect === '') {
-        return './new.php';
+        return appUrl('new.php');
     }
 
-    return './new.php?redirect=' . urlencode(ltrim($safeRedirect, './'));
+    return appUrl('new.php') . '?redirect=' . urlencode(ltrim($safeRedirect, './'));
 }

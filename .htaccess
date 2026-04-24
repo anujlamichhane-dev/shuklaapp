@@ -1,4 +1,3 @@
-# General settings
 DirectoryIndex index.php index.html
 
 <IfModule mod_rewrite.c>
@@ -7,7 +6,6 @@ DirectoryIndex index.php index.html
     RewriteRule ^(?:src|database)/ - [F,L]
     RewriteRule ^(?:header|footer)\.php$ - [F,L]
 
-    # Force HTTPS (handles proxies too)
     RewriteCond %{HTTPS} !=on [OR]
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

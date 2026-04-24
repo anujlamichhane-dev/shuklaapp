@@ -178,7 +178,7 @@
                 error_log('Ticket event logging failed for ticket ' . (int)$savedTicket->id . ': ' . $eventError->getMessage());
             }
 
-            redirectAfterCreate('./mytickets.php');
+            redirectAfterCreate(appUrl('mytickets.php'));
         } catch(Throwable $e){
             error_log('Ticket creation failed for user ' . ($user->id ?? 'unknown') . ': ' . $e->getMessage());
             $err = "Failed to generate ticket";
@@ -204,7 +204,7 @@
                         <small class="text-muted">Share the issue and how we can reach you.</small>
                     </div>
                     <div class="mt-2 mt-lg-0">
-                        <a href="./mytickets.php" class="btn btn-outline-secondary btn-sm">My tickets</a>
+                        <a href="<?php echo htmlspecialchars(appUrl('mytickets.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-outline-secondary btn-sm">My tickets</a>
                     </div>
                 </div>
             </div>

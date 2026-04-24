@@ -330,12 +330,12 @@
 
       <section class="poster-links">
         <div class="menu-grid">
-          <a class="menu-card poster-card" href="tickets-menu.php">
+          <a class="menu-card poster-card" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
             <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
             <span class="menu-label">सुझाव र गुनासो</span>
             <span class="menu-subtext">टिकट सम्बन्धी सेवा</span>
           </a>
-          <a class="menu-card poster-card" href="general-info-menu.php">
+          <a class="menu-card poster-card" href="<?php echo htmlspecialchars(appUrl('general-info-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
             <span class="menu-icon"><i class="fas fa-info-circle"></i></span>
             <span class="menu-label">सामान्य जानकारी</span>
             <span class="menu-subtext">दस्तावेज र सम्पर्क</span>
@@ -346,7 +346,7 @@
       <section class="menu-section">
         <div class="section-title"><?php echo htmlspecialchars(i18n_t('home.quick_links'), ENT_QUOTES, 'UTF-8'); ?></div>
         <div class="menu-grid">
-          <a class="menu-card" href="tickets-menu.php">
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
             <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
             <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
             <span class="menu-subtext">
@@ -362,35 +362,35 @@
             </span>
           </a>
           <?php if ($isClient): ?>
-            <a class="menu-card" href="ticket.php">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('ticket.php'), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas fa-plus-circle"></i></span>
               <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.new_ticket'), ENT_QUOTES, 'UTF-8'); ?></span>
               <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.new_ticket.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
             </a>
           <?php elseif ($isGuest): ?>
-            <a class="menu-card" href="ticket.php">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('ticket.php'), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas fa-plus-circle"></i></span>
               <span class="menu-label">Open Ticket Anonymously</span>
               <span class="menu-subtext">Submit a request without creating an account</span>
             </a>
-            <a class="menu-card" href="mytickets.php">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('mytickets.php'), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas fa-award"></i></span>
               <span class="menu-label">My Anonymous Tickets</span>
               <span class="menu-subtext">Review and reply to tickets from this guest session</span>
             </a>
           <?php endif; ?>
-          <a class="menu-card" href="documents-info.php">
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('documents-info.php'), ENT_QUOTES, 'UTF-8'); ?>">
             <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
             <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.documents'), ENT_QUOTES, 'UTF-8'); ?></span>
             <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.documents.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
           </a>
-          <a class="menu-card" href="contacts.php">
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('contacts.php'), ENT_QUOTES, 'UTF-8'); ?>">
             <span class="menu-icon"><i class="fas fa-address-book"></i></span>
             <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.contacts'), ENT_QUOTES, 'UTF-8'); ?></span>
             <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.contacts.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
           </a>
           <?php if ($isOfficial || $isAdmin): ?>
-            <a class="menu-card" href="messages-inbox.php">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('messages-inbox.php'), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas fa-inbox"></i></span>
               <span class="menu-label">Inbox</span>
               <span class="menu-subtext">
@@ -399,19 +399,19 @@
             </a>
           <?php endif; ?>
           <?php if ($isClient): ?>
-            <a class="menu-card" href="message.php">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('message.php'), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas fa-paper-plane"></i></span>
               <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.message'), ENT_QUOTES, 'UTF-8'); ?></span>
               <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.message.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
             </a>
-            <a class="menu-card" href="my-messages.php">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('my-messages.php'), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas fa-inbox"></i></span>
               <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.my_messages'), ENT_QUOTES, 'UTF-8'); ?></span>
               <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.my_messages.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
             </a>
           <?php endif; ?>
           <?php if ($isCreator || $isAdmin): ?>
-            <a class="menu-card" href="users.php">
+            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('users.php'), ENT_QUOTES, 'UTF-8'); ?>">
               <span class="menu-icon"><i class="fas fa-users-cog"></i></span>
               <span class="menu-label">Users</span>
               <span class="menu-subtext">Manage accounts &amp; roles</span>

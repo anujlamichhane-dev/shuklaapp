@@ -17,5 +17,5 @@ if (!empty($_COOKIE['remember_token'])) {
 }
 
 session_destroy();
-header('Location: ./index.php');
+header('Location: ./');
 exit();
