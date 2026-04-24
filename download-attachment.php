@@ -1,6 +1,16 @@
 <?php
 // Secure download/view for message attachments.
+require_once __DIR__ . '/src/security.php';
+security_bootstrap_session();
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => security_is_https(),
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 session_start();
+security_send_headers(true);
 
 if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
     http_response_code(403);

@@ -3,6 +3,8 @@ if (!ob_get_level()) {
   ob_start();
 }
 require_once './src/remember.php';
+require_once './src/security.php';
+security_bootstrap_session();
 $secure = remember_cookie_secure();
 $cookieDomain = remember_cookie_domain();
 session_set_cookie_params([
@@ -14,6 +16,7 @@ session_set_cookie_params([
   'samesite' => 'Lax',
 ]);
 session_start();
+security_send_headers();
 require_once './src/i18n.php';
 require_once './src/Database.php';
 require_once './src/helper-functions.php';
@@ -29,7 +32,7 @@ if (!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) {
 }
 //ini_set('display_errors', 1);
 if(!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false){
-    header('Location: ./index.php');
+    header('Location: ' . buildLoginUrl(currentRequestTarget()));
     exit();
 }
 $user = $_SESSION['user'];

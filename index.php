@@ -1,5 +1,7 @@
 <?php
 require_once './src/remember.php';
+require_once './src/security.php';
+security_bootstrap_session();
 $secure = remember_cookie_secure();
 $cookieDomain = remember_cookie_domain();
 session_set_cookie_params([
@@ -11,9 +13,10 @@ session_set_cookie_params([
   'samesite' => 'Lax',
 ]);
 session_start();
+security_send_headers(true);
 $remember = isset($_POST['remember']) && $_POST['remember'] === '1';
-error_reporting(E_ALL);/*  */
-ini_set('display_errors', 1);
+error_reporting(0);
+ini_set('display_errors', 0);
 
 if (!isset($_SESSION['logged-in'])) {
   $_SESSION['logged-in'] = false;
@@ -35,6 +38,7 @@ if (isset($_GET['guest_required']) && $_GET['guest_required'] === '1') {
 }
 
 if (isset($_POST['guest_login'])) {
+  csrf_require_valid_request();
   remember_clear_cookie($secure);
   session_regenerate_id(true);
   $_SESSION['logged-in'] = true;
@@ -60,11 +64,19 @@ if ((!isset($_SESSION['logged-in']) || $_SESSION['logged-in'] == false) && !isse
 
 // LOGIN
 if (isset($_POST['submit'])) {
+  csrf_require_valid_request();
 
   $email = trim($_POST['email'] ?? '');
   $password = $_POST['password'] ?? '';
+  $loginIdentity = security_client_ip() . '|' . strtolower($email);
+  $loginWindowSeconds = 600;
+  $loginMaxAttempts = 6;
+  $loginBlockSeconds = 900;
+  $rateStatus = security_rate_limit_check('login', $loginIdentity, $loginMaxAttempts, $loginWindowSeconds);
 
-  if (strlen($email) < 1) {
+  if (!$rateStatus['allowed']) {
+    $err = 'Too many login attempts. Please try again in ' . $rateStatus['retry_after'] . ' seconds.';
+  } else if (strlen($email) < 1) {
     $err = 'Please enter email address';
   } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $err = 'Please enter a valid email adddress';
@@ -104,6 +116,7 @@ if (isset($_POST['submit'])) {
             $_SESSION['user'] = $user;
 
             $stmt->close();
+            security_rate_limit_reset('login', $loginIdentity);
 
             if ($remember) {
               remember_create_token($db, $user->id, $secure);
@@ -123,12 +136,16 @@ if (isset($_POST['submit'])) {
             $err = "Wrong username or password";
           }
         } else {
-          $err = "No user found";
+          $err = "Wrong username or password";
         }
       }
 
       $stmt->close();
     }
+  }
+
+  if ($err !== '' && strpos($err, 'Too many login attempts') !== 0) {
+    security_rate_limit_hit('login', $loginIdentity, $loginMaxAttempts, $loginWindowSeconds, $loginBlockSeconds);
   }
 }
 ?>
@@ -312,6 +329,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
       </div>
       <div class="card-body">
         <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+          <?php echo csrf_input(); ?>
           <input type="hidden" name="redirect" value="<?php echo htmlspecialchars(ltrim($redirectTarget, './'), ENT_QUOTES, 'UTF-8'); ?>">
 
           <?php if (strlen($notice) > 1) : ?>

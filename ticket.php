@@ -61,6 +61,7 @@
   }
 
   if(isset($_POST['submit'])){
+      csrf_require_valid_request();
     
       $name = trim($_POST['name'] ?? '');
       $email = trim($_POST['email'] ?? '');
@@ -218,6 +219,7 @@
                 <?php endif?>
 
                 <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>" class="ticket-form">
+                    <?php echo csrf_input(); ?>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="name">Name</label>

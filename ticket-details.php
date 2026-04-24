@@ -57,6 +57,7 @@ function ticketActorName($actorId, $requesterOwner)
 }
 
 if (isset($_POST['submit'])) {
+    csrf_require_valid_request();
 
     $teamMember = isset($_POST["team_member"]) && ctype_digit($_POST["team_member"]) ? (int)$_POST["team_member"] : null;
     $team = isset($_POST["team"]) && ctype_digit($_POST["team"]) ? (int)$_POST["team"] : (int)$ticket->team;
@@ -94,6 +95,7 @@ if (isset($_POST['submit'])) {
 }
 
 if (isset($_POST['comment'])) {
+    csrf_require_valid_request();
 
     $commentDraft = trim($_POST['body'] ?? '');
 
@@ -160,6 +162,7 @@ $ticketCreatedAt = !empty($ticket->created_at) ? new DateTime($ticket->created_a
 
                 <?php if($canManageTicket): ?>
                     <form method="post">
+                        <?php echo csrf_input(); ?>
                         <div class="col-lg-8 col-md-8 col-sm-12 offset-lg-2 offset-md-2">
                             <div class="form-group row">
                                 <label for="team" class="col-sm-3 col-form-label">Team</label>
@@ -209,6 +212,7 @@ $ticketCreatedAt = !empty($ticket->created_at) ? new DateTime($ticket->created_a
             </div>
         </div>
         <form method="POST" action="">
+        <?php echo csrf_input(); ?>
         <div class="form-group row col-lg-8 offset-lg-2 col-md-8 col-sm-12 offset-md-2">
       
             <label for="team" class="col-sm-12 col-lg-3 col-md-3 col-form-label">Comment</label>
@@ -221,6 +225,7 @@ $ticketCreatedAt = !empty($ticket->created_at) ? new DateTime($ticket->created_a
 
         <?php if($canManageTicket): ?>
         <form id="formData" class="grid-form"  enctype="multipart/form-data" method="POST">
+                            <?php echo csrf_input(); ?>
                             <label for="team"   style="margin-left:180px">Change Ticket Status</label>
                             <div class="col-sm-8">
                        
@@ -292,26 +297,29 @@ jQuery('#formData').submit(function (e) {
     jQuery.ajax({
         url: './src/update-ticket.php',
         type: 'post',
-        dataType: 'text',
+        dataType: 'json',
         data: formData,
         contentType: false,
         processData: false,
         success: function (res) {
-            let result = JSON.parse(res)
-            if (result.status == 200) {
+            if (res.status == 200) {
 
                 jQuery('#msg').html(
                     '<div class="btn btn-success" style="text-align:center"><strong><span class="fa fa-check"></span> Success!</strong>' +
-                    result.msg + '</div>');
+                    res.msg + '</div>');
                 jQuery('#formEvents').trigger("reset");
             } else {
 
                 jQuery('#msg').html(
                     '<div class="btn btn-danger" style="text-align:center"><strong><span class="fa fa-times"></span> Failed!</strong>' +
-                    result.msg + '</div>');
+                    res.msg + '</div>');
 
             }
 
+        },
+        error: function () {
+            jQuery('#msg').html(
+                '<div class="btn btn-danger" style="text-align:center"><strong><span class="fa fa-times"></span> Failed!</strong> Request failed.</div>');
         }
     });
 });

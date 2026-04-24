@@ -19,6 +19,7 @@
   $statusType = '';
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_require_valid_request();
     $uploadDir = __DIR__ . '/data/message_uploads';
     $allowedExt = ['pdf','jpg','jpeg','png','gif','webp','doc','docx','ppt','pptx','xls','xlsx','csv','txt'];
     $maxBytes = 10 * 1024 * 1024; // 10MB
@@ -61,19 +62,14 @@
       $uploadName = $_FILES['attachment']['name'] ?? '';
       $tmpName = $_FILES['attachment']['tmp_name'] ?? '';
       $uploadSize = (int)($_FILES['attachment']['size'] ?? 0);
-      $uploadMime = $_FILES['attachment']['type'] ?? '';
-      $ext = strtolower(pathinfo($uploadName, PATHINFO_EXTENSION));
+      $uploadCheck = security_validate_upload($tmpName, $uploadName, $uploadSize, $allowedExt, $maxBytes);
 
-      if (!in_array($ext, $allowedExt, true)) {
-        $statusMsg = 'Unsupported file type. Allowed: pdf, images, office docs, txt, csv.';
-        $statusType = 'error';
-      } elseif ($uploadSize > $maxBytes) {
-        $statusMsg = 'File is too large. Max 10MB.';
-        $statusType = 'error';
-      } elseif (!is_uploaded_file($tmpName)) {
-        $statusMsg = 'Invalid upload. Please try again.';
+      if (!$uploadCheck['ok']) {
+        $statusMsg = $uploadCheck['message'];
         $statusType = 'error';
       } else {
+        $uploadMime = $uploadCheck['mime'];
+        $ext = $uploadCheck['ext'];
         $safeSlug = preg_replace('/[^a-zA-Z0-9-_]/', '_', pathinfo($uploadName, PATHINFO_FILENAME));
         $uniqueName = $safeSlug . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
         $dest = $uploadDir . DIRECTORY_SEPARATOR . $uniqueName;
@@ -172,6 +168,7 @@
 
         <div class="message-card">
           <form method="POST" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+            <?php echo csrf_input(); ?>
             <div class="form-row">
               <label for="recipient"><?php echo htmlspecialchars(i18n_t('message.sendto'), ENT_QUOTES, 'UTF-8'); ?></label>
               <select id="recipient" name="recipient" required>

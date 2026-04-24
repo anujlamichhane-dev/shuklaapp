@@ -1,5 +1,15 @@
 <?php
+require_once './src/security.php';
+security_bootstrap_session();
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => security_is_https(),
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 session_start();
+security_send_headers(true);
 
 require_once './src/Database.php';
 
@@ -11,11 +21,19 @@ $email = '';
 $phone = '';
 
 if (isset($_POST['submit'])) {
+    csrf_require_valid_request();
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $password = $_POST['password'] ?? '';
+    $resetIdentity = security_client_ip() . '|' . strtolower($email);
+    $resetWindowSeconds = 900;
+    $resetMaxAttempts = 5;
+    $resetBlockSeconds = 1800;
+    $rateStatus = security_rate_limit_check('password-reset', $resetIdentity, $resetMaxAttempts, $resetWindowSeconds);
 
-    if (strlen($email) < 1) {
+    if (!$rateStatus['allowed']) {
+        $err = 'Too many reset attempts. Please try again in ' . $rateStatus['retry_after'] . ' seconds.';
+    } elseif (strlen($email) < 1) {
         $err = 'Please enter email address';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $err = 'Please enter a valid email address';
@@ -39,8 +57,8 @@ if (isset($_POST['submit'])) {
                 $res = $stmt->get_result();
                 if ($res && $res->num_rows > 0) {
                     $user = $res->fetch_object();
-                    if ($user->phone !== $phone) {
-                        $err = 'Phone number does not match our records';
+                    if ((string)$user->phone !== $phone) {
+                        $err = 'Unable to verify those account details.';
                     } else {
                         $hashed = password_hash($password, PASSWORD_DEFAULT);
                         $update = $db->prepare("UPDATE users SET password = ?, last_password = ? WHERE id = ?");
@@ -49,6 +67,13 @@ if (isset($_POST['submit'])) {
                         } else {
                             $update->bind_param('ssi', $hashed, $hashed, $user->id);
                             if ($update->execute()) {
+                                $clear = $db->prepare("DELETE FROM remember_tokens WHERE user_id = ?");
+                                if ($clear) {
+                                    $clear->bind_param('i', $user->id);
+                                    $clear->execute();
+                                    $clear->close();
+                                }
+                                security_rate_limit_reset('password-reset', $resetIdentity);
                                 $msg = 'Password updated successfully. You can now log in.';
                             } else {
                                 $err = 'Unable to update password right now';
@@ -57,11 +82,15 @@ if (isset($_POST['submit'])) {
                         }
                     }
                 } else {
-                    $err = 'No account found with that email';
+                    $err = 'Unable to verify those account details.';
                 }
             }
             $stmt->close();
         }
+    }
+
+    if ($err !== '' && strpos($err, 'Too many reset attempts') !== 0) {
+        security_rate_limit_hit('password-reset', $resetIdentity, $resetMaxAttempts, $resetWindowSeconds, $resetBlockSeconds);
     }
 }
 ?>
@@ -316,16 +345,17 @@ if (isset($_POST['submit'])) {
       <div class="card-body">
         <?php if(strlen($err) > 1) :?>
           <div class="alert alert-danger text-center mb-3" role="alert" aria-live="assertive">
-            <strong>Request failed:</strong> <?php echo $err;?>
+            <strong>Request failed:</strong> <?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8');?>
           </div>
         <?php endif?>
 
         <?php if(strlen($msg) > 1) :?>
           <div class="alert alert-success text-center mb-3" role="alert" aria-live="polite">
-            <strong>Success:</strong> <?php echo $msg;?>
+            <strong>Success:</strong> <?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8');?>
           </div>
         <?php endif?>
-        <form method="POST" action="<?php echo $_SERVER['PHP_SELF'] ?>">
+        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+          <?php echo csrf_input(); ?>
           <div class="form-group">
             <label for="inputEmail">Email address</label>
             <input type="email" id="inputEmail" name="email" class="form-control" placeholder="name@example.com" autofocus="autofocus" value="<?php echo htmlspecialchars($email ?? '') ?>" required>

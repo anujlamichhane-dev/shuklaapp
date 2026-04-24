@@ -25,6 +25,7 @@
 
   // handle reply submit
   if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reply_body'], $_POST['message_id'])) {
+    csrf_require_valid_request();
     $replyBody = trim($_POST['reply_body']);
     $msgId = (int)$_POST['message_id'];
     $uploadDir = __DIR__ . '/data/message_uploads';
@@ -63,19 +64,14 @@
       $fname = $_FILES['reply_attachment']['name'] ?? '';
       $tmp = $_FILES['reply_attachment']['tmp_name'] ?? '';
       $fsize = (int)($_FILES['reply_attachment']['size'] ?? 0);
-      $fmime = $_FILES['reply_attachment']['type'] ?? '';
-      $ext = strtolower(pathinfo($fname, PATHINFO_EXTENSION));
+      $uploadCheck = security_validate_upload($tmp, $fname, $fsize, $allowedExt, $maxBytes);
 
-      if (!in_array($ext, $allowedExt, true)) {
-        $statusMsg = 'Unsupported attachment type.';
-        $statusType = 'error';
-      } elseif ($fsize > $maxBytes) {
-        $statusMsg = 'Attachment too large (max 10MB).';
-        $statusType = 'error';
-      } elseif (!is_uploaded_file($tmp)) {
-        $statusMsg = 'Invalid upload.';
+      if (!$uploadCheck['ok']) {
+        $statusMsg = $uploadCheck['message'];
         $statusType = 'error';
       } else {
+        $fmime = $uploadCheck['mime'];
+        $ext = $uploadCheck['ext'];
         $safeSlug = preg_replace('/[^a-zA-Z0-9-_]/', '_', pathinfo($fname, PATHINFO_FILENAME));
         $uniqueName = $safeSlug . '_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
         $dest = $uploadDir . DIRECTORY_SEPARATOR . $uniqueName;
@@ -89,7 +85,9 @@
           $statusType = 'error';
         }
       }
-    } else {
+    }
+
+    if ($statusMsg === '') {
       $emailForRole = '';
       switch ($role) {
         case 'mayor': $emailForRole = 'mayor@shuklagandakimun.gov.np'; break;
@@ -232,6 +230,7 @@
                       </div>
                     <?php endif; ?>
                     <form class="mt-2" method="POST" enctype="multipart/form-data" action="messages-inbox.php">
+                      <?php echo csrf_input(); ?>
                       <input type="hidden" name="message_id" value="<?php echo (int)$msg->id; ?>">
                       <div class="form-group mb-2">
                         <textarea class="form-control" name="reply_body" rows="2" placeholder="Reply..." required></textarea>

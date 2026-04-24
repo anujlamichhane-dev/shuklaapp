@@ -1,8 +1,17 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+require_once './src/security.php';
+security_bootstrap_session();
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => security_is_https(),
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+error_reporting(0);
+ini_set('display_errors', 0);
 session_start();
+security_send_headers(true);
 
 require_once './src/Database.php';
 require_once './src/helper-functions.php';
@@ -17,6 +26,7 @@ $phone = '';
 $redirectTarget = sanitizeRedirectTarget($_GET['redirect'] ?? $_POST['redirect'] ?? '', './mobile-home.php');
 
 if (isset($_POST['submit'])) {
+    csrf_require_valid_request();
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
@@ -260,6 +270,7 @@ if (isset($_POST['submit'])) {
         <?php endif; ?>
 
         <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+          <?php echo csrf_input(); ?>
           <input type="hidden" name="redirect" value="<?php echo htmlspecialchars(ltrim($redirectTarget, './'), ENT_QUOTES, 'UTF-8'); ?>">
           <div class="form-group">
             <label for="inputName">Full name</label>

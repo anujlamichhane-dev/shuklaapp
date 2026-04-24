@@ -1,5 +1,6 @@
 # General settings
 DirectoryIndex index.php index.html
+Options -Indexes
 
 # Enable Rewrite Engine
 <IfModule mod_rewrite.c>
@@ -8,4 +9,10 @@ DirectoryIndex index.php index.html
     RewriteCond %{HTTPS} !=on [OR]
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
