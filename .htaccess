@@ -1,3 +1,5 @@
+Options -Indexes
+
 DirectoryIndex index.php index.html
 
 <IfModule mod_rewrite.c>

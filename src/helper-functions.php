@@ -118,13 +118,13 @@ function appUrl($target = '')
 {
     $target = trim((string)$target);
     if ($target === '' || $target === './' || $target === '/' || $target === 'index' || $target === 'index.php' || $target === './index.php') {
-        return '/';
+        return './index.php';
     }
 
     $target = str_replace('\\', '/', $target);
     $parts = parse_url($target);
     if ($parts === false) {
-        return '/';
+        return './index.php';
     }
 
     $path = trim((string)($parts['path'] ?? ''), '/');
@@ -133,20 +133,22 @@ function appUrl($target = '')
     $cleanPath = ltrim($path, './');
 
     if ($cleanPath === '' || $cleanPath === 'index' || $cleanPath === 'index.php') {
-        $url = '/';
+        $url = './index.php';
     } else {
         $segments = array_values(array_filter(explode('/', $cleanPath), 'strlen'));
         if (!empty($segments)) {
             $last = array_pop($segments);
-            $last = preg_replace('/\.php$/i', '', $last);
-            if ($last !== '' && $last !== 'index') {
+            if (!preg_match('/\.php$/i', $last)) {
+                $last .= '.php';
+            }
+            if ($last !== '' && $last !== 'index.php') {
                 $segments[] = $last;
             }
         }
 
-        $url = '/' . implode('/', $segments) . '/';
-        if ($url === '//') {
-            $url = '/';
+        $url = './' . implode('/', $segments);
+        if ($url === '.') {
+            $url = './index.php';
         }
     }
 
