@@ -12,6 +12,12 @@
   $err = '';
   $msg = '';
 
+  function isExcludedTicketTeam($name)
+  {
+      $normalizedName = strtolower(trim((string) $name));
+      return in_array($normalizedName, ['devops', 'injamul', 'server'], true);
+  }
+
   function redirectAfterCreate($target)
   {
       if (ob_get_level()) {
@@ -63,11 +69,18 @@
   }
 
   $teams = [];
+  $availableTeamIds = [];
   try {
       $teams = Team::findAll();
+      $teams = array_values(array_filter($teams, function ($team) {
+          return !isExcludedTicketTeam($team->name ?? '');
+      }));
       usort($teams, function ($left, $right) {
           return strcasecmp((string) ($left->name ?? ''), (string) ($right->name ?? ''));
       });
+      $availableTeamIds = array_map(function ($team) {
+          return (int) $team->id;
+      }, $teams);
   } catch (Throwable $teamError) {
       error_log('Ticket form failed to load teams: ' . $teamError->getMessage());
       $err = 'Unable to load teams right now. Please try again later.';
@@ -111,6 +124,8 @@
       } else if(strlen($comment) < 1){
           $err = "Please enter comment";
       } else if(!ctype_digit($team) || (int)$team < 1){
+          $err = "Please select a team";
+      } else if(!in_array((int) $team, $availableTeamIds, true)){
           $err = "Please select a team";
       } else if(!in_array($priority, ['low', 'medium', 'high'], true)) {
           $err = "Please select a valid priority";
@@ -300,16 +315,6 @@
 
     </div>
     <!-- /.container-fluid -->
-
-    <!-- Sticky Footer -->
-    <footer class="sticky-footer">
-        <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-            <span>Copyright © Synchlab Coding</span>
-            </div>
-        </div>
-    </footer>
-
 </div>
 <!-- /.content-wrapper -->
 
