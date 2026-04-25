@@ -55,25 +55,34 @@
     const backdrop = document.getElementById('sidebarBackdrop');
     const closeBtn = document.querySelector('.sidebar-close');
 
+    function syncSidebarState(isOpen) {
+      if (!sidebar) return;
+      sidebar.classList.toggle('toggled', isOpen);
+      document.body.classList.toggle('sidebar-toggled', isOpen);
+      if (backdrop) {
+        backdrop.classList.toggle('is-open', isOpen);
+      }
+      if (toggle) {
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
+    }
+
     if (toggle && sidebar) {
       toggle.addEventListener('click', function(e) {
         e.preventDefault();
-        // Let the admin theme script handle the class toggle; only sync the backdrop state.
         setTimeout(() => {
-          if (backdrop) backdrop.classList.toggle('is-open', sidebar.classList.contains('toggled'));
+          syncSidebarState(sidebar.classList.contains('toggled'));
         }, 0);
       });
     }
     if (closeBtn && sidebar) {
       closeBtn.addEventListener('click', function() {
-        sidebar.classList.remove('toggled');
-        if (backdrop) backdrop.classList.remove('is-open');
+        syncSidebarState(false);
       });
     }
     if (backdrop && sidebar) {
       backdrop.addEventListener('click', function() {
-        sidebar.classList.remove('toggled');
-        backdrop.classList.remove('is-open');
+        syncSidebarState(false);
       });
     }
 

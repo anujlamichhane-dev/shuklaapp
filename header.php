@@ -122,6 +122,88 @@ if ($isModerator && $currentPage === 'mytickets.php') {
   $langUrlEn = $path . '?' . http_build_query($query);
   $query['lang'] = 'ne';
   $langUrlNe = $path . '?' . http_build_query($query);
+
+  $roleLabels = [
+    'admin' => 'Administrator',
+    'creator' => 'Creator',
+    'moderator' => 'Moderator',
+    'client' => 'Citizen Account',
+    'guest' => 'Guest Session',
+    'mayor' => 'Mayor',
+    'deputymayor' => 'Deputy Mayor',
+    'spokesperson' => 'Spokesperson',
+    'chief_officer' => 'Chief Officer',
+    'info_officer' => 'Information Officer',
+  ];
+  $roleLabel = $roleLabels[$role] ?? ucwords(str_replace('_', ' ', $role));
+
+  $ticketPages = [
+    'tickets-menu.php',
+    'ticket.php',
+    'mytickets.php',
+    'ticket-details.php',
+    'dashboard.php',
+    'open.php',
+    'pending.php',
+    'solved.php',
+    'closed.php',
+    'unassigned.php',
+    'team.php',
+    'users.php',
+  ];
+  $messagePages = [
+    'message.php',
+    'messages-inbox.php',
+    'my-messages.php',
+    'message-view.php',
+  ];
+
+  $sidebarPrimaryLinks = [
+    [
+      'href' => appUrl('mobile-home.php'),
+      'label' => i18n_t('nav.home'),
+      'icon' => 'fa-home',
+      'active' => $currentPage === 'mobile-home.php',
+    ],
+    [
+      'href' => appUrl('tickets-menu.php'),
+      'label' => i18n_t('nav.tickets'),
+      'icon' => 'fa-clipboard-list',
+      'active' => in_array($currentPage, $ticketPages, true),
+    ],
+  ];
+
+  if (!$isGuest) {
+    $sidebarPrimaryLinks[] = [
+      'href' => appUrl(($isAdmin || $isOfficial) ? 'messages-inbox.php' : 'message.php'),
+      'label' => i18n_t('nav.messages'),
+      'icon' => 'fa-inbox',
+      'active' => in_array($currentPage, $messagePages, true),
+    ];
+  }
+
+  $sidebarPrimaryLinks[] = [
+    'href' => appUrl('contacts.php'),
+    'label' => i18n_t('nav.contacts'),
+    'icon' => 'fa-address-book',
+    'active' => $currentPage === 'contacts.php',
+  ];
+
+  $sidebarAccountLinks = [];
+  if ($isGuest) {
+    $sidebarAccountLinks[] = [
+      'href' => buildLoginUrl(),
+      'label' => 'Login',
+      'icon' => 'fa-sign-in-alt',
+      'active' => false,
+    ];
+    $sidebarAccountLinks[] = [
+      'href' => $registerForTicketUrl,
+      'label' => 'Create Account',
+      'icon' => 'fa-user-plus',
+      'active' => false,
+    ];
+  }
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($currentLang, ENT_QUOTES, 'UTF-8'); ?>">
@@ -165,7 +247,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
       </a>
     <?php endif; ?>
     <?php if (!$hideSidebarToggle): ?>
-      <button class="btn btn-link btn-sm text-white mr-2 mobile-menu-icon" id="sidebarToggle" type="button" aria-label="Toggle sidebar">
+      <button class="btn btn-link btn-sm text-white mr-2 mobile-menu-icon" id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-controls="appSidebar" aria-expanded="false">
         <i class="fas fa-bars"></i>
       </button>
     <?php endif; ?>
@@ -216,52 +298,56 @@ if ($isModerator && $currentPage === 'mytickets.php') {
 
     <!-- Sidebar -->
     <?php if (!$hideSidebar): ?>
-    <ul class="sidebar navbar-nav">
-      <li class="sidebar-profile"></li>
-      <li class="nav-item active">
-        <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('mobile-home.php'), ENT_QUOTES, 'UTF-8'); ?>">
-          <i class="fas fa-fw fa-home"></i>
-          <span> <?php echo htmlspecialchars(i18n_t('nav.home'), ENT_QUOTES, 'UTF-8'); ?></span>
-        </a>
+    <ul class="sidebar navbar-nav" id="appSidebar" aria-label="Main navigation">
+      <li class="sidebar-profile">
+        <div class="sidebar-profile-card">
+          <div class="sidebar-profile-top">
+            <div class="sidebar-brand">
+              <img src="<?php echo htmlspecialchars(appUrl('img/shuklagandaki_logo.png'), ENT_QUOTES, 'UTF-8'); ?>" alt="Shuklagandaki Municipality logo">
+            </div>
+            <button class="sidebar-close" type="button" aria-label="Close navigation">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="sidebar-profile-copy">
+            <p class="sidebar-eyebrow">Shuklagandaki Municipality</p>
+            <h2 class="sidebar-user-name"><?php echo htmlspecialchars($user->name ?? 'Guest', ENT_QUOTES, 'UTF-8'); ?></h2>
+            <span class="sidebar-user-role"><?php echo htmlspecialchars($roleLabel, ENT_QUOTES, 'UTF-8'); ?></span>
+          </div>
+        </div>
       </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
-          <i class="fas fa-fw fa-clipboard-list"></i>
-          <span> <?php echo htmlspecialchars(i18n_t('nav.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
-        </a>
-      </li>
-      <?php if (!$isGuest): ?>
-        <li class="nav-item active">
-          <a class="nav-link" href="<?php echo htmlspecialchars(appUrl(($isAdmin || $isOfficial) ? 'messages-inbox.php' : 'message.php'), ENT_QUOTES, 'UTF-8'); ?>">
-            <i class="fas fa-fw fa-inbox"></i>
-            <span> <?php echo htmlspecialchars(i18n_t('nav.messages'), ENT_QUOTES, 'UTF-8'); ?></span>
+
+      <?php foreach ($sidebarPrimaryLinks as $link): ?>
+        <li class="nav-item <?php echo $link['active'] ? 'active' : ''; ?>">
+          <a class="nav-link" href="<?php echo htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8'); ?>"<?php echo $link['active'] ? ' aria-current="page"' : ''; ?>>
+            <span class="nav-link-icon">
+              <i class="fas fa-fw <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i>
+            </span>
+            <span class="nav-link-title"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
           </a>
         </li>
+      <?php endforeach; ?>
+
+      <?php if ($sidebarAccountLinks): ?>
+        <li class="sidebar-section-divider" aria-hidden="true"></li>
+        <?php foreach ($sidebarAccountLinks as $link): ?>
+          <li class="nav-item">
+            <a class="nav-link" href="<?php echo htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8'); ?>">
+              <span class="nav-link-icon">
+                <i class="fas fa-fw <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i>
+              </span>
+              <span class="nav-link-title"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
+            </a>
+          </li>
+        <?php endforeach; ?>
       <?php endif; ?>
-      <li class="nav-item active">
-        <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('contacts.php'), ENT_QUOTES, 'UTF-8'); ?>">
-          <i class="fas fa-fw fa-address-book"></i>
-          <span> <?php echo htmlspecialchars(i18n_t('nav.contacts'), ENT_QUOTES, 'UTF-8'); ?></span>
-        </a>
-      </li>
-      <?php if ($isGuest): ?>
-        <li class="nav-item active">
-          <a class="nav-link" href="<?php echo htmlspecialchars(buildLoginUrl(), ENT_QUOTES, 'UTF-8'); ?>">
-            <i class="fas fa-fw fa-sign-in-alt"></i>
-            <span> Login</span>
-          </a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="<?php echo htmlspecialchars($registerForTicketUrl, ENT_QUOTES, 'UTF-8'); ?>">
-            <i class="fas fa-fw fa-user-plus"></i>
-            <span> Create Account</span>
-          </a>
-        </li>
-      <?php endif; ?>
-      <li class="nav-item active sidebar-logout">
+
+      <li class="nav-item sidebar-logout">
         <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('logout.php'), ENT_QUOTES, 'UTF-8'); ?>">
-          <i class="fas fa-fw fa-sign-out-alt"></i>
-          <span> <?php echo $isGuest ? 'Exit Guest' : htmlspecialchars(i18n_t('nav.logout'), ENT_QUOTES, 'UTF-8'); ?></span>
+          <span class="nav-link-icon">
+            <i class="fas fa-fw fa-sign-out-alt"></i>
+          </span>
+          <span class="nav-link-title"><?php echo $isGuest ? 'Exit Guest' : htmlspecialchars(i18n_t('nav.logout'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
       </li>
     </ul>
