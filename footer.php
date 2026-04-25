@@ -89,10 +89,6 @@
   })();
 </script>
 
-<script>
-  window.chtlConfig = { chatbotId: "6965689128" };
-</script>
-<script async data-id="6965689128" id="chtl-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
 </body>
 
 </html>

@@ -332,7 +332,7 @@ if (isset($_POST['submit'])) {
         <li>If your phone number changed, contact your ward office for an update.</li>
       </ul>
       <div class="support-block">
-        For urgent help or if you suspect someone else accessed your account, reset immediately and notify your ward helpdesk.
+        For urgent help or if you suspect someone else accessed your account, reset immediately and notify your ward office.
       </div>
     </section>
 

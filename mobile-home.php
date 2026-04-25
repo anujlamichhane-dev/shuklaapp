@@ -7,26 +7,31 @@
 
   $uploadError = '';
   $uploadMsg = '';
-  $sliderDefaults = ['img/pic1.jpg', 'img/pic 2.jpg'];
+  $sliderDefaults = [
+    ['src' => 'img/inside-the-municipality.jpg', 'caption' => 'Service Delivery Operation Center'],
+    ['src' => 'img/municipality-building.jpg', 'caption' => 'Municipality office campus'],
+  ];
   $sliderDataPath = __DIR__ . '/data/mobile-slider.json';
   $sliderDataDir = __DIR__ . '/data';
   $sliderDir = __DIR__ . '/img';
   $sliderUrlBase = 'img';
+  $sliderItems = $sliderDefaults;
 
-  $sliderItems = [];
-  foreach ($sliderDefaults as $path) {
-    $sliderItems[] = ['src' => $path, 'caption' => ''];
-  }
   if (is_readable($sliderDataPath)) {
     $decoded = json_decode(file_get_contents($sliderDataPath), true);
     if (is_array($decoded)) {
       $clean = [];
       foreach ($decoded as $entry) {
-        if (is_string($entry) && $entry !== '') {
+        if (is_string($entry) && $entry !== '' && stripos($entry, 'whatsapp-image') === false) {
           $clean[] = ['src' => $entry, 'caption' => ''];
           continue;
         }
-        if (is_array($entry) && !empty($entry['src']) && is_string($entry['src'])) {
+        if (
+          is_array($entry) &&
+          !empty($entry['src']) &&
+          is_string($entry['src']) &&
+          stripos($entry['src'], 'whatsapp-image') === false
+        ) {
           $clean[] = [
             'src' => $entry['src'],
             'caption' => isset($entry['caption']) && is_string($entry['caption']) ? $entry['caption'] : ''
@@ -68,7 +73,7 @@
             $candidate = __DIR__ . '/img/' . str_replace(['\\', '//'], '/', $relative);
             $imgRoot = realpath(__DIR__ . '/img');
             $target = realpath($candidate);
-            $protected = ['pic1.jpg', 'pic 2.jpg'];
+            $protected = ['inside-the-municipality.jpg', 'municipality-building.jpg'];
             if ($target && $imgRoot && strpos($target, $imgRoot) === 0) {
               if (!in_array(basename($target), $protected, true) && is_file($target)) {
                 @unlink($target);
@@ -140,9 +145,7 @@
             $uploadError = 'Only JPG, PNG, or WebP files are allowed.';
             continue;
           }
-
-          $imageInfo = @getimagesize($tmpName);
-          if ($imageInfo === false) {
+          if (@getimagesize($tmpName) === false) {
             $uploadError = 'Please upload valid image files.';
             continue;
           }
@@ -188,19 +191,11 @@
     }
   }
 
-  // Build ticket links for the Tickets menu page.
-  $ticketLinks = [];
-  $infoLinks = [];
-  // Inbox count for officials to surface messages at a glance.
+  $requestLinks = [];
   $inboxCount = 0;
   if ($isOfficial || $isAdmin) {
-    $hasMessagesTable = false;
     $tblCheck = $db->query("SHOW TABLES LIKE 'messages'");
     if ($tblCheck && $tblCheck->num_rows > 0) {
-      $hasMessagesTable = true;
-    }
-
-    if ($hasMessagesTable) {
       if ($isAdmin) {
         $cntRes = $db->query("SELECT COUNT(*) AS total FROM messages");
         $row = $cntRes ? $cntRes->fetch_object() : null;
@@ -220,209 +215,187 @@
   }
 
   if ($isGuest) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Open Ticket Anonymously', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'My Anonymous Tickets', 'icon' => 'fa-award'];
+    $requestLinks[] = ['href' => 'ticket.php', 'label' => 'Open a service request', 'icon' => 'fa-plus-circle'];
+    $requestLinks[] = ['href' => 'mytickets.php', 'label' => 'Track this session', 'icon' => 'fa-clipboard-list'];
   } elseif ($isClient) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Open New Tickets', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'mytickets.php?status=pending', 'label' => 'My Pending Tickets', 'icon' => 'fa-clock'];
+    $requestLinks[] = ['href' => 'ticket.php', 'label' => 'Open a service request', 'icon' => 'fa-plus-circle'];
+    $requestLinks[] = ['href' => 'mytickets.php?status=pending', 'label' => 'My active cases', 'icon' => 'fa-clock'];
   } else {
-    $ticketLinks[] = ['href' => 'dashboard.php', 'label' => 'Dashboard', 'icon' => 'fa-tachometer-alt'];
-    $ticketLinks[] = ['href' => 'open.php', 'label' => 'Open', 'icon' => 'fa-lock-open'];
-    $ticketLinks[] = ['href' => 'solved.php', 'label' => 'Solved', 'icon' => 'fa-anchor'];
-    $ticketLinks[] = ['href' => 'closed.php', 'label' => 'Closed', 'icon' => 'fa-times-circle'];
-    $ticketLinks[] = ['href' => 'pending.php', 'label' => 'Pending', 'icon' => 'fa-adjust'];
-    $ticketLinks[] = ['href' => 'unassigned.php', 'label' => 'Unassigned', 'icon' => 'fa-at'];
+    $requestLinks[] = ['href' => 'dashboard.php', 'label' => 'Request board', 'icon' => 'fa-columns'];
+    $requestLinks[] = ['href' => 'open.php', 'label' => 'Submitted', 'icon' => 'fa-inbox'];
+    $requestLinks[] = ['href' => 'pending.php', 'label' => 'In progress', 'icon' => 'fa-tools'];
+    $requestLinks[] = ['href' => 'solved.php', 'label' => 'Resolved', 'icon' => 'fa-check-circle'];
+    $requestLinks[] = ['href' => 'closed.php', 'label' => 'Closed', 'icon' => 'fa-folder'];
+    $requestLinks[] = ['href' => 'unassigned.php', 'label' => 'Unassigned', 'icon' => 'fa-user-clock'];
 
     if (!$isModerator) {
-      $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'My Tickets', 'icon' => 'fa-award'];
+      $requestLinks[] = ['href' => 'mytickets.php', 'label' => 'My cases', 'icon' => 'fa-clipboard-list'];
     }
 
     if ($isAdmin) {
-      $ticketLinks[] = ['href' => 'team.php', 'label' => 'Teams', 'icon' => 'fa-users'];
-      $ticketLinks[] = ['href' => 'users.php', 'label' => 'Users', 'icon' => 'fa-users'];
+      $requestLinks[] = ['href' => 'team.php', 'label' => 'Teams', 'icon' => 'fa-users'];
+      $requestLinks[] = ['href' => 'users.php', 'label' => 'Users', 'icon' => 'fa-users-cog'];
     }
   }
-
-  $infoLinks[] = ['href' => 'documents-info.php', 'label' => 'Documents Info', 'icon' => 'fa-file-alt'];
-  $infoLinks[] = ['href' => 'contacts.php', 'label' => 'Contacts', 'icon' => 'fa-address-book'];
-
-  if ($isClient) {
-    $infoLinks[] = ['href' => 'message.php', 'label' => 'Send Message', 'icon' => 'fa-paper-plane'];
-    $infoLinks[] = ['href' => 'my-messages.php', 'label' => 'My Messages', 'icon' => 'fa-inbox'];
-  } elseif ($isOfficial || $isAdmin) {
-    $infoLinks[] = ['href' => 'messages-inbox.php', 'label' => 'Inbox', 'icon' => 'fa-inbox'];
-  }
-
 ?>
 
-  <div id="content-wrapper">
-    <div class="app-shell">
-      <section class="hero-card">
-        <?php if ($uploadError): ?>
-          <div class="alert alert-danger mb-2"><?php echo htmlspecialchars($uploadError, ENT_QUOTES, 'UTF-8'); ?></div>
-        <?php endif; ?>
-        <?php if ($uploadMsg): ?>
-          <div class="alert alert-success mb-2"><?php echo htmlspecialchars($uploadMsg, ENT_QUOTES, 'UTF-8'); ?></div>
-        <?php endif; ?>
-
-        <div class="hero-slider" data-rotation="6500">
-          <?php foreach ($sliderItems as $index => $item): ?>
-            <div class="hero-slide <?php echo $index === 0 ? 'is-active' : ''; ?>">
-              <img src="<?php echo htmlspecialchars($item['src'], ENT_QUOTES, 'UTF-8'); ?>" alt="Slider photo <?php echo $index + 1; ?>" class="hero-photo">
-              <span class="hero-slide-caption" data-caption="<?php echo htmlspecialchars($item['caption'], ENT_QUOTES, 'UTF-8'); ?>"></span>
-            </div>
-          <?php endforeach; ?>
-        </div>
-        <div class="hero-caption-box" data-caption><?php echo htmlspecialchars($sliderItems[0]['caption'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
-        <?php if (count($sliderItems) > 1): ?>
-          <div class="hero-dots">
-            <?php foreach ($sliderItems as $index => $item): ?>
-              <button class="dot <?php echo $index === 0 ? 'active' : ''; ?>" type="button" aria-label="Show slide <?php echo $index + 1; ?>"></button>
-            <?php endforeach; ?>
-          </div>
-        <?php endif; ?>
-
-        <?php if ($isCreator): ?>
-          <form class="slider-uploader" method="POST" enctype="multipart/form-data">
-            <div class="slider-upload-title">Update slider photos</div>
-            <div class="slider-upload-row">
-              <input type="file" name="slider_photos[]" accept="image/*" multiple required>
-              <button class="btn btn-sm btn-primary" type="submit" name="upload_slider">Upload</button>
-            </div>
-            <label class="slider-upload-label" for="slider-captions">Captions (one per line, in file order)</label>
-            <textarea id="slider-captions" name="slider_captions" rows="3" placeholder="Example: Main office opening"></textarea>
-            <label class="slider-upload-option">
-              <input type="checkbox" name="replace_slides" value="1">
-              Replace existing slides
-            </label>
-            <div class="slider-upload-hint">JPG, PNG, or WebP up to 5MB each. Captions become the filename.</div>
-          </form>
-
-          <?php if (!empty($sliderItems)): ?>
-            <div class="slider-manager">
-              <div class="slider-upload-title">Existing slides</div>
-              <?php foreach ($sliderItems as $index => $item): ?>
-                <div class="slider-manager-row">
-                  <div class="slider-manager-text">
-                    <div class="slider-manager-name"><?php echo htmlspecialchars(basename($item['src']), ENT_QUOTES, 'UTF-8'); ?></div>
-                    <?php if (!empty($item['caption'])): ?>
-                      <div class="slider-manager-caption"><?php echo htmlspecialchars($item['caption'], ENT_QUOTES, 'UTF-8'); ?></div>
-                    <?php endif; ?>
-                  </div>
-                  <form method="POST" class="slider-manager-actions">
-                    <input type="hidden" name="slide_index" value="<?php echo $index; ?>">
-                    <button class="btn btn-sm btn-outline-danger" type="submit" name="delete_slide">Delete</button>
-                  </form>
-                </div>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
-        <?php endif; ?>
-      </section>
-
-      <?php if ($isGuest): ?>
-        <section class="menu-section">
-          <div class="alert alert-info mb-0">
-            You are browsing as a guest. Login or create an account to open a new ticket.
-          </div>
-        </section>
+<div id="content-wrapper">
+  <div class="app-shell">
+    <section class="hero-card">
+      <?php if ($uploadError): ?>
+        <div class="alert alert-danger mb-2"><?php echo htmlspecialchars($uploadError, ENT_QUOTES, 'UTF-8'); ?></div>
+      <?php endif; ?>
+      <?php if ($uploadMsg): ?>
+        <div class="alert alert-success mb-2"><?php echo htmlspecialchars($uploadMsg, ENT_QUOTES, 'UTF-8'); ?></div>
       <?php endif; ?>
 
-      <section class="poster-links">
-        <div class="menu-grid">
-          <a class="menu-card poster-card" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
-            <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
-            <span class="menu-label">सुझाव र गुनासो</span>
-            <span class="menu-subtext">टिकट सम्बन्धी सेवा</span>
-          </a>
-          <a class="menu-card poster-card" href="<?php echo htmlspecialchars(appUrl('general-info-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
-            <span class="menu-icon"><i class="fas fa-info-circle"></i></span>
-            <span class="menu-label">सामान्य जानकारी</span>
-            <span class="menu-subtext">दस्तावेज र सम्पर्क</span>
-          </a>
+      <div class="hero-intro">
+        <div class="hero-kicker">Shuklagandaki Municipality</div>
+        <h1 class="hero-heading">Local services, handled by people</h1>
+        <p class="hero-copy">Use the portal to reach the municipality, review service information, and follow each case from submission to resolution.</p>
+      </div>
+
+      <div class="hero-slider" data-rotation="6500">
+        <?php foreach ($sliderItems as $index => $item): ?>
+          <div class="hero-slide <?php echo $index === 0 ? 'is-active' : ''; ?>">
+            <img src="<?php echo htmlspecialchars($item['src'], ENT_QUOTES, 'UTF-8'); ?>" alt="Municipality photo <?php echo $index + 1; ?>" class="hero-photo">
+            <span class="hero-slide-caption" data-caption="<?php echo htmlspecialchars($item['caption'], ENT_QUOTES, 'UTF-8'); ?>"></span>
+          </div>
+        <?php endforeach; ?>
+      </div>
+      <div class="hero-caption-box" data-caption><?php echo htmlspecialchars($sliderItems[0]['caption'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
+      <?php if (count($sliderItems) > 1): ?>
+        <div class="hero-dots">
+          <?php foreach ($sliderItems as $index => $item): ?>
+            <button class="dot <?php echo $index === 0 ? 'active' : ''; ?>" type="button" aria-label="Show slide <?php echo $index + 1; ?>"></button>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+
+      <?php if ($isCreator): ?>
+        <form class="slider-uploader" method="POST" enctype="multipart/form-data">
+          <div class="slider-upload-title">Update slider photos</div>
+          <div class="slider-upload-row">
+            <input type="file" name="slider_photos[]" accept="image/*" multiple required>
+            <button class="btn btn-sm btn-primary" type="submit" name="upload_slider">Upload</button>
+          </div>
+          <label class="slider-upload-label" for="slider-captions">Captions (one per line, in file order)</label>
+          <textarea id="slider-captions" name="slider_captions" rows="3" placeholder="Example: Main office opening"></textarea>
+          <label class="slider-upload-option">
+            <input type="checkbox" name="replace_slides" value="1">
+            Replace existing slides
+          </label>
+          <div class="slider-upload-hint">JPG, PNG, or WebP up to 5MB each. Captions become the filename.</div>
+        </form>
+      <?php endif; ?>
+    </section>
+
+    <?php if ($isGuest): ?>
+      <section class="menu-section">
+        <div class="alert alert-info mb-0">
+          You are browsing as a guest. You can still submit a service request, but it will stay linked to this device session only.
         </div>
       </section>
+    <?php endif; ?>
 
-      <section class="menu-section">
-        <div class="section-title"><?php echo htmlspecialchars(i18n_t('home.quick_links'), ENT_QUOTES, 'UTF-8'); ?></div>
-        <div class="menu-grid">
-          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
-            <span class="menu-icon"><i class="fas fa-ticket-alt"></i></span>
-            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
+    <section class="poster-links">
+      <div class="menu-grid">
+        <a class="menu-card poster-card" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
+          <span class="menu-icon"><i class="fas fa-clipboard-list"></i></span>
+          <span class="menu-label">Service Requests</span>
+          <span class="menu-subtext">Report issues and follow municipal cases</span>
+        </a>
+        <a class="menu-card poster-card" href="<?php echo htmlspecialchars(appUrl('general-info-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
+          <span class="menu-icon"><i class="fas fa-info-circle"></i></span>
+          <span class="menu-label">General Information</span>
+          <span class="menu-subtext">Documents, contacts, and municipal guidance</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="menu-section">
+      <div class="section-title"><?php echo htmlspecialchars(i18n_t('home.quick_links'), ENT_QUOTES, 'UTF-8'); ?></div>
+      <div class="menu-grid">
+        <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
+          <span class="menu-icon"><i class="fas fa-clipboard-list"></i></span>
+          <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
+          <span class="menu-subtext">
+            <?php
+              if ($isClient) {
+                echo htmlspecialchars(i18n_t('home.tickets.sub'), ENT_QUOTES, 'UTF-8');
+              } elseif ($isGuest) {
+                echo 'Track cases from this device session';
+              } else {
+                echo 'All request views';
+              }
+            ?>
+          </span>
+        </a>
+
+        <?php if ($isClient): ?>
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('ticket.php'), ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="menu-icon"><i class="fas fa-plus-circle"></i></span>
+            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.new_ticket'), ENT_QUOTES, 'UTF-8'); ?></span>
+            <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.new_ticket.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
+          </a>
+        <?php elseif ($isGuest): ?>
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('ticket.php'), ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="menu-icon"><i class="fas fa-plus-circle"></i></span>
+            <span class="menu-label">Open a service request</span>
+            <span class="menu-subtext">Submit a municipal case without creating an account</span>
+          </a>
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('mytickets.php'), ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="menu-icon"><i class="fas fa-clipboard-list"></i></span>
+            <span class="menu-label">Track this session</span>
+            <span class="menu-subtext">Review and reply to cases from this guest session</span>
+          </a>
+        <?php endif; ?>
+
+        <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('documents-info.php'), ENT_QUOTES, 'UTF-8'); ?>">
+          <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
+          <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.documents'), ENT_QUOTES, 'UTF-8'); ?></span>
+          <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.documents.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
+        </a>
+        <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('contacts.php'), ENT_QUOTES, 'UTF-8'); ?>">
+          <span class="menu-icon"><i class="fas fa-address-book"></i></span>
+          <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.contacts'), ENT_QUOTES, 'UTF-8'); ?></span>
+          <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.contacts.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
+        </a>
+
+        <?php if ($isOfficial || $isAdmin): ?>
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('messages-inbox.php'), ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="menu-icon"><i class="fas fa-inbox"></i></span>
+            <span class="menu-label">Inbox</span>
             <span class="menu-subtext">
-              <?php
-                if ($isClient) {
-                  echo htmlspecialchars(i18n_t('home.tickets.sub'), ENT_QUOTES, 'UTF-8');
-                } elseif ($isGuest) {
-                  echo 'Open and track tickets anonymously';
-                } else {
-                  echo 'All ticket views';
-                }
-              ?>
+              <?php echo $inboxCount > 0 ? $inboxCount . ' message' . ($inboxCount === 1 ? '' : 's') : 'No messages yet'; ?>
             </span>
           </a>
-          <?php if ($isClient): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('ticket.php'), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas fa-plus-circle"></i></span>
-              <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.new_ticket'), ENT_QUOTES, 'UTF-8'); ?></span>
-              <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.new_ticket.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
-            </a>
-          <?php elseif ($isGuest): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('ticket.php'), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas fa-plus-circle"></i></span>
-              <span class="menu-label">Open Ticket Anonymously</span>
-              <span class="menu-subtext">Submit a request without creating an account</span>
-            </a>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('mytickets.php'), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas fa-award"></i></span>
-              <span class="menu-label">My Anonymous Tickets</span>
-              <span class="menu-subtext">Review and reply to tickets from this guest session</span>
-            </a>
-          <?php endif; ?>
-          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('documents-info.php'), ENT_QUOTES, 'UTF-8'); ?>">
-            <span class="menu-icon"><i class="fas fa-file-alt"></i></span>
-            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.documents'), ENT_QUOTES, 'UTF-8'); ?></span>
-            <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.documents.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
-          </a>
-          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('contacts.php'), ENT_QUOTES, 'UTF-8'); ?>">
-            <span class="menu-icon"><i class="fas fa-address-book"></i></span>
-            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.contacts'), ENT_QUOTES, 'UTF-8'); ?></span>
-            <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.contacts.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
-          </a>
-          <?php if ($isOfficial || $isAdmin): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('messages-inbox.php'), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas fa-inbox"></i></span>
-              <span class="menu-label">Inbox</span>
-              <span class="menu-subtext">
-                <?php echo $inboxCount > 0 ? $inboxCount . ' message' . ($inboxCount === 1 ? '' : 's') : 'No messages yet'; ?>
-              </span>
-            </a>
-          <?php endif; ?>
-          <?php if ($isClient): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('message.php'), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas fa-paper-plane"></i></span>
-              <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.message'), ENT_QUOTES, 'UTF-8'); ?></span>
-              <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.message.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
-            </a>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('my-messages.php'), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas fa-inbox"></i></span>
-              <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.my_messages'), ENT_QUOTES, 'UTF-8'); ?></span>
-              <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.my_messages.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
-            </a>
-          <?php endif; ?>
-          <?php if ($isCreator || $isAdmin): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('users.php'), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas fa-users-cog"></i></span>
-              <span class="menu-label">Users</span>
-              <span class="menu-subtext">Manage accounts &amp; roles</span>
-            </a>
-          <?php endif; ?>
-        </div>
+        <?php endif; ?>
 
-      </section>
+        <?php if ($isClient): ?>
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('message.php'), ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="menu-icon"><i class="fas fa-paper-plane"></i></span>
+            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.message'), ENT_QUOTES, 'UTF-8'); ?></span>
+            <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.message.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
+          </a>
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('my-messages.php'), ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="menu-icon"><i class="fas fa-inbox"></i></span>
+            <span class="menu-label"><?php echo htmlspecialchars(i18n_t('home.my_messages'), ENT_QUOTES, 'UTF-8'); ?></span>
+            <span class="menu-subtext"><?php echo htmlspecialchars(i18n_t('home.my_messages.sub'), ENT_QUOTES, 'UTF-8'); ?></span>
+          </a>
+        <?php endif; ?>
 
-    </div>
+        <?php if ($isCreator || $isAdmin): ?>
+          <a class="menu-card" href="<?php echo htmlspecialchars(appUrl('users.php'), ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="menu-icon"><i class="fas fa-users-cog"></i></span>
+            <span class="menu-label">Users</span>
+            <span class="menu-subtext">Manage accounts and roles</span>
+          </a>
+        <?php endif; ?>
+      </div>
+    </section>
   </div>
+</div>
 
 <?php include './footer.php'; ?>
 
@@ -439,12 +412,8 @@
     const rotation = Number(slider.dataset.rotation || 6500);
 
     const showSlide = (index) => {
-      slides.forEach((slide, i) => {
-        slide.classList.toggle('is-active', i === index);
-      });
-      dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === index);
-      });
+      slides.forEach((slide, i) => slide.classList.toggle('is-active', i === index));
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
       if (caption) {
         const captionSpan = slides[index].querySelector('[data-caption]');
         caption.textContent = captionSpan ? captionSpan.dataset.caption : '';
@@ -455,11 +424,7 @@
     showSlide(activeIndex);
     if (slides.length < 2) return;
 
-    const nextSlide = () => {
-      const nextIndex = (activeIndex + 1) % slides.length;
-      showSlide(nextIndex);
-    };
-
+    const nextSlide = () => showSlide((activeIndex + 1) % slides.length);
     let timer = setInterval(nextSlide, rotation);
 
     dots.forEach((dot, index) => {
@@ -470,52 +435,4 @@
       });
     });
   })();
-
-</script>
-
-<script>
-  (function () {
-    const slider = document.querySelector('.hero-slider');
-    if (!slider) return;
-
-    const slides = Array.from(slider.querySelectorAll('.hero-slide'));
-    const dots = Array.from(document.querySelectorAll('.hero-dots .dot'));
-    const caption = document.querySelector('.hero-caption-box');
-
-    let activeIndex = 0;
-    const rotation = Number(slider.dataset.rotation || 6500);
-
-    const showSlide = (index) => {
-      slides.forEach((slide, i) => {
-        slide.classList.toggle('is-active', i === index);
-      });
-      dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === index);
-      });
-      if (caption) {
-        const captionSpan = slides[index].querySelector('[data-caption]');
-        caption.textContent = captionSpan ? captionSpan.dataset.caption : '';
-      }
-      activeIndex = index;
-    };
-
-    showSlide(activeIndex);
-    if (slides.length < 2) return;
-
-    const nextSlide = () => {
-      const nextIndex = (activeIndex + 1) % slides.length;
-      showSlide(nextIndex);
-    };
-
-    let timer = setInterval(nextSlide, rotation);
-
-    dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => {
-        showSlide(index);
-        clearInterval(timer);
-        timer = setInterval(nextSlide, rotation);
-      });
-    });
-  })();
-
 </script>

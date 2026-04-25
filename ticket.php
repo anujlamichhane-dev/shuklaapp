@@ -1,322 +1,331 @@
 <?php
-  include './header.php';
-  require_once './src/requester.php';
-  require_once './src/ticket.php';
-  require_once './src/ticket-event.php';
-  require_once './src/helper-functions.php';
+include './header.php';
+require_once './src/requester.php';
+require_once './src/ticket.php';
+require_once './src/ticket-event.php';
+require_once './src/helper-functions.php';
+require_once './src/service-request.php';
 
-  $isClient = (($user->role ?? '') === 'client');
-  $isGuest = (($user->role ?? '') === 'guest');
+$isClient = (($user->role ?? '') === 'client');
+$isGuest = (($user->role ?? '') === 'guest');
+$teams = Team::findAll();
+$categories = service_request_categories();
+$urgencyOptions = service_request_urgency_options();
+$contactWindows = service_request_contact_windows();
 
-  $err = '';
-  $msg = '';
+$err = '';
+$msg = '';
+$prefill = [
+    'name' => trim((string)($user->name ?? '')),
+    'email' => trim((string)($user->email ?? '')),
+    'phone' => trim((string)($user->phone ?? '')),
+    'subject' => '',
+    'details' => '',
+    'category' => 'other',
+    'location' => '',
+    'urgency' => 'normal',
+    'contact_window' => 'anytime',
+    'reference_hint' => '',
+];
 
-  function redirectAfterCreate($target)
-  {
-      if (ob_get_level()) {
-          while (ob_get_level()) {
-              ob_end_clean();
-          }
-      }
+if ($isGuest && $prefill['name'] === '') {
+    $prefill['name'] = 'Resident';
+}
 
-      header('Location: ' . $target, true, 302);
-      ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="refresh" content="0;url=<?php echo htmlspecialchars($target, ENT_QUOTES, 'UTF-8'); ?>">
-    <title>Redirecting...</title>
-</head>
-<body>
-    <script>
-        window.location.replace(<?php echo json_encode($target); ?>);
-    </script>
-    <a href="<?php echo htmlspecialchars($target, ENT_QUOTES, 'UTF-8'); ?>">Continue</a>
-</body>
-</html>
-      <?php
-      exit();
-  }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+    csrf_require_valid_request();
 
-  // Pre-fill fields to avoid undefined notices and improve UX after validation errors
-  $prefillName = '';
-  $prefillEmail = '';
-  $prefillPhone = '';
-  $prefillSubject = '';
-  $prefillComment = '';
-  $prefillPriority = 'low';
-  $guestDefaults = guestContactDefaults();
-  $guestDisplayMessage = 'MAKE AN ACCOUNT IN ORDER TO PUT YOUR INFORMATION';
+    $prefill['name'] = trim((string)($_POST['name'] ?? ''));
+    $prefill['email'] = trim((string)($_POST['email'] ?? ''));
+    $prefill['phone'] = trim((string)($_POST['phone'] ?? ''));
+    $prefill['subject'] = trim((string)($_POST['subject'] ?? ''));
+    $prefill['details'] = trim((string)($_POST['details'] ?? ''));
+    $prefill['category'] = trim((string)($_POST['category'] ?? 'other'));
+    $prefill['location'] = trim((string)($_POST['location'] ?? ''));
+    $prefill['urgency'] = trim((string)($_POST['urgency'] ?? 'normal'));
+    $prefill['contact_window'] = trim((string)($_POST['contact_window'] ?? 'anytime'));
+    $prefill['reference_hint'] = trim((string)($_POST['reference_hint'] ?? ''));
 
-  // If client is logged in, default to their stored contact info
-  if ($isClient) {
-      $prefillName = $user->name ?? '';
-      $prefillEmail = $user->email ?? '';
-      $prefillPhone = $user->phone ?? '';
-  } elseif ($isGuest) {
-      $prefillName = $guestDisplayMessage;
-      $prefillEmail = $guestDisplayMessage;
-      $prefillPhone = $guestDisplayMessage;
-  }
+    if ($prefill['name'] === '') {
+        $err = 'Please enter your name.';
+    } elseif (!isValidEmail($prefill['email'])) {
+        $err = 'Please enter a valid email address.';
+    } elseif (!isValidPhone($prefill['phone'])) {
+        $err = 'Please enter a valid 10-digit phone number.';
+    } elseif ($prefill['subject'] === '') {
+        $err = 'Please add a short summary for the case.';
+    } elseif ($prefill['details'] === '') {
+        $err = 'Please describe the issue in a few clear sentences.';
+    } elseif (!isset($categories[$prefill['category']])) {
+        $err = 'Please choose a valid service area.';
+    } elseif (!isset($urgencyOptions[$prefill['urgency']])) {
+        $err = 'Please choose a valid urgency level.';
+    } elseif (!isset($contactWindows[$prefill['contact_window']])) {
+        $err = 'Please choose a valid contact time.';
+    } else {
+        try {
+            $requester = Requester::findOrCreate([
+                'name' => $prefill['name'],
+                'email' => $prefill['email'],
+                'phone' => $prefill['phone'],
+                'user_id' => $isClient ? (int)($user->id ?? 0) : null,
+            ]);
 
-  if(isset($_POST['submit'])){
-      csrf_require_valid_request();
-    
-      $name = trim($_POST['name'] ?? '');
-      $email = trim($_POST['email'] ?? '');
-      $phone = trim($_POST['phone'] ?? '');
-      $subject = trim($_POST['subject'] ?? '');
-      $comment = trim($_POST['comment'] ?? ''); 
-      $priority = trim($_POST['priority'] ?? 'low');
+            $body = service_request_build_body([
+                'category' => $prefill['category'],
+                'location' => $prefill['location'],
+                'urgency' => $prefill['urgency'],
+                'contact_window' => $prefill['contact_window'],
+                'reference_hint' => $prefill['reference_hint'],
+            ], $prefill['details']);
 
-      if ($isGuest) {
-          $name = $guestDefaults['name'];
-          $email = $guestDefaults['email'];
-          $phone = $guestDefaults['phone'];
-      }
-
-      // keep user input on validation errors
-      $prefillName = $name;
-      $prefillEmail = $email;
-      $prefillPhone = $phone;
-      $prefillSubject = $subject;
-      $prefillComment = $comment;
-      $prefillPriority = $priority;
-
-      if(strlen($name) < 1) {
-          $err = "Please enter requester name";
-      } else if(strlen($email) < 1) {
-          $err = "Please enter requester email address";
-      } else if(!isValidEmail($email)){
-          $err = "PLease enter a valid email address";
-      } else if(!isValidPhone($phone)){
-          $err = "Please enter a valid phone number";
-      } else if(strlen($subject) < 1){
-          $err = "Please enter subject";
-      } else if(strlen($comment) < 1){
-          $err = "Please enter comment";
-      } else if(!in_array($priority, ['low', 'medium', 'high'], true)) {
-          $err = "Please select a valid priority";
-      } else {
-        try{
-            $db = Database::getInstance();
-            $hasUserIdColumn = false;
-            $colCheck = $db->query("SHOW COLUMNS FROM requester LIKE 'user_id'");
-            if ($colCheck && $colCheck->num_rows > 0) {
-                $hasUserIdColumn = true;
-            }
-
-            if ($hasUserIdColumn) {
-                $insertRequester = $db->prepare(
-                    "INSERT INTO requester (name, email, phone, user_id)
-                     VALUES (?, ?, ?, ?)"
-                );
-            } else {
-                $insertRequester = $db->prepare(
-                    "INSERT INTO requester (name, email, phone)
-                     VALUES (?, ?, ?)"
-                );
-            }
-
-            if ($insertRequester === false) {
-                throw new Exception('Failed to prepare requester insert');
-            }
-
-            if ($hasUserIdColumn) {
-                $requesterUserId = isset($user->id) ? (int)$user->id : null;
-                $insertRequester->bind_param('sssi', $name, $email, $phone, $requesterUserId);
-            } else {
-                $insertRequester->bind_param('sss', $name, $email, $phone);
-            }
-
-            if (!$insertRequester->execute()) {
-                $requesterError = $insertRequester->error ?: $db->error;
-                $insertRequester->close();
-                throw new Exception($requesterError);
-            }
-
-            $requesterId = (int)$db->insert_id;
-            $insertRequester->close();
-
-            $insertTicket = $db->prepare(
-                "INSERT INTO ticket (title, body, requester, team, status, priority)
-                 VALUES (?, ?, ?, ?, 'open', ?)"
-            );
-
-            if ($insertTicket === false) {
-                throw new Exception('Failed to prepare ticket insert');
-            }
-
-            $teamId = null;
-            $insertTicket->bind_param('ssiis', $subject, $comment, $requesterId, $teamId, $priority);
-
-            if (!$insertTicket->execute()) {
-                $ticketError = $insertTicket->error ?: $db->error;
-                $insertTicket->close();
-                throw new Exception($ticketError);
-            }
-
-            $savedTicketId = (int)$db->insert_id;
-            $insertTicket->close();
-
-            $savedTicket = new stdClass();
-            $savedTicket->id = $savedTicketId;
+            $ticket = new Ticket([
+                'title' => $prefill['subject'],
+                'body' => $body,
+                'requester' => $requester->id,
+                'team' => service_request_route_team_id($prefill['category'], $teams),
+                'team_member' => null,
+                'status' => 'open',
+                'priority' => service_request_priority_from_urgency($prefill['urgency']),
+            ]);
+            $ticket->save();
 
             if ($isGuest) {
-                rememberGuestContact($name, $email, $phone);
-                rememberGuestTicket($savedTicketId);
+                rememberGuestContact($prefill['name'], $prefill['email'], $prefill['phone']);
+                rememberGuestTicket($ticket->id);
             }
 
             try {
                 $event = new Event([
-                    'ticket' => $savedTicket->id, 
-                    'user' => $user->id ?? 0, 
-                    'body' => $isGuest ? 'Ticket created by guest' : 'Ticket created'
+                    'ticket' => $ticket->id,
+                    'user' => (int)($user->id ?? 0),
+                    'body' => 'Case submitted through the citizen service portal.',
                 ]);
                 $event->save();
             } catch (Throwable $eventError) {
-                error_log('Ticket event logging failed for ticket ' . (int)$savedTicket->id . ': ' . $eventError->getMessage());
+                error_log('Service request event logging failed for case ' . (int)$ticket->id . ': ' . $eventError->getMessage());
             }
 
-            redirectAfterCreate(appUrl('mytickets.php'));
-        } catch(Throwable $e){
-            error_log('Ticket creation failed for user ' . ($user->id ?? 'unknown') . ': ' . $e->getMessage());
-            $err = "Failed to generate ticket";
+            header('Location: ' . appUrl('ticket-details.php?id=' . (int)$ticket->id . '&created=1'));
+            exit();
+        } catch (Throwable $e) {
+            error_log('Service request creation failed for user ' . ($user->id ?? 'unknown') . ': ' . $e->getMessage());
+            $err = 'The case could not be submitted right now. Please try again.';
         }
-      }
-  }
+    }
+}
 ?>
 <div id="content-wrapper">
+  <div class="container-fluid">
+    <div class="request-shell">
+      <section class="request-hero">
+        <div>
+          <div class="request-kicker">Citizen Service Request</div>
+          <h1>Report an issue or ask for municipal support</h1>
+          <p>Use this form for road damage, waste collection, water problems, ward service delays, document follow-up, or any other municipal service concern.</p>
+        </div>
+        <div class="request-hero-card">
+          <div class="request-hero-stat">
+            <strong>Structured intake</strong>
+            <span>Your case is saved with location, urgency, and service area so it can be reviewed faster.</span>
+          </div>
+          <div class="request-hero-stat">
+            <strong>Human follow-up</strong>
+            <span>Municipal staff can assign, update, and resolve the case from the same thread.</span>
+          </div>
+        </div>
+      </section>
 
-    <div class="container-fluid">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="#">Dashboard</a>
-            </li>
-            <li class="breadcrumb-item active">New ticket</li>
-        </ol>
+      <?php if ($err !== ''): ?>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($err, ENT_QUOTES, 'UTF-8'); ?></div>
+      <?php endif; ?>
+      <?php if ($msg !== ''): ?>
+        <div class="alert alert-success"><?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'); ?></div>
+      <?php endif; ?>
 
-        <div class="card mb-3">
-            <div class="card-header">
-                <div class="d-flex align-items-center justify-content-between flex-wrap">
-                    <div>
-                        <h3 class="mb-0">Create a new ticket</h3>
-                        <small class="text-muted">Share the issue and how we can reach you.</small>
-                    </div>
-                    <div class="mt-2 mt-lg-0">
-                        <a href="<?php echo htmlspecialchars(appUrl('mytickets.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-outline-secondary btn-sm">My tickets</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <?php if(strlen($err) > 1) :?>
-                <div class="alert alert-danger text-center my-3" role="alert"> <strong>Failed! </strong> <?php echo $err;?></div>
-                <?php endif?>
+      <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>" class="request-form-card">
+        <?php echo csrf_input(); ?>
 
-                <?php if(strlen($msg) > 1) :?>
-                <div class="alert alert-success text-center my-3" role="alert"> <strong>Success! </strong> <?php echo $msg;?></div>
-                <?php endif?>
-
-                <form method="POST" action="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? $_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>" class="ticket-form">
-                    <?php echo csrf_input(); ?>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="name">Name</label>
-                            <input type="text" name="name" id="name" class="form-control" placeholder="Enter name" value="<?php echo htmlspecialchars($prefillName); ?>" <?php echo ($isClient || $isGuest) ? 'readonly' : '';?>>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="email">Email</label>
-                            <input type="text" name="email" id="email" class="form-control" placeholder="Enter email" value="<?php echo htmlspecialchars($prefillEmail); ?>" <?php echo ($isClient || $isGuest) ? 'readonly' : '';?>>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="phone">Phone</label>
-                            <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter phone number" value="<?php echo htmlspecialchars($prefillPhone); ?>" <?php echo $isGuest ? 'readonly' : '';?>>
-                        </div>
-                    </div>
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="name" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Subject</label>
-                        <div class="col-sm-8">
-                            <input type="text" name="subject" class="form-control" id="" placeholder="Enter subject" value="<?php echo htmlspecialchars($prefillSubject, ENT_QUOTES, 'UTF-8'); ?>">
-                        </div>
-                    </div>
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="name" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Comment</label>
-                        <div class="col-sm-8">
-                            <textarea name="comment" class="form-control" id="" placeholder="Enter comment"><?php echo htmlspecialchars($prefillComment, ENT_QUOTES, 'UTF-8'); ?></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group row col-lg-8 offset-lg-2 col-md-8 offset-md-2 col-sm-12">
-                        <label for="name" class="col-sm-12 col-lg-2 col-md-2 col-form-label">Priority</label>
-                        <div class="col-sm-8">
-                            <select name="priority" class="form-control">
-                                <option value="low" <?php echo $prefillPriority === 'low' ? 'selected' : ''; ?>>Low</option>
-                                <option value="medium" <?php echo $prefillPriority === 'medium' ? 'selected' : ''; ?>>Medium</option>
-                                <option value="high" <?php echo $prefillPriority === 'high' ? 'selected' : ''; ?>>High</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" name="submit" class="btn btn-lg btn-primary"> Create</button>
-                    </div>
-                </form>
-            </div>
+        <div class="request-section-head">
+          <h2>Your contact details</h2>
+          <p>We use this to confirm the case and send updates. Guests can still submit without creating an account.</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="request-name">Full name</label>
+            <input type="text" class="form-control" id="request-name" name="name" value="<?php echo htmlspecialchars($prefill['name'], ENT_QUOTES, 'UTF-8'); ?>" required>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="request-email">Email address</label>
+            <input type="email" class="form-control" id="request-email" name="email" value="<?php echo htmlspecialchars($prefill['email'], ENT_QUOTES, 'UTF-8'); ?>" required>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="request-phone">Phone number</label>
+            <input type="text" class="form-control" id="request-phone" name="phone" value="<?php echo htmlspecialchars($prefill['phone'], ENT_QUOTES, 'UTF-8'); ?>" required>
+          </div>
         </div>
 
-    </div>
-    <!-- /.container-fluid -->
-</div>
-<!-- /.content-wrapper -->
-
-</div>
-<!-- /#wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="./index.php">Logout</a>
-            </div>
+        <div class="request-section-head">
+          <h2>Case details</h2>
+          <p>Tell the municipality what happened, where it happened, and how urgent it is.</p>
         </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="request-category">Service area</label>
+            <select class="form-control" id="request-category" name="category" required>
+              <?php foreach ($categories as $key => $category): ?>
+                <option value="<?php echo htmlspecialchars($key, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $prefill['category'] === $key ? 'selected' : ''; ?>>
+                  <?php echo htmlspecialchars($category['label'], ENT_QUOTES, 'UTF-8'); ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="request-location">Location</label>
+            <input type="text" class="form-control" id="request-location" name="location" value="<?php echo htmlspecialchars($prefill['location'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Ward, tole, landmark, or office counter">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="request-subject">Short summary</label>
+          <input type="text" class="form-control" id="request-subject" name="subject" value="<?php echo htmlspecialchars($prefill['subject'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Example: Street light not working near ward office" required>
+        </div>
+        <div class="form-group">
+          <label for="request-details">Full description</label>
+          <textarea class="form-control" id="request-details" name="details" rows="6" placeholder="Explain what residents are facing, how long it has been happening, and what support is needed." required><?php echo htmlspecialchars($prefill['details'], ENT_QUOTES, 'UTF-8'); ?></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="request-urgency">Urgency</label>
+            <select class="form-control" id="request-urgency" name="urgency" required>
+              <?php foreach ($urgencyOptions as $key => $label): ?>
+                <option value="<?php echo htmlspecialchars($key, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $prefill['urgency'] === $key ? 'selected' : ''; ?>>
+                  <?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="request-contact-window">Best time to contact you</label>
+            <select class="form-control" id="request-contact-window" name="contact_window" required>
+              <?php foreach ($contactWindows as $key => $label): ?>
+                <option value="<?php echo htmlspecialchars($key, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $prefill['contact_window'] === $key ? 'selected' : ''; ?>>
+                  <?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <label for="request-reference">Reference note</label>
+            <input type="text" class="form-control" id="request-reference" name="reference_hint" value="<?php echo htmlspecialchars($prefill['reference_hint'], ENT_QUOTES, 'UTF-8'); ?>" placeholder="Optional file no., ward note, or landmark">
+          </div>
+        </div>
+
+        <div class="request-actions">
+          <a href="<?php echo htmlspecialchars(appUrl('mytickets.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-outline-secondary">View my cases</a>
+          <button type="submit" name="submit" class="btn btn-primary">Submit case</button>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<style>
+  .request-shell {
+    max-width: 980px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+  }
+  .request-hero,
+  .request-form-card {
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid rgba(18, 46, 77, 0.08);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  }
+  .request-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+    gap: 1.25rem;
+    padding: 1.5rem;
+  }
+  .request-kicker {
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-weight: 700;
+    color: #2f6fed;
+    margin-bottom: .5rem;
+  }
+  .request-hero h1 {
+    margin-bottom: .5rem;
+    color: #12324d;
+  }
+  .request-hero p {
+    margin-bottom: 0;
+    color: #516277;
+    line-height: 1.6;
+  }
+  .request-hero-card {
+    border-radius: 18px;
+    background: linear-gradient(180deg, #f4f8fb 0%, #eef4f8 100%);
+    padding: 1rem;
+    display: grid;
+    gap: .85rem;
+    align-content: start;
+  }
+  .request-hero-stat strong {
+    display: block;
+    color: #12324d;
+    margin-bottom: .2rem;
+  }
+  .request-hero-stat span {
+    display: block;
+    color: #5f7085;
+    font-size: .95rem;
+    line-height: 1.5;
+  }
+  .request-form-card {
+    padding: 1.5rem;
+  }
+  .request-section-head {
+    margin-bottom: .85rem;
+  }
+  .request-section-head h2 {
+    font-size: 1.1rem;
+    margin-bottom: .2rem;
+    color: #12324d;
+  }
+  .request-section-head p {
+    margin-bottom: 0;
+    color: #66788d;
+  }
+  .request-form-card .form-control {
+    border-radius: 12px;
+    min-height: 48px;
+  }
+  .request-form-card textarea.form-control {
+    min-height: 160px;
+  }
+  .request-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+    margin-top: 1rem;
+  }
+  @media (max-width: 768px) {
+    .request-hero {
+      grid-template-columns: 1fr;
+    }
+    .request-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .request-actions .btn {
+      width: 100%;
+    }
+  }
+</style>
 
-<!-- Core plugin JavaScript-->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-<!-- Page level plugin JavaScript-->
-<script src="vendor/chart.js/Chart.min.js"></script>
-<script src="vendor/datatables/jquery.dataTables.js"></script>
-<script src="vendor/datatables/dataTables.bootstrap4.js"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="js/admin-theme.min.js"></script>
-
-<!-- Demo scripts for this page-->
-<script src="js/demo/datatables-demo.js"></script>
-<script src="js/demo/chart-area-demo.js"></script>
-
-</body>
-
-</html>
+<?php include './footer.php'; ?>

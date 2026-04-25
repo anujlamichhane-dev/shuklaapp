@@ -1,11 +1,11 @@
 {
-    "title": "Helpdesk Ticketing System",
-    "name": "helpdesk-ticketing-system",
+    "title": "Shuklagandaki Municipal Service Portal",
+    "name": "shuklagandaki-service-portal",
     "version": "5.1.0",
     "scripts": {
         "start": "gulp watch"
     },
-    "description": "Helpdesk and ticket management application.",
+    "description": "Municipal service request and citizen communication application.",
     "keywords": [
         "css",
         "sass",

@@ -80,6 +80,34 @@ body.mobile-home-body #content-wrapper {
   overflow: hidden;
 }
 
+.hero-intro {
+  padding: 8px 6px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.hero-kicker {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.hero-heading {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--navy);
+}
+
+.hero-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .hero-slider {
   position: relative;
   height: 210px;

@@ -145,7 +145,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
 
   <!-- Custom styles for this template-->
   <link href="css/admin-theme.css" rel="stylesheet">
-  <link href="css/theme-purple.css" rel="stylesheet">
+  <link href="css/theme-human.css" rel="stylesheet">
   <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>
   <?php if (!empty($extraCss) && is_array($extraCss)): ?>
     <?php foreach ($extraCss as $cssPath): ?>
@@ -226,7 +226,7 @@ if ($isModerator && $currentPage === 'mytickets.php') {
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="<?php echo htmlspecialchars(appUrl('tickets-menu.php'), ENT_QUOTES, 'UTF-8'); ?>">
-          <i class="fas fa-fw fa-ticket-alt"></i>
+          <i class="fas fa-fw fa-clipboard-list"></i>
           <span> <?php echo htmlspecialchars(i18n_t('nav.tickets'), ENT_QUOTES, 'UTF-8'); ?></span>
         </a>
       </li>

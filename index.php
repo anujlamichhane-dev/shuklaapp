@@ -34,7 +34,7 @@ $redirectTarget = sanitizeRedirectTarget($_GET['redirect'] ?? $_POST['redirect']
 $isGuestSession = isGuestUser($_SESSION['user'] ?? null);
 
 if (isset($_GET['guest_required']) && $_GET['guest_required'] === '1') {
-  $notice = 'Please log in or create an account to open a new ticket.';
+  $notice = 'Please log in or create an account to open a service request.';
 }
 
 if (isset($_POST['guest_login'])) {
@@ -176,7 +176,7 @@ $langUrlNe = $path . '?' . http_build_query($query);
 
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="css/admin-theme.css" rel="stylesheet">
-  <link href="css/theme-purple.css" rel="stylesheet">
+  <link href="css/theme-human.css" rel="stylesheet">
   <link href="css/mobile-home.css" rel="stylesheet">
   <link href="css/mobile-theme.css" rel="stylesheet">
   <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>

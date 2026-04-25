@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/service-request.php';
+
 class Ticket
 {
 
@@ -84,14 +86,25 @@ class Ticket
 
     public static function find($id): Ticket
     {
-        $sql = "SELECT * FROM ticket WHERE id = '$id'";
         $self = new static;
-        $res = $self->db->query($sql);
-        if ($res->num_rows < 1) {
+        $id = (int)$id;
+        $stmt = $self->db->prepare("SELECT * FROM ticket WHERE id = ? LIMIT 1");
+        if ($stmt === false) {
+            return false;
+        }
+        $stmt->bind_param('i', $id);
+        if (!$stmt->execute()) {
+            $stmt->close();
+            return false;
+        }
+        $res = $stmt->get_result();
+        if (!$res || $res->num_rows < 1) {
+            $stmt->close();
             return false;
         }
 
         $self->populateObject($res->fetch_object());
+        $stmt->close();
         return $self;
     }
 
@@ -117,11 +130,18 @@ class Ticket
 
     public static function findByStatus($status): array
     {
-        $sql = "SELECT * FROM ticket WHERE status = '$status' ORDER BY id DESC";
-        //print_r($sql);die();
         $self = new static;
         $tickets = [];
-        $res = $self->db->query($sql);
+        $stmt = $self->db->prepare("SELECT * FROM ticket WHERE status = ? ORDER BY id DESC");
+        if ($stmt === false) {
+            return $tickets;
+        }
+        $stmt->bind_param('s', $status);
+        if (!$stmt->execute()) {
+            $stmt->close();
+            return $tickets;
+        }
+        $res = $stmt->get_result();
 
         if ($res && $res->num_rows > 0) {
             while ($row = $res->fetch_object()) {
@@ -131,52 +151,70 @@ class Ticket
             }
         }
 
+        $stmt->close();
+
         return $tickets;
     }
 
     public static function changeStatus($id, $status): bool
     {
         $self = new static;
-        $sql = "UPDATE ticket SET status = '$status' WHERE id = '$id'";
-        return $self->db->query($sql);
+        $stmt = $self->db->prepare("UPDATE ticket SET status = ? WHERE id = ?");
+        if ($stmt === false) {
+            return false;
+        }
+        $id = (int)$id;
+        $stmt->bind_param('si', $status, $id);
+        $ok = $stmt->execute();
+        $stmt->close();
+        return $ok;
     }
 
     public static function delete($id): bool
     {
-        $sql = "DELETE FROM ticket WHERE id = '$id'";
-        // print_r($sql);die();
         $self = new static;
-        return $self->db->query($sql);
+        $stmt = $self->db->prepare("DELETE FROM ticket WHERE id = ?");
+        if ($stmt === false) {
+            return false;
+        }
+        $id = (int)$id;
+        $stmt->bind_param('i', $id);
+        $ok = $stmt->execute();
+        $stmt->close();
+        return $ok;
     }
 
     public static function setRating($id, $rating): bool
     {
-        $sql = "UPDATE ticket SET rating = '$rating' WHERE id = '$id'";
         $self = new static;
-        return $self->db->query($sql);
+        $stmt = $self->db->prepare("UPDATE ticket SET rating = ? WHERE id = ?");
+        if ($stmt === false) {
+            return false;
+        }
+        $id = (int)$id;
+        $stmt->bind_param('si', $rating, $id);
+        $ok = $stmt->execute();
+        $stmt->close();
+        return $ok;
     }
 
     public static function setPriority($id, $priority): bool
     {
-        $sql = "UPDATE ticket SET priority = '$priority' WHERE id = '$id'";
         $self = new static;
-        return $self->db->query($sql);
+        $stmt = $self->db->prepare("UPDATE ticket SET priority = ? WHERE id = ?");
+        if ($stmt === false) {
+            return false;
+        }
+        $id = (int)$id;
+        $stmt->bind_param('si', $priority, $id);
+        $ok = $stmt->execute();
+        $stmt->close();
+        return $ok;
     }
 
     public function displayStatusBadge(): string
     {
-        $badgeType = '';
-        if ($this->status == 'open') {
-            $badgeType = 'danger';
-        } else if ($this->status == 'pending') {
-            $badgeType = 'warning';
-        } else if ($this->status == 'solved') {
-            $badgeType = 'success';
-        } else if ($this->status == 'closed') {
-            $badgeType = 'info';
-        }
-
-        return '<div class="badge badge-' . $badgeType . '" role="badge"> ' . ucfirst($this->status) . '</div>';
+        return service_request_status_badge((string)$this->status);
     }
 
     public function populateObject($object): void
@@ -238,16 +276,25 @@ class Ticket
 
     public function unassigned()
     {
-
-        $sql = "SELECT * FROM ticket WHERE team_member = '' OR team_member IS NULL ORDER BY id DESC";
-
         $self = new static;
         $tickets = [];
-        $res = $self->db->query($sql);
+        $stmt = $self->db->prepare(
+            "SELECT * FROM ticket WHERE team_member = '' OR team_member IS NULL ORDER BY id DESC"
+        );
+        if ($stmt === false) {
+            return $tickets;
+        }
+        if (!$stmt->execute()) {
+            $stmt->close();
+            return $tickets;
+        }
+        $res = $stmt->get_result();
 
         while ($row = $res->fetch_object()) {
             $tickets[] = $row;
         }
+
+        $stmt->close();
 
         return $tickets;
 
@@ -255,21 +302,32 @@ class Ticket
 
     public static function findByMember($member)
      {
-
-        $sql = "SELECT t.* FROM ticket t
-                LEFT JOIN team_member tm ON tm.id = t.team_member
-                WHERE t.team_member = '$member' OR tm.user = '$member'
-                ORDER BY t.id DESC";
-        
         $self = new static;
         $tickets = [];
-        $res = $self->db->query($sql);
+        $member = (int)$member;
+        $stmt = $self->db->prepare(
+            "SELECT t.* FROM ticket t
+             LEFT JOIN team_member tm ON tm.id = t.team_member
+             WHERE t.team_member = ? OR tm.user = ?
+             ORDER BY t.id DESC"
+        );
+        if ($stmt === false) {
+            return $tickets;
+        }
+        $stmt->bind_param('ii', $member, $member);
+        if (!$stmt->execute()) {
+            $stmt->close();
+            return $tickets;
+        }
+        $res = $stmt->get_result();
         
         while($row = $res->fetch_object()){
             $ticket = new static;
             $ticket->populateObject($row);
             $tickets[] = $ticket;
         }
+
+        $stmt->close();
 
         return $tickets;
 

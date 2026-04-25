@@ -1,24 +1,28 @@
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Shuklagandaki Municipality citizen service highlights">
-  <meta name="author" content="">
-  <title>Shuklagandaki Municipality - Home</title>
+  <meta name="description" content="Shuklagandaki Municipality citizen service portal">
+  <title>Shuklagandaki Municipality - Welcome</title>
   <link rel="icon" type="image/png" href="img/shuklagandaki_logo.png">
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="css/admin-theme.css" rel="stylesheet" type="text/css">
   <link href="css/mobile-home.css" rel="stylesheet">
   <link href="css/mobile-theme.css" rel="stylesheet">
   <link href="css/home.css" rel="stylesheet">
-  <script defer src="js/main.js?v=<?php echo filemtime(__DIR__ . '/js/main.js'); ?>"></script>
 </head>
 <body class="mobile-home-body home-body">
   <div class="home-wrapper">
+    <section class="welcome-panel">
+      <div class="welcome-kicker">Shuklagandaki Municipality</div>
+      <h1>Citizen services with clear follow-up</h1>
+      <p>Open a municipal service request, review document information, and contact the right office from one place.</p>
+    </section>
+
     <main class="flex-fill d-flex align-items-center">
-      <div id="featureCarousel" class="carousel slide carousel-fade w-100" data-ride="carousel" data-interval="4800">
+      <div id="featureCarousel" class="carousel slide carousel-fade w-100" data-ride="carousel" data-interval="5200">
         <ol class="carousel-indicators">
           <li data-target="#featureCarousel" data-slide-to="0" class="active"></li>
           <li data-target="#featureCarousel" data-slide-to="1"></li>
@@ -26,68 +30,36 @@
         </ol>
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <div class="slide-illustration">
-              <div class="accent accent-folder"><i class="fas fa-folder-open"></i></div>
-              <div class="accent accent-letter"><i class="fas fa-envelope-open-text"></i></div>
-              <div class="mobile-frame">
-                <div class="mobile-notch"></div>
-                <div class="mobile-icon gradient-gold">
-                  <i class="fas fa-file-alt"></i>
-                </div>
-              </div>
+            <div class="photo-frame">
+              <img src="img/municipality-building.jpg" alt="Municipality building">
             </div>
-            <h2 class="slide-title">सिफारिस</h2>
-            <p class="slide-text">तपाईंको मोबाइलबाट सबै प्रकारका सिफारिसहरू पहुँच गर्नुहोस्।</p>
+            <h2 class="slide-title">Municipal offices</h2>
+            <p class="slide-text">Find the right place to start your request and see which services the municipality handles.</p>
           </div>
 
           <div class="carousel-item">
-            <div class="slide-illustration">
-              <div class="accent accent-warning"><i class="fas fa-exclamation-triangle"></i></div>
-              <div class="accent accent-firstaid"><i class="fas fa-briefcase-medical"></i></div>
-              <div class="mobile-frame">
-                <div class="mobile-notch"></div>
-                <div class="mobile-icon gradient-red">
-                  <i class="fas fa-bullhorn"></i>
-                </div>
-              </div>
+            <div class="photo-frame">
+              <img src="img/inside-the-municipality.jpg" alt="Service delivery center">
             </div>
-            <h2 class="slide-title">आपतकालिन सम्पर्क नं.</h2>
-            <p class="slide-text">आफ्नो स्थानीय स्वास्थ्य आपतकालीन सेवाहरुमा छिटो पहुँच प्राप्त गर्नुहोस्।</p>
+            <h2 class="slide-title">Service delivery center</h2>
+            <p class="slide-text">Track your case with the same information staff use for routing, assignment, and follow-up.</p>
           </div>
 
           <div class="carousel-item">
-            <div class="slide-illustration">
-              <div class="accent accent-chat"><i class="fas fa-comments"></i></div>
-              <div class="accent accent-document"><i class="fas fa-id-card"></i></div>
-              <div class="mobile-frame">
-                <div class="mobile-notch"></div>
-                <div class="mobile-icon gradient-green">
-                  <i class="fas fa-vote-yea"></i>
-                </div>
-              </div>
+            <div class="photo-frame">
+              <img src="img/mayor.png" alt="Municipality leadership">
             </div>
-            <h2 class="slide-title">गुनासो</h2>
-            <p class="slide-text">बुझ्नुहोस् वा जानकारी दर्ता गर्नुहोस् सहज र सुरक्षित रूपमा।</p>
+            <h2 class="slide-title">Human contact</h2>
+            <p class="slide-text">Reach real municipal offices, not a generic support template, and keep communication grounded in local services.</p>
           </div>
         </div>
-
-        <a class="carousel-control-prev" href="#featureCarousel" role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#featureCarousel" role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
       </div>
     </main>
 
     <footer class="d-flex justify-content-between align-items-center mt-4">
-      <div class="d-flex align-items-center">
-        <div class="home-indicator"></div>
-      </div>
+      <div class="home-indicator"></div>
       <a class="btn btn-primary shadow start-button" href="./">
-        सुरु गर्नुस्
+        Enter portal
         <span class="ml-2"><i class="fas fa-arrow-right"></i></span>
       </a>
     </footer>

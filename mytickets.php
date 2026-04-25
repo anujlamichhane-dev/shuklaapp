@@ -3,18 +3,20 @@ include './header.php';
 require_once './src/ticket.php';
 require_once './src/requester.php';
 require_once './src/team.php';
-require_once './src/user.php';
 require_once './src/team-member.php';
+require_once './src/service-request.php';
 
 $isClient = (($user->role ?? '') === 'client');
 $isGuest = (($user->role ?? '') === 'guest');
 
 if ($isClient) {
     $tickets = Ticket::findByRequesterUserId($user->id);
+    if (empty($tickets) && !empty($user->email)) {
+        $tickets = Ticket::findByRequesterEmail($user->email);
+    }
 } elseif ($isGuest) {
     $tickets = [];
-    $guestTicketIds = array_reverse(getGuestTicketIds());
-    foreach ($guestTicketIds as $guestTicketId) {
+    foreach (array_reverse(getGuestTicketIds()) as $guestTicketId) {
         $ticket = Ticket::find($guestTicketId);
         if ($ticket) {
             $tickets[] = $ticket;
@@ -24,142 +26,137 @@ if ($isClient) {
     $tickets = Ticket::findByMember($user->id);
 }
 
-if ($isClient && empty($tickets) && !empty($user->email)) {
-    $tickets = Ticket::findByRequesterEmail($user->email);
-}
-
 $statusFilter = '';
 if (isset($_GET['status']) && is_string($_GET['status'])) {
     $candidate = strtolower(trim($_GET['status']));
-    $allowedStatuses = ['open', 'pending', 'solved', 'closed'];
-    if (in_array($candidate, $allowedStatuses, true)) {
+    if (isset(service_request_status_options()[$candidate])) {
         $statusFilter = $candidate;
     }
 }
 
 if ($statusFilter !== '') {
     $tickets = array_values(array_filter($tickets, function ($ticket) use ($statusFilter) {
-        return isset($ticket->status) && strtolower($ticket->status) === $statusFilter;
+        return strtolower(trim((string)($ticket->status ?? ''))) === $statusFilter;
     }));
 }
-
-
 ?>
 <div id="content-wrapper">
-
-    <div class="container-fluid">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <a href="#"><?php echo htmlspecialchars(i18n_t('mytickets.breadcrumb.dashboard'), ENT_QUOTES, 'UTF-8'); ?></a>
-      </li>
-      <li class="breadcrumb-item active"><?php echo htmlspecialchars(i18n_t('mytickets.breadcrumb.title'), ENT_QUOTES, 'UTF-8'); ?></li>
-    </ol>
-        <div class="card mb-3">
-            <div class="card-body">
-                <?php if (empty($tickets)) : ?>
-                    <div class="alert alert-info text-center mb-0">
-                        <?php echo htmlspecialchars(i18n_t('mytickets.empty'), ENT_QUOTES, 'UTF-8'); ?>
-                    </div>
-                <?php else : ?>
-                <div class="table-responsive tickets-table">
-                    <table class="table table-bordered table-hover table-sm table-mobile-stack" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th><?php echo htmlspecialchars(i18n_t('mytickets.table.subject'), ENT_QUOTES, 'UTF-8'); ?></th>
-                                <th><?php echo htmlspecialchars(i18n_t('mytickets.table.requester'), ENT_QUOTES, 'UTF-8'); ?></th>
-                                <th><?php echo htmlspecialchars(i18n_t('mytickets.table.team'), ENT_QUOTES, 'UTF-8'); ?></th>
-                                <th><?php echo htmlspecialchars(i18n_t('mytickets.table.agent'), ENT_QUOTES, 'UTF-8'); ?></th>
-                                <th><?php echo htmlspecialchars(i18n_t('mytickets.table.status'), ENT_QUOTES, 'UTF-8'); ?></th>
-                                <th><?php echo htmlspecialchars(i18n_t('mytickets.table.requested'), ENT_QUOTES, 'UTF-8'); ?></th>
-                                <th><?php echo htmlspecialchars(i18n_t('mytickets.table.action'), ENT_QUOTES, 'UTF-8'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($tickets as $ticket) : ?>
-                                <?php $requesterObj = Requester::find($ticket->requester); ?>
-                                <?php $teamObj = (!empty($ticket->team) && (int)$ticket->team > 0) ? Team::find($ticket->team) : null; ?>
-                                <?php $agentName = $ticket->team_member ? TeamMember::getName($ticket->team_member) : ''; ?>
-                                <?php $date = new DateTime($ticket->created_at); ?>
-                                <tr>
-                                    <td data-label="<?php echo htmlspecialchars(i18n_t('mytickets.table.subject'), ENT_QUOTES, 'UTF-8'); ?>"><a href="./ticket-details.php?id=<?php echo $ticket->id ?>"><?php echo $ticket->title ?></a></td>
-                                    <td data-label="<?php echo htmlspecialchars(i18n_t('mytickets.table.requester'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo $requesterObj ? $requesterObj->name : ''; ?></td>
-                                    <td data-label="<?php echo htmlspecialchars(i18n_t('mytickets.table.team'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo $teamObj ? $teamObj->name : ''; ?></td>
-                                    <td data-label="<?php echo htmlspecialchars(i18n_t('mytickets.table.agent'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo $agentName; ?></td>
-                                    <td data-label="<?php echo htmlspecialchars(i18n_t('mytickets.table.status'), ENT_QUOTES, 'UTF-8'); ?>">
-                                        <?php if ($ticket->status == 'solved') : ?>
-                                            <span class="badge badge-success"><?php echo $ticket->status ?></span>
-                                        <?php else : ?>
-                                            <span class="badge badge-secondary"><?php echo $ticket->status ?></span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td data-label="<?php echo htmlspecialchars(i18n_t('mytickets.table.requested'), ENT_QUOTES, 'UTF-8'); ?>"><?php echo $date->format('d-m-Y H:i') ?></td>
-                                    <td data-label="<?php echo htmlspecialchars(i18n_t('mytickets.table.action'), ENT_QUOTES, 'UTF-8'); ?>" width="100px">
-                                        <a class="btn btn-outline-primary btn-sm btn-block" href="./ticket-details.php?id=<?php echo $ticket->id ?>"><?php echo htmlspecialchars(i18n_t('mytickets.table.view'), ENT_QUOTES, 'UTF-8'); ?></a>
-                                    </td>
-                                </tr>
-                            <?php endforeach ?>
-                        </tbody>
-                    </table>
-                </div>
-                <?php endif; ?>
-            </div>
+  <div class="container-fluid">
+    <div class="list-shell">
+      <section class="list-hero">
+        <div>
+          <div class="list-kicker">Citizen Case Tracker</div>
+          <h1><?php echo $isGuest ? 'Session cases' : 'My service requests'; ?></h1>
+          <p><?php echo $isGuest ? 'These cases are available for this guest session on this device.' : 'Review current status, assigned team, and updates for your municipal cases.'; ?></p>
         </div>
-
-
-    </div>
-    <!-- /.container-fluid -->
-
-
-
-</div>
-<!-- /.content-wrapper -->
-
-</div>
-<!-- /#wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="./index.php">Logout</a>
-            </div>
+        <div class="list-actions">
+          <a href="<?php echo htmlspecialchars(appUrl('ticket.php'), ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-primary">Open a new case</a>
         </div>
+      </section>
+
+      <?php if (empty($tickets)): ?>
+        <div class="alert alert-info mb-0"><?php echo htmlspecialchars(i18n_t('mytickets.empty'), ENT_QUOTES, 'UTF-8'); ?></div>
+      <?php else: ?>
+        <div class="table-responsive tickets-table list-table-card">
+          <table class="table table-bordered table-hover table-sm table-mobile-stack" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>Service</th>
+                <th>Assigned team</th>
+                <th>Staff member</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($tickets as $ticket): ?>
+                <?php
+                  $ticketData = service_request_ticket_data($ticket);
+                  $teamObj = (!empty($ticket->team) && (int)$ticket->team > 0) ? Team::find($ticket->team) : null;
+                  $teamName = trim((string)($teamObj->name ?? 'Not assigned yet'));
+                  $agentName = $ticket->team_member ? TeamMember::getName((int)$ticket->team_member) : 'Not assigned yet';
+                  $submittedAt = !empty($ticket->created_at) ? new DateTime($ticket->created_at) : null;
+                ?>
+                <tr>
+                  <td data-label="Case">
+                    <a href="./ticket-details.php?id=<?php echo (int)$ticket->id; ?>">
+                      <?php echo htmlspecialchars($ticketData['case_number'], ENT_QUOTES, 'UTF-8'); ?>
+                    </a>
+                    <div class="small text-muted"><?php echo htmlspecialchars((string)$ticket->title, ENT_QUOTES, 'UTF-8'); ?></div>
+                  </td>
+                  <td data-label="Service">
+                    <?php echo htmlspecialchars($ticketData['category_label'], ENT_QUOTES, 'UTF-8'); ?>
+                    <?php if ($ticketData['location'] !== ''): ?>
+                      <div class="small text-muted"><?php echo htmlspecialchars($ticketData['location'], ENT_QUOTES, 'UTF-8'); ?></div>
+                    <?php endif; ?>
+                  </td>
+                  <td data-label="Assigned team"><?php echo htmlspecialchars($teamName, ENT_QUOTES, 'UTF-8'); ?></td>
+                  <td data-label="Staff member"><?php echo htmlspecialchars($agentName, ENT_QUOTES, 'UTF-8'); ?></td>
+                  <td data-label="Status"><?php echo service_request_status_badge((string)$ticket->status); ?></td>
+                  <td data-label="Submitted"><?php echo $submittedAt instanceof DateTime ? htmlspecialchars($submittedAt->format('d M Y, H:i'), ENT_QUOTES, 'UTF-8') : ''; ?></td>
+                  <td data-label="Action"><a class="btn btn-outline-primary btn-sm btn-block" href="./ticket-details.php?id=<?php echo (int)$ticket->id; ?>">Open case</a></td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      <?php endif; ?>
     </div>
+  </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<style>
+  .list-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+  }
+  .list-hero,
+  .list-table-card {
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid rgba(18, 46, 77, 0.08);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  }
+  .list-hero {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
+  }
+  .list-kicker {
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-size: .8rem;
+    font-weight: 700;
+    color: #2f6fed;
+    margin-bottom: .4rem;
+  }
+  .list-hero h1 {
+    margin-bottom: .35rem;
+    color: #12324d;
+  }
+  .list-hero p {
+    margin: 0;
+    color: #5f7085;
+    line-height: 1.6;
+  }
+  .list-table-card {
+    padding: 1rem;
+  }
+  @media (max-width: 768px) {
+    .list-hero {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .list-actions .btn {
+      width: 100%;
+    }
+  }
+</style>
 
-<!-- Core plugin JavaScript-->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-<!-- Page level plugin JavaScript-->
-<script src="vendor/chart.js/Chart.min.js"></script>
-<script src="vendor/datatables/jquery.dataTables.js"></script>
-<script src="vendor/datatables/dataTables.bootstrap4.js"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="js/admin-theme.min.js"></script>
-
-<!-- Demo scripts for this page-->
-<script src="js/demo/datatables-demo.js"></script>
-<script src="js/demo/chart-area-demo.js"></script>
-
-</body>
-
-</html>
+<?php include './footer.php'; ?>

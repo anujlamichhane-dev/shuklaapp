@@ -1,151 +1,116 @@
 <?php
-    include './header.php';
-    require_once './src/ticket.php';
-    require_once './src/requester.php';
-    require_once './src/team.php';
+include './header.php';
+require_once './src/service-request-board.php';
 
-    $ticket = new Ticket();
-
-    $allTicket = $ticket::findAll();
-
-    $requester = new Requester();
-    $team = new Team();
-
-    if (isset($_GET['del'])) {
-
-      $id = $_GET['del'];
-      
-     
-      try {
-
-         
-          $ticket->delete($id);
-         // print_r($ticket->delete($id)); die();
-          echo '<script>alert("Ticket deleted successfully");window.location = "./dashboard.php"</script>';
-      } catch (Exception $e) {
-          echo $e->getMessage();
-      }
-  
-  }
-  
-
+$mode = 'all';
+$config = service_request_admin_page_config($mode);
+$tickets = service_request_fetch_board_tickets($mode);
+$stats = service_request_board_stats($tickets);
 ?>
 <div id="content-wrapper">
-
   <div class="container-fluid">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item">
-        <a href="#">Dashboard</a>
-      </li>
-      <li class="breadcrumb-item active">Overview</li>
-    </ol>
-    <a class="btn btn-primary my-3" href="./ticket.php"><i class="fa fa-plus"></i> New Ticket</a>
-    <div class="card mb-3">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-bordered table-sm" id="dataTable" width="100%" cellspacing="0">
-            <thead>
-              <tr>
-                <th>Subject</th>
-                <th>Requester</th>
-                <th>Team</th>
-                <th>Agent</th>
-                <th>Created At</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php foreach($allTicket as $ticket):
-                $requesterObj = Requester::find($ticket->requester);
-                $teamObj = Team::find($ticket->team);
-                $requesterName = $requesterObj ? $requesterObj->name : '—';
-                $teamName = $teamObj ? $teamObj->name : '—';
-              ?>
-              <tr>
-                <td><a href="./ticket-details.php?id=<?php echo $ticket->id?>"><?php echo $ticket->title?></a></td>
-                <td><?php echo htmlspecialchars($requesterName, ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php echo htmlspecialchars($teamName, ENT_QUOTES, 'UTF-8'); ?></td>
-                <td>--</td>
-                <?php $date = new DateTime($ticket->created_at)?>
-                <td><?php echo $date->format('d-m-Y H:i:s')?> </td>
-                <td width="100px">
-                  <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <div class="btn-group" role="group">
-                      <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Action
-                      </button>
-                      <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                        <a href="./ticket-details.php?id=<?php echo $ticket->id?>" class="dropdown-item" href="#">View</a>
-                        <a class="dropdown-item" onclick="return confirm('Are you sure to delete')"
-                          href="?del=<?php echo $ticket->id; ?>">Delete</a>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <?php endforeach?>
-            </tbody>
-          </table>
+    <div class="board-shell">
+      <section class="board-hero">
+        <div>
+          <div class="board-kicker">Municipal Service Desk</div>
+          <h1><?php echo htmlspecialchars($config['title'], ENT_QUOTES, 'UTF-8'); ?></h1>
+          <p><?php echo htmlspecialchars($config['subtitle'], ENT_QUOTES, 'UTF-8'); ?></p>
         </div>
-      </div>
-    </div>
+        <div class="board-actions">
+          <a class="btn btn-primary" href="<?php echo htmlspecialchars(appUrl('ticket.php'), ENT_QUOTES, 'UTF-8'); ?>">Create internal case</a>
+        </div>
+      </section>
 
-  </div>
-  <!-- /.container-fluid -->
+      <section class="board-stats">
+        <div class="board-stat"><strong><?php echo (int)$stats['total']; ?></strong><span>Total cases</span></div>
+        <div class="board-stat"><strong><?php echo (int)$stats['open']; ?></strong><span>Submitted</span></div>
+        <div class="board-stat"><strong><?php echo (int)$stats['pending']; ?></strong><span>In progress</span></div>
+        <div class="board-stat"><strong><?php echo (int)$stats['solved']; ?></strong><span>Resolved</span></div>
+        <div class="board-stat"><strong><?php echo (int)$stats['unassigned']; ?></strong><span>Unassigned</span></div>
+      </section>
 
-  
-
-</div>
-<!-- /.content-wrapper -->
-
-</div>
-<!-- /#wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-  <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-primary" href="./index.php">Logout</a>
-      </div>
+      <section class="board-table-card">
+        <?php echo service_request_render_board($tickets, 'No service requests have been logged yet.'); ?>
+      </section>
     </div>
   </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<style>
+  .board-shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+  }
+  .board-hero,
+  .board-table-card,
+  .board-stats {
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid rgba(18, 46, 77, 0.08);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+  }
+  .board-hero {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
+  }
+  .board-kicker {
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-size: .8rem;
+    font-weight: 700;
+    color: #2f6fed;
+    margin-bottom: .4rem;
+  }
+  .board-hero h1 {
+    margin-bottom: .35rem;
+    color: #12324d;
+  }
+  .board-hero p {
+    margin: 0;
+    color: #5f7085;
+  }
+  .board-stats {
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .75rem;
+  }
+  .board-stat {
+    border-radius: 16px;
+    background: #f7fafc;
+    padding: .95rem 1rem;
+    border: 1px solid rgba(18, 46, 77, 0.08);
+  }
+  .board-stat strong {
+    display: block;
+    font-size: 1.4rem;
+    color: #12324d;
+  }
+  .board-stat span {
+    color: #6a7d90;
+  }
+  .board-table-card {
+    padding: 1rem;
+  }
+  @media (max-width: 900px) {
+    .board-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 768px) {
+    .board-hero {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .board-actions .btn {
+      width: 100%;
+    }
+  }
+</style>
 
-<!-- Core plugin JavaScript-->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-<!-- Page level plugin JavaScript-->
-<script src="vendor/chart.js/Chart.min.js"></script>
-<script src="vendor/datatables/jquery.dataTables.js"></script>
-<script src="vendor/datatables/dataTables.bootstrap4.js"></script>
-
-<!-- Custom scripts for all pages-->
-<script src="js/admin-theme.min.js"></script>
-
-<!-- Demo scripts for this page-->
-<script src="js/demo/datatables-demo.js"></script>
-<script src="js/demo/chart-area-demo.js"></script>
-
-</body>
-
-</html>
+<?php include './footer.php'; ?>

@@ -71,12 +71,12 @@
             <li class="breadcrumb-item">
                 <a href="#">Dashboard</a>
             </li>
-            <li class="breadcrumb-item active">New ticket</li>
+            <li class="breadcrumb-item active">New user</li>
         </ol>
 
         <div class="card mb-3">
             <div class="card-header">
-                <h3>Create a new ticket</h3>
+                <h3>Create a new user</h3>
             </div>
             <div class="card-body">
                

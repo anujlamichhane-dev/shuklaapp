@@ -1,0 +1,113 @@
+/* Municipal service portal theme overrides */
+:root {
+  --primary: #0f5d7a;
+  --secondary: #6d7f8e;
+  --success: #2b8a57;
+  --info: #1d7ca6;
+  --warning: #d88a1f;
+  --danger: #c6543f;
+  --dark: #12324d;
+  --light: #f5f8fb;
+}
+
+body {
+  background-color: #f5f8fb;
+  color: #18324a;
+}
+
+a {
+  color: #0f5d7a;
+}
+
+a:hover,
+a:focus {
+  color: #0a475e;
+}
+
+.bg-dark,
+.sidebar {
+  background: linear-gradient(180deg, #12324d 0%, #0d2438 100%) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link,
+.sidebar .nav-item .nav-link {
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.sidebar .nav-item .nav-link:hover,
+.sidebar .nav-item .nav-link:focus,
+.sidebar .nav-item .nav-link:active {
+  color: #fff;
+}
+
+.btn-primary,
+.bg-primary {
+  background-color: #0f5d7a !important;
+  border-color: #0f5d7a !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.show > .btn-primary.dropdown-toggle {
+  background-color: #0a475e !important;
+  border-color: #0a475e !important;
+}
+
+.btn-outline-primary {
+  color: #0f5d7a;
+  border-color: #0f5d7a;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active,
+.btn-outline-primary.active,
+.show > .btn-outline-primary.dropdown-toggle {
+  background-color: #0f5d7a;
+  border-color: #0f5d7a;
+}
+
+.badge-primary {
+  background-color: #0f5d7a;
+}
+
+.badge-info {
+  background-color: #1d7ca6;
+}
+
+.badge-warning {
+  background-color: #d88a1f;
+  color: #fff;
+}
+
+.badge-success {
+  background-color: #2b8a57;
+}
+
+.badge-danger {
+  background-color: #c6543f;
+}
+
+.card,
+.menu-card,
+.hero-card,
+.docs-hero,
+.message-card,
+.contact-section,
+.place-card {
+  border-color: rgba(18, 46, 77, 0.08);
+}
+
+.table thead th {
+  color: #23425f;
+}
+
+.scroll-to-top {
+  background: rgba(15, 93, 122, 0.7);
+}
+
+.scroll-to-top:hover {
+  background: rgba(10, 71, 94, 0.9);
+}

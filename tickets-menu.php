@@ -5,24 +5,22 @@
   $hideSidebarToggle = true;
   include './header.php';
 
-  // Build ticket links for this menu.
-  $ticketLinks = [];
+  $menuCards = [];
   if ($isGuest) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Open Ticket Anonymously', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'My Anonymous Tickets', 'icon' => 'fa-award'];
+    $menuCards[] = ['href' => 'ticket.php', 'label' => 'Open a service request', 'sub' => 'Report an issue or ask for support from this device', 'icon' => 'fa-plus-circle'];
+    $menuCards[] = ['href' => 'mytickets.php', 'label' => 'Track this session', 'sub' => 'Review cases opened during this guest session', 'icon' => 'fa-clipboard-list'];
   } elseif ($isClient) {
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'नयाँ सुझाव र गुनासो', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'mytickets.php', 'label' => 'मेरो सुझाव र गुनासो', 'icon' => 'fa-award'];
+    $menuCards[] = ['href' => 'ticket.php', 'label' => 'Open a service request', 'sub' => 'Submit a new municipal case', 'icon' => 'fa-plus-circle'];
+    $menuCards[] = ['href' => 'mytickets.php', 'label' => 'My service requests', 'sub' => 'See status, staff updates, and case history', 'icon' => 'fa-clipboard-list'];
   } else {
-    $ticketLinks[] = ['href' => 'dashboard.php', 'label' => i18n_t('tickets.dashboard'), 'icon' => 'fa-tachometer-alt'];
-    $ticketLinks[] = ['href' => 'ticket.php', 'label' => 'Create New Tickets', 'icon' => 'fa-plus-circle'];
-    $ticketLinks[] = ['href' => 'open.php', 'label' => i18n_t('tickets.open'), 'icon' => 'fa-lock-open'];
-    $ticketLinks[] = ['href' => 'solved.php', 'label' => i18n_t('tickets.solved'), 'icon' => 'fa-anchor'];
-    $ticketLinks[] = ['href' => 'closed.php', 'label' => i18n_t('tickets.closed'), 'icon' => 'fa-times-circle'];
-    $ticketLinks[] = ['href' => 'pending.php', 'label' => 'Pending', 'icon' => 'fa-adjust'];
-    $ticketLinks[] = ['href' => 'unassigned.php', 'label' => i18n_t('tickets.unassigned'), 'icon' => 'fa-at'];
+    $menuCards[] = ['href' => 'dashboard.php', 'label' => 'Request board', 'sub' => 'All municipal cases', 'icon' => 'fa-columns'];
+    $menuCards[] = ['href' => 'open.php', 'label' => 'Submitted cases', 'sub' => 'Waiting for triage', 'icon' => 'fa-inbox'];
+    $menuCards[] = ['href' => 'pending.php', 'label' => 'In progress', 'sub' => 'Under review or active work', 'icon' => 'fa-tools'];
+    $menuCards[] = ['href' => 'solved.php', 'label' => 'Resolved', 'sub' => 'Answered or completed', 'icon' => 'fa-check-circle'];
+    $menuCards[] = ['href' => 'closed.php', 'label' => 'Closed', 'sub' => 'Archived cases', 'icon' => 'fa-folder'];
+    $menuCards[] = ['href' => 'unassigned.php', 'label' => 'Unassigned', 'sub' => 'Needs a responsible staff member', 'icon' => 'fa-user-clock'];
     if (!$isModerator) {
-      $ticketLinks[] = ['href' => 'mytickets.php', 'label' => i18n_t('tickets.my'), 'icon' => 'fa-award'];
+      $menuCards[] = ['href' => 'mytickets.php', 'label' => 'My assigned cases', 'sub' => 'Cases connected to your account', 'icon' => 'fa-user-check'];
     }
   }
 ?>
@@ -30,67 +28,46 @@
 <div id="content-wrapper">
   <div class="app-shell">
     <section class="menu-section">
-      <div class="section-title"><?php echo htmlspecialchars(i18n_t('tickets.menu.title'), ENT_QUOTES, 'UTF-8'); ?></div>
+      <div class="section-title">Service requests</div>
       <?php if ($isGuest): ?>
-        <div class="alert alert-info">Guests can open and track tickets anonymously in this session. Create an account later if you want permanent access across devices.</div>
-        <div class="menu-grid">
-          <?php foreach ($ticketLinks as $link): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl($link['href']), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
-              <span class="menu-label"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
-            </a>
-          <?php endforeach; ?>
-        </div>
-      <?php elseif ($isClient): ?>
-        <div class="menu-grid">
-          <?php foreach ($ticketLinks as $link): ?>
-            <a class="menu-card" href="<?php echo htmlspecialchars(appUrl($link['href']), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="menu-icon"><i class="fas <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
-              <span class="menu-label"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
-            </a>
-          <?php endforeach; ?>
-        </div>
-      <?php else: ?>
-        <div class="ticket-menu-card">
-          <?php foreach ($ticketLinks as $link): ?>
-            <a class="ticket-row" href="<?php echo htmlspecialchars(appUrl($link['href']), ENT_QUOTES, 'UTF-8'); ?>">
-              <span class="ticket-icon"><i class="fas <?php echo htmlspecialchars($link['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
-              <span class="ticket-label"><?php echo htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8'); ?></span>
-              <span class="ticket-arrow"><i class="fas fa-chevron-right"></i></span>
-            </a>
-          <?php endforeach; ?>
-        </div>
+        <div class="alert alert-info">Guest access works on this device only. Add an email and phone number so staff can contact you about the case.</div>
       <?php endif; ?>
+      <div class="menu-grid single">
+        <?php foreach ($menuCards as $card): ?>
+          <a class="menu-card service-card" href="<?php echo htmlspecialchars(appUrl($card['href']), ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="menu-icon"><i class="fas <?php echo htmlspecialchars($card['icon'], ENT_QUOTES, 'UTF-8'); ?>"></i></span>
+            <span class="menu-label"><?php echo htmlspecialchars($card['label'], ENT_QUOTES, 'UTF-8'); ?></span>
+            <span class="menu-subtext"><?php echo htmlspecialchars($card['sub'], ENT_QUOTES, 'UTF-8'); ?></span>
+          </a>
+        <?php endforeach; ?>
+      </div>
     </section>
   </div>
 </div>
 
 <style>
-  .ticket-menu-card {
-    background: rgba(20, 23, 30, 0.85);
-    border-radius: 16px;
-    padding: 6px;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
-  }
-  .ticket-row {
-    display: flex;
+  .service-card {
+    text-align: left;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "icon label"
+      "icon sub";
+    gap: .25rem .85rem;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    border-radius: 12px;
-    color: #e5e7eb;
-    text-decoration: none;
+    padding: 1rem 1.1rem;
   }
-  .ticket-row:hover { background: rgba(255,255,255,0.06); }
-  .ticket-icon {
-    width: 34px; height: 34px;
-    display: grid; place-items: center;
-    border-radius: 10px;
-    background: rgba(59,130,246,0.2);
-    color: #7cb3ff;
+  .service-card .menu-icon {
+    grid-area: icon;
+    margin: 0;
   }
-  .ticket-label { font-weight: 600; }
-  .ticket-arrow { margin-left: auto; color: #94a3b8; }
+  .service-card .menu-label {
+    grid-area: label;
+  }
+  .service-card .menu-subtext {
+    grid-area: sub;
+    margin-top: 0;
+  }
 </style>
 
 <?php include './footer.php'; ?>

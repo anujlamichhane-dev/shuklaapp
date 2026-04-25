@@ -67,7 +67,7 @@ class TeamMember{
         $self = new static;
         $res = $self->db->query($sql);
         
-        if($res->num_rows < 1) return new static;
+        if(!$res || $res->num_rows < 1) return [];
 
         while($row = $res->fetch_object()){
             $member = new static;

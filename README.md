@@ -1,3 +1,3 @@
-Helpdesk Ticketing System
+Shuklagandaki Municipal Service Portal
 
-PHP-based helpdesk and ticket management application.
+PHP-based municipal service request and citizen communication application.
